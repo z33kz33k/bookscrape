@@ -35,6 +35,15 @@ class AuthorStats:
             "shelvings_count": self.shelvings_count,
         }
 
+    @staticmethod
+    def from_dict(data: Dict[str, Union[float, int]]) -> "AuthorStats":
+        return AuthorStats(
+            data["avg_rating"],
+            data["ratings_count"],
+            data["reviews_count"],
+            data["shelvings_count"],
+        )
+
 
 @dataclass
 class Book:
@@ -51,6 +60,15 @@ class Book:
             "ratings_count": self.ratings_count,
             "id": self.id,
         }
+
+    @staticmethod
+    def from_dict(data: Dict[str, Union[str, int, float]]) -> "Book":
+        return Book(
+            data["title"],
+            data["avg_rating"],
+            data["ratings_count"],
+            data["id"],
+        )
 
 
 def getsoup(url: str) -> BeautifulSoup:
