@@ -2,19 +2,21 @@
 
     goodreads.py
     ~~~~~~~~~~~~
-    Goodreads parsing.
+    Goodreads scraping and parsing.
 
     @author: z33k
 
 """
 import re
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from contexttimer import Timer
+
+from constants import REQUEST_TIMOUT
 
 
 @dataclass
@@ -24,6 +26,15 @@ class AuthorStats:
     reviews_count: int
     shelvings_count: int
 
+    @property
+    def as_dict(self) -> Dict[str, Union[float, int]]:
+        return {
+            "avg_rating": self.avg_rating,
+            "ratings_count": self.ratings_count,
+            "reviews_count": self.reviews_count,
+            "shelvings_count": self.shelvings_count,
+        }
+
 
 @dataclass
 class Book:
@@ -32,11 +43,20 @@ class Book:
     ratings_count: int
     id: str
 
+    @property
+    def as_dict(self) -> Dict[str, Union[str, int, float]]:
+        return {
+            "title": self.title,
+            "avg_rating": self.avg_rating,
+            "ratings_count": self.ratings_count,
+            "id": self.id,
+        }
+
 
 def getsoup(url: str) -> BeautifulSoup:
     print(f"Requesting: {url!r}")
     with Timer() as t:
-        markup = requests.get(url).text
+        markup = requests.get(url, timeout=REQUEST_TIMOUT).text
     print(f"Request completed in {t.elapsed:3f} seconds.")
     return BeautifulSoup(markup, "lxml")
 
@@ -62,17 +82,34 @@ class AuthorParser:
         Example:
             'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
         """
+        def parse_spans(spans_: List[Tag], *names: str) -> Optional[Tag]:
+            i, result = 0, None
+            while not result:
+                if i == len(spans_):
+                    break
+                span = spans_[i]
+                re_parts = [f"(?=.*{name})" for name in names]
+                result = span.find(href=re.compile("".join(re_parts)))
+                i += 1
+
+            return result
+
         query = "+".join(self.allnames)
         url_template = "https://www.goodreads.com/search?q={}"
         url = url_template.format(query)
         soup = getsoup(url)
-        span = soup.find("span", itemprop="author")
-        if not span:
+        spans = soup.find_all("span", itemprop="author")
+        if not spans:
             raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
-        re_parts = [f"(?=.*{name})" for name in self.allnames]
-        a = span.find(href=re.compile("".join(re_parts)))
+
+        a = parse_spans(spans, *self.allnames)
+
         if not a:
-            raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
+            if len(self.allnames) > 2:
+                a = parse_spans(spans, self.allnames[0], self.allnames[-1])
+            if not a:
+                raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
+
         link = a.attrs.get("href")
         if not link:
             raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
@@ -157,15 +194,27 @@ class AuthorParser:
             raise ValueError(f"Invalid row: {row}.")
         id_ = href.replace("/book/show/", "")
         text = row.find("span", class_="minirating").text.strip()
+        trash = ("liked it ", "really liked it ", "really ", "it was amazing ", "it was ok ",
+                 "didn't like it ")
+        for t in trash:
+            if t in text:
+                text = text.replace(t, "")
         avg, count = text.split(" — ")
         avg = float(avg.replace(" avg rating", ""))
-        count = int(count.replace(",", "").replace(" ratings", ""))
+        trash = (" ratings", " rating")
+        t = next((t for t in trash if t in count), None)
+        if not t:
+            raise ValueError(f"Invalid row: {row}.")
+        count = int(count.replace(",", "").replace(t, ""))
         return Book(title, avg, count, id_)
 
     def get_stats_and_books(self) -> None:
         link = self.find_author_link()
         author_id = self.extract_id(link)
         self.stats, self.books = self.parse_author_list(author_id)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(stats={self.stats}, books={self.books[:5]})"
 
 
 class BookParser:

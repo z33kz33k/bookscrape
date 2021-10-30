@@ -1,0 +1,5596 @@
+{
+    "Lester del Rey": {
+        "stats": {
+            "avg_rating": 4.04,
+            "ratings_count": 31708,
+            "reviews_count": 2113,
+            "shelvings_count": 78257
+        },
+        "books": [
+            {
+                "title": "The Runaway Robot",
+                "avg_rating": 3.99,
+                "ratings_count": 433,
+                "id": "52666.The_Runaway_Robot"
+            },
+            {
+                "title": "Tunnel Through Time",
+                "avg_rating": 3.55,
+                "ratings_count": 256,
+                "id": "245925.Tunnel_Through_Time"
+            },
+            {
+                "title": "Once Upon a Time: A Treasury of Modern Fairy Tales",
+                "avg_rating": 3.89,
+                "ratings_count": 233,
+                "id": "1043897.Once_Upon_a_Time"
+            },
+            {
+                "title": "Nerves",
+                "avg_rating": 3.34,
+                "ratings_count": 264,
+                "id": "2290361.Nerves"
+            },
+            {
+                "title": "Badge of Infamy",
+                "avg_rating": 3.56,
+                "ratings_count": 227,
+                "id": "2188089.Badge_of_Infamy"
+            },
+            {
+                "title": "The Sky Is Falling",
+                "avg_rating": 3.32,
+                "ratings_count": 178,
+                "id": "255454.The_Sky_Is_Falling"
+            },
+            {
+                "title": "Day of the Giants",
+                "avg_rating": 3.94,
+                "ratings_count": 125,
+                "id": "3105495-day-of-the-giants"
+            },
+            {
+                "title": "The Best of Lester Del Rey",
+                "avg_rating": 3.82,
+                "ratings_count": 117,
+                "id": "34939.The_Best_of_Lester_Del_Rey"
+            },
+            {
+                "title": "Dead Ringer",
+                "avg_rating": 3.38,
+                "ratings_count": 128,
+                "id": "11765564-dead-ringer"
+            },
+            {
+                "title": "Tales of Soaring Science Fantasy from \"... And Some Were Human\"",
+                "avg_rating": 3.27,
+                "ratings_count": 123,
+                "id": "16283314-tales-of-soaring-science-fantasy-from-and-some-were-human"
+            },
+            {
+                "title": "The Fifth Golden Age of Science Fiction MEGAPACK \u00ae: Lester del Rey",
+                "avg_rating": 3.93,
+                "ratings_count": 94,
+                "id": "22550725-the-fifth-golden-age-of-science-fiction-megapack"
+            },
+            {
+                "title": "Outpost of Jupiter",
+                "avg_rating": 3.37,
+                "ratings_count": 108,
+                "id": "230432.Outpost_of_Jupiter"
+            },
+            {
+                "title": "Moon of Mutiny",
+                "avg_rating": 3.33,
+                "ratings_count": 103,
+                "id": "230433.Moon_of_Mutiny"
+            },
+            {
+                "title": "Marooned On Mars",
+                "avg_rating": 3.21,
+                "ratings_count": 106,
+                "id": "2165804.Marooned_On_Mars"
+            },
+            {
+                "title": "The Mysterious Planet",
+                "avg_rating": 3.31,
+                "ratings_count": 100,
+                "id": "230443.The_Mysterious_Planet"
+            },
+            {
+                "title": "Rocket Jockey",
+                "avg_rating": 3.64,
+                "ratings_count": 90,
+                "id": "230429.Rocket_Jockey"
+            },
+            {
+                "title": "The Eleventh Commandment",
+                "avg_rating": 3.31,
+                "ratings_count": 95,
+                "id": "230437.The_Eleventh_Commandment"
+            },
+            {
+                "title": "Victory by Lester del Rey, Science Fiction, Adventure",
+                "avg_rating": 3.3,
+                "ratings_count": 92,
+                "id": "3185550-victory-by-lester-del-rey-science-fiction-adventure"
+            },
+            {
+                "title": "Let'Em Breathe Space",
+                "avg_rating": 3.55,
+                "ratings_count": 82,
+                "id": "19391670-let-em-breathe-space"
+            },
+            {
+                "title": "Helen O'Loy",
+                "avg_rating": 3.37,
+                "ratings_count": 82,
+                "id": "25906151-helen-o-loy"
+            },
+            {
+                "title": "Attack from Atlantis",
+                "avg_rating": 3.15,
+                "ratings_count": 87,
+                "id": "230434.Attack_from_Atlantis"
+            },
+            {
+                "title": "The 13th Golden Age of Science Fiction Megapack\u00ae: Lester del Rey",
+                "avg_rating": 3.98,
+                "ratings_count": 61,
+                "id": "24485495-the-13th-golden-age-of-science-fiction-megapack"
+            },
+            {
+                "title": "Pstalemate",
+                "avg_rating": 3.28,
+                "ratings_count": 67,
+                "id": "230438.Pstalemate"
+            },
+            {
+                "title": "Step to the Stars",
+                "avg_rating": 3.91,
+                "ratings_count": 56,
+                "id": "10366752-step-to-the-stars"
+            },
+            {
+                "title": "Mission to the Moon",
+                "avg_rating": 3.63,
+                "ratings_count": 49,
+                "id": "3070758-mission-to-the-moon"
+            },
+            {
+                "title": "The World of Science Fiction, 1926-1976: The History of a Subculture",
+                "avg_rating": 3.72,
+                "ratings_count": 46,
+                "id": "1643445.The_World_of_Science_Fiction_1926_1976"
+            },
+            {
+                "title": "No Strings Attached",
+                "avg_rating": 3.44,
+                "ratings_count": 43,
+                "id": "8483697-no-strings-attached"
+            },
+            {
+                "title": "The Man Without a Planet",
+                "avg_rating": 3.49,
+                "ratings_count": 39,
+                "id": "3385963-the-man-without-a-planet"
+            },
+            {
+                "title": "The Fantasy MEGAPACK \u00ae",
+                "avg_rating": 3.67,
+                "ratings_count": 36,
+                "id": "27274211-the-fantasy-megapack"
+            },
+            {
+                "title": "Infinite Worlds of Maybe",
+                "avg_rating": 3.97,
+                "ratings_count": 33,
+                "id": "9485726-infinite-worlds-of-maybe"
+            }
+        ]
+    },
+    "Robert Silverberg": {
+        "stats": {
+            "avg_rating": 3.88,
+            "ratings_count": 212175,
+            "reviews_count": 14961,
+            "shelvings_count": 518186
+        },
+        "books": [
+            {
+                "title": "Lord Valentine's Castle",
+                "avg_rating": 3.89,
+                "ratings_count": 8981,
+                "id": "252838.Lord_Valentine_s_Castle"
+            },
+            {
+                "title": "Legends",
+                "avg_rating": 3.92,
+                "ratings_count": 7510,
+                "id": "77232.Legends"
+            },
+            {
+                "title": "The Science Fiction Hall of Fame, Volume One, 1929-1964",
+                "avg_rating": 4.34,
+                "ratings_count": 5397,
+                "id": "141860.The_Science_Fiction_Hall_of_Fame_Volume_One_1929_1964"
+            },
+            {
+                "title": "Dying Inside",
+                "avg_rating": 3.84,
+                "ratings_count": 5687,
+                "id": "968902.Dying_Inside"
+            },
+            {
+                "title": "Legends II",
+                "avg_rating": 3.92,
+                "ratings_count": 3704,
+                "id": "77563.Legends_II"
+            },
+            {
+                "title": "Majipoor Chronicles",
+                "avg_rating": 3.8,
+                "ratings_count": 3215,
+                "id": "252969.Majipoor_Chronicles"
+            },
+            {
+                "title": "The Book of Skulls",
+                "avg_rating": 3.65,
+                "ratings_count": 3145,
+                "id": "219107.The_Book_of_Skulls"
+            },
+            {
+                "title": "A Time of Changes",
+                "avg_rating": 3.69,
+                "ratings_count": 3070,
+                "id": "1706646.A_Time_of_Changes"
+            },
+            {
+                "title": "Valentine Pontifex",
+                "avg_rating": 3.77,
+                "ratings_count": 2790,
+                "id": "252970.Valentine_Pontifex"
+            },
+            {
+                "title": "Nightwings",
+                "avg_rating": 3.76,
+                "ratings_count": 2672,
+                "id": "449261.Nightwings"
+            },
+            {
+                "title": "Downward to the Earth",
+                "avg_rating": 3.83,
+                "ratings_count": 2395,
+                "id": "845485.Downward_to_the_Earth"
+            },
+            {
+                "title": "The World Inside",
+                "avg_rating": 3.73,
+                "ratings_count": 2422,
+                "id": "261625.The_World_Inside"
+            },
+            {
+                "title": "The Man in the Maze",
+                "avg_rating": 3.8,
+                "ratings_count": 1815,
+                "id": "449329.The_Man_in_the_Maze"
+            },
+            {
+                "title": "Up the Line",
+                "avg_rating": 3.71,
+                "ratings_count": 1706,
+                "id": "449343.Up_the_Line"
+            },
+            {
+                "title": "Tower of Glass",
+                "avg_rating": 3.75,
+                "ratings_count": 1675,
+                "id": "202172.Tower_of_Glass"
+            },
+            {
+                "title": "Across a Billion Years",
+                "avg_rating": 3.87,
+                "ratings_count": 1559,
+                "id": "19095568-across-a-billion-years"
+            },
+            {
+                "title": "Hawksbill Station",
+                "avg_rating": 3.75,
+                "ratings_count": 1481,
+                "id": "872778.Hawksbill_Station"
+            },
+            {
+                "title": "Legends 3",
+                "avg_rating": 3.88,
+                "ratings_count": 1398,
+                "id": "202449.Legends_3"
+            },
+            {
+                "title": "Legends Volume 2",
+                "avg_rating": 3.89,
+                "ratings_count": 1128,
+                "id": "61654.Legends_Volume_2"
+            },
+            {
+                "title": "The Stochastic Man",
+                "avg_rating": 3.62,
+                "ratings_count": 1129,
+                "id": "1408115.The_Stochastic_Man"
+            },
+            {
+                "title": "Roma Eterna",
+                "avg_rating": 3.38,
+                "ratings_count": 1173,
+                "id": "851384.Roma_Eterna"
+            },
+            {
+                "title": "Gilgamesh the King",
+                "avg_rating": 3.72,
+                "ratings_count": 787,
+                "id": "310648.Gilgamesh_the_King"
+            },
+            {
+                "title": "Sailing to Byzantium",
+                "avg_rating": 3.85,
+                "ratings_count": 753,
+                "id": "449263.Sailing_to_Byzantium"
+            },
+            {
+                "title": "Shadrach in the Furnace",
+                "avg_rating": 3.6,
+                "ratings_count": 791,
+                "id": "474943.Shadrach_in_the_Furnace"
+            },
+            {
+                "title": "The Alien Years",
+                "avg_rating": 3.5,
+                "ratings_count": 784,
+                "id": "390359.The_Alien_Years"
+            },
+            {
+                "title": "Kingdoms of the Wall",
+                "avg_rating": 3.76,
+                "ratings_count": 717,
+                "id": "987341.Kingdoms_of_the_Wall"
+            },
+            {
+                "title": "At Winter's End",
+                "avg_rating": 3.7,
+                "ratings_count": 711,
+                "id": "449320.At_Winter_s_End"
+            },
+            {
+                "title": "Legends 2",
+                "avg_rating": 3.88,
+                "ratings_count": 665,
+                "id": "43895.Legends_2"
+            },
+            {
+                "title": "The Face of the Waters",
+                "avg_rating": 3.57,
+                "ratings_count": 700,
+                "id": "583309.The_Face_of_the_Waters"
+            },
+            {
+                "title": "The First Science Fiction Megapack: 25 Modern and Classic Science Fiction Tales",
+                "avg_rating": 3.61,
+                "ratings_count": 665,
+                "id": "18887701-the-first-science-fiction-megapack"
+            }
+        ]
+    },
+    "Frederik Pohl": {
+        "stats": {
+            "avg_rating": 3.9,
+            "ratings_count": 137837,
+            "reviews_count": 7329,
+            "shelvings_count": 278874
+        },
+        "books": [
+            {
+                "title": "Gateway",
+                "avg_rating": 4.07,
+                "ratings_count": 43002,
+                "id": "218427.Gateway"
+            },
+            {
+                "title": "Beyond the Blue Event Horizon",
+                "avg_rating": 3.95,
+                "ratings_count": 12496,
+                "id": "373399.Beyond_the_Blue_Event_Horizon"
+            },
+            {
+                "title": "The Space Merchants",
+                "avg_rating": 3.85,
+                "ratings_count": 9533,
+                "id": "392566.The_Space_Merchants"
+            },
+            {
+                "title": "Man Plus",
+                "avg_rating": 3.74,
+                "ratings_count": 7755,
+                "id": "367215.Man_Plus"
+            },
+            {
+                "title": "Heechee Rendezvous",
+                "avg_rating": 3.85,
+                "ratings_count": 7016,
+                "id": "77462.Heechee_Rendezvous"
+            },
+            {
+                "title": "The Annals of the Heechee",
+                "avg_rating": 3.75,
+                "ratings_count": 4018,
+                "id": "77463.The_Annals_of_the_Heechee"
+            },
+            {
+                "title": "Jem",
+                "avg_rating": 3.59,
+                "ratings_count": 2828,
+                "id": "591572.Jem"
+            },
+            {
+                "title": "The World at the End of Time",
+                "avg_rating": 4.02,
+                "ratings_count": 2175,
+                "id": "599712.The_World_at_the_End_of_Time"
+            },
+            {
+                "title": "The Gateway Trip",
+                "avg_rating": 3.82,
+                "ratings_count": 1582,
+                "id": "218429.The_Gateway_Trip"
+            },
+            {
+                "title": "The Boy Who Would Live Forever: A Novel of Gateway",
+                "avg_rating": 3.57,
+                "ratings_count": 987,
+                "id": "148450.The_Boy_Who_Would_Live_Forever"
+            },
+            {
+                "title": "Black Star Rising",
+                "avg_rating": 3.53,
+                "ratings_count": 916,
+                "id": "968775.Black_Star_Rising"
+            },
+            {
+                "title": "The Other End of Time",
+                "avg_rating": 3.44,
+                "ratings_count": 742,
+                "id": "611402.The_Other_End_of_Time"
+            },
+            {
+                "title": "The Merchants' War",
+                "avg_rating": 3.72,
+                "ratings_count": 627,
+                "id": "2037401.The_Merchants_War"
+            },
+            {
+                "title": "The Tunnel Under the World",
+                "avg_rating": 3.89,
+                "ratings_count": 545,
+                "id": "12753079-the-tunnel-under-the-world"
+            },
+            {
+                "title": "Starchild Trilogy",
+                "avg_rating": 3.68,
+                "ratings_count": 530,
+                "id": "715000.Starchild_Trilogy"
+            },
+            {
+                "title": "The Coming of the Quantum Cats",
+                "avg_rating": 3.41,
+                "ratings_count": 556,
+                "id": "1402910.The_Coming_of_the_Quantum_Cats"
+            },
+            {
+                "title": "Wolfbane",
+                "avg_rating": 3.6,
+                "ratings_count": 499,
+                "id": "1875941.Wolfbane"
+            },
+            {
+                "title": "The Best of Frederik Pohl",
+                "avg_rating": 4.05,
+                "ratings_count": 425,
+                "id": "364220.The_Best_of_Frederik_Pohl"
+            },
+            {
+                "title": "Chernobyl",
+                "avg_rating": 3.82,
+                "ratings_count": 445,
+                "id": "597180.Chernobyl"
+            },
+            {
+                "title": "Starburst",
+                "avg_rating": 3.48,
+                "ratings_count": 481,
+                "id": "451203.Starburst"
+            },
+            {
+                "title": "Gladiator-at-Law",
+                "avg_rating": 3.46,
+                "ratings_count": 444,
+                "id": "484105.Gladiator_at_Law"
+            },
+            {
+                "title": "Homegoing",
+                "avg_rating": 3.35,
+                "ratings_count": 426,
+                "id": "988505.Homegoing"
+            },
+            {
+                "title": "Search the Sky",
+                "avg_rating": 3.51,
+                "ratings_count": 396,
+                "id": "953472.Search_the_Sky"
+            },
+            {
+                "title": "The Age of the Pussyfoot",
+                "avg_rating": 3.6,
+                "ratings_count": 357,
+                "id": "1171506.The_Age_of_the_Pussyfoot"
+            },
+            {
+                "title": "The Far Shore of Time",
+                "avg_rating": 3.49,
+                "ratings_count": 342,
+                "id": "367217.The_Far_Shore_of_Time"
+            },
+            {
+                "title": "The Siege of Eternity",
+                "avg_rating": 3.38,
+                "ratings_count": 342,
+                "id": "449426.The_Siege_of_Eternity"
+            },
+            {
+                "title": "Plague of Pythons",
+                "avg_rating": 3.6,
+                "ratings_count": 319,
+                "id": "8360784-plague-of-pythons"
+            },
+            {
+                "title": "The Reefs of Space",
+                "avg_rating": 3.51,
+                "ratings_count": 299,
+                "id": "1476166.The_Reefs_of_Space"
+            },
+            {
+                "title": "Platinum Pohl: The Collected Best Stories",
+                "avg_rating": 4.03,
+                "ratings_count": 254,
+                "id": "364219.Platinum_Pohl"
+            },
+            {
+                "title": "The Way the Future Was: A Memoir",
+                "avg_rating": 4.05,
+                "ratings_count": 244,
+                "id": "1117714.The_Way_the_Future_Was"
+            }
+        ]
+    },
+    "Philip Jose Farmer": {
+        "stats": {
+            "avg_rating": 3.85,
+            "ratings_count": 109503,
+            "reviews_count": 4823,
+            "shelvings_count": 203618
+        },
+        "books": [
+            {
+                "title": "To Your Scattered Bodies Go",
+                "avg_rating": 3.94,
+                "ratings_count": 31596,
+                "id": "189147.To_Your_Scattered_Bodies_Go"
+            },
+            {
+                "title": "The Fabulous Riverboat",
+                "avg_rating": 3.88,
+                "ratings_count": 9634,
+                "id": "16536.The_Fabulous_Riverboat"
+            },
+            {
+                "title": "The Dark Design",
+                "avg_rating": 3.73,
+                "ratings_count": 5736,
+                "id": "370899.The_Dark_Design"
+            },
+            {
+                "title": "The Magic Labyrinth",
+                "avg_rating": 3.7,
+                "ratings_count": 4486,
+                "id": "55442.The_Magic_Labyrinth"
+            },
+            {
+                "title": "The Gods of Riverworld",
+                "avg_rating": 3.61,
+                "ratings_count": 3666,
+                "id": "370897.The_Gods_of_Riverworld"
+            },
+            {
+                "title": "Venus on the Half-Shell",
+                "avg_rating": 3.77,
+                "ratings_count": 2692,
+                "id": "171066.Venus_on_the_Half_Shell"
+            },
+            {
+                "title": "The Maker of Universes",
+                "avg_rating": 3.84,
+                "ratings_count": 1834,
+                "id": "2132254.The_Maker_of_Universes"
+            },
+            {
+                "title": "Dayworld",
+                "avg_rating": 3.65,
+                "ratings_count": 1563,
+                "id": "16543.Dayworld"
+            },
+            {
+                "title": "Riverworld: To Your Scattered Bodies Go/The Fabulous Riverboat",
+                "avg_rating": 3.83,
+                "ratings_count": 1466,
+                "id": "6665903-riverworld"
+            },
+            {
+                "title": "Behind the Walls of Terra",
+                "avg_rating": 3.88,
+                "ratings_count": 1177,
+                "id": "591774.Behind_the_Walls_of_Terra"
+            },
+            {
+                "title": "Doc Savage: His Apocalyptic Life",
+                "avg_rating": 3.9,
+                "ratings_count": 1078,
+                "id": "987974.Doc_Savage"
+            },
+            {
+                "title": "A Private Cosmos",
+                "avg_rating": 3.92,
+                "ratings_count": 1059,
+                "id": "591785.A_Private_Cosmos"
+            },
+            {
+                "title": "The Gates of Creation",
+                "avg_rating": 3.85,
+                "ratings_count": 976,
+                "id": "591766.The_Gates_of_Creation"
+            },
+            {
+                "title": "Riverworld and other stories",
+                "avg_rating": 3.86,
+                "ratings_count": 885,
+                "id": "987985.Riverworld_and_other_stories"
+            },
+            {
+                "title": "The Lavalite World",
+                "avg_rating": 3.82,
+                "ratings_count": 812,
+                "id": "591780.The_Lavalite_World"
+            },
+            {
+                "title": "The World of Tiers, Volume 1",
+                "avg_rating": 4.0,
+                "ratings_count": 759,
+                "id": "869158.The_World_of_Tiers_Volume_1"
+            },
+            {
+                "title": "The Lovers",
+                "avg_rating": 3.57,
+                "ratings_count": 756,
+                "id": "1162042.The_Lovers"
+            },
+            {
+                "title": "Tarzan Alive: A Definitive Biography of Lord Greystoke",
+                "avg_rating": 3.82,
+                "ratings_count": 638,
+                "id": "239252.Tarzan_Alive"
+            },
+            {
+                "title": "The Green Odyssey",
+                "avg_rating": 3.55,
+                "ratings_count": 620,
+                "id": "32789.The_Green_Odyssey"
+            },
+            {
+                "title": "Dayworld Rebel",
+                "avg_rating": 3.6,
+                "ratings_count": 611,
+                "id": "1254977.Dayworld_Rebel"
+            },
+            {
+                "title": "The World of Tiers Volume 2",
+                "avg_rating": 3.98,
+                "ratings_count": 542,
+                "id": "370900.The_World_of_Tiers_Volume_2"
+            },
+            {
+                "title": "Dark is the Sun",
+                "avg_rating": 3.58,
+                "ratings_count": 582,
+                "id": "303429.Dark_is_the_Sun"
+            },
+            {
+                "title": "The Other Log of Phileas Fogg",
+                "avg_rating": 3.42,
+                "ratings_count": 592,
+                "id": "931510.The_Other_Log_of_Phileas_Fogg"
+            },
+            {
+                "title": "A Feast Unknown",
+                "avg_rating": 3.7,
+                "ratings_count": 542,
+                "id": "16539.A_Feast_Unknown"
+            },
+            {
+                "title": "The Adventure of the Peerless Peer",
+                "avg_rating": 3.39,
+                "ratings_count": 500,
+                "id": "6335034-the-adventure-of-the-peerless-peer"
+            },
+            {
+                "title": "Flesh",
+                "avg_rating": 3.36,
+                "ratings_count": 504,
+                "id": "591745.Flesh"
+            },
+            {
+                "title": "The Stone God Awakens",
+                "avg_rating": 3.52,
+                "ratings_count": 468,
+                "id": "1526312.The_Stone_God_Awakens"
+            },
+            {
+                "title": "Image of the Beast",
+                "avg_rating": 3.61,
+                "ratings_count": 445,
+                "id": "370898.Image_of_the_Beast"
+            },
+            {
+                "title": "The Unreasoning Mask",
+                "avg_rating": 3.49,
+                "ratings_count": 458,
+                "id": "845599.The_Unreasoning_Mask"
+            },
+            {
+                "title": "Red Orc's Rage",
+                "avg_rating": 3.57,
+                "ratings_count": 443,
+                "id": "591773.Red_Orc_s_Rage"
+            }
+        ]
+    },
+    "Miriam Allen deFord": {
+        "stats": {
+            "avg_rating": 4.13,
+            "ratings_count": 10714,
+            "reviews_count": 592,
+            "shelvings_count": 26430
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Alfred Hitchcock Presents: Stories That Scared Even Me",
+                "avg_rating": 3.91,
+                "ratings_count": 775,
+                "id": "485558.Alfred_Hitchcock_Presents"
+            },
+            {
+                "title": "Alfred Hitchcock Presents: Stories Not for the Nervous",
+                "avg_rating": 3.83,
+                "ratings_count": 522,
+                "id": "87571.Alfred_Hitchcock_Presents"
+            },
+            {
+                "title": "Dangerous Visions 1",
+                "avg_rating": 4.02,
+                "ratings_count": 450,
+                "id": "3327497-dangerous-visions-1"
+            },
+            {
+                "title": "Alfred Hitchcock's Monster Museum: Twelve Shuddery Stories for Daring Young Readers",
+                "avg_rating": 3.8,
+                "ratings_count": 140,
+                "id": "87588.Alfred_Hitchcock_s_Monster_Museum"
+            },
+            {
+                "title": "The Alien Condition",
+                "avg_rating": 4.0,
+                "ratings_count": 94,
+                "id": "13234483-the-alien-condition"
+            },
+            {
+                "title": "Alfred Hitchcock Presents: More Stories Not for the Nervous",
+                "avg_rating": 3.91,
+                "ratings_count": 74,
+                "id": "3977238-alfred-hitchcock-presents"
+            },
+            {
+                "title": "Scream Along With Me: Alfred Hitchcock Presents",
+                "avg_rating": 4.12,
+                "ratings_count": 41,
+                "id": "3967082-scream-along-with-me"
+            },
+            {
+                "title": "Le citt\u00e0 che ci aspettano",
+                "avg_rating": 3.29,
+                "ratings_count": 51,
+                "id": "13648801-le-citt-che-ci-aspettano"
+            },
+            {
+                "title": "Xenogenesis",
+                "avg_rating": 3.79,
+                "ratings_count": 19,
+                "id": "1155685.Xenogenesis"
+            },
+            {
+                "title": "The Real Bonnie And Clyde",
+                "avg_rating": 3.0,
+                "ratings_count": 18,
+                "id": "3250893-the-real-bonnie-and-clyde"
+            },
+            {
+                "title": "The Eel",
+                "avg_rating": 3.2,
+                "ratings_count": 15,
+                "id": "20986031-the-eel"
+            },
+            {
+                "title": "Space, Time & Crime",
+                "avg_rating": 3.33,
+                "ratings_count": 12,
+                "id": "6280293-space-time-crime"
+            },
+            {
+                "title": "One Way",
+                "avg_rating": 3.0,
+                "ratings_count": 9,
+                "id": "8708967-one-way"
+            },
+            {
+                "title": "Oh, Rats!",
+                "avg_rating": 3.33,
+                "ratings_count": 6,
+                "id": "35896870-oh-rats"
+            },
+            {
+                "title": "A Death in the Family",
+                "avg_rating": 3.75,
+                "ratings_count": 4,
+                "id": "41736548-a-death-in-the-family"
+            },
+            {
+                "title": "Henry  Martindale,  Great  Dane",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "39320281-henry-martindale-great-dane"
+            },
+            {
+                "title": "Murderers Sane & Mad",
+                "avg_rating": 5.0,
+                "ratings_count": 2,
+                "id": "18336682-murderers-sane-mad"
+            },
+            {
+                "title": "The Overbury Affair",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "16114665-the-overbury-affair"
+            },
+            {
+                "title": "Elsewhere, Elsewhen, Elsehow",
+                "avg_rating": 3.0,
+                "ratings_count": 2,
+                "id": "2515368.Elsewhere_Elsewhen_Elsehow"
+            },
+            {
+                "title": "Who Was When?: A Dictionary of Contemporaries",
+                "avg_rating": 5.0,
+                "ratings_count": 1,
+                "id": "2605137-who-was-when"
+            },
+            {
+                "title": "Never Stop to Pat a Kitten",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "29947421-never-stop-to-pat-a-kitten"
+            },
+            {
+                "title": "The Facts About Fascism; Little Blue Book No. 1087",
+                "avg_rating": 3.0,
+                "ratings_count": 1,
+                "id": "20339107-the-facts-about-fascism-little-blue-book-no-1087"
+            },
+            {
+                "title": "Stone Walls: Prisons from Fetters to Furloughs",
+                "avg_rating": 2.0,
+                "ratings_count": 1,
+                "id": "18593171-stone-walls"
+            },
+            {
+                "title": "Walking Alone",
+                "avg_rating": 2.0,
+                "ratings_count": 1,
+                "id": "52031242-walking-alone"
+            },
+            {
+                "title": "Shaken With The Wind",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "53434485-shaken-with-the-wind"
+            },
+            {
+                "title": "They Were San Franciscans",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "3299307-they-were-san-franciscans"
+            },
+            {
+                "title": "A Case for the U.N.",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "52740430-a-case-for-the-u-n"
+            },
+            {
+                "title": "Homecoming",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "45899477-homecoming"
+            },
+            {
+                "title": "Something to Do with Figures",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "51112342-something-to-do-with-figures"
+            }
+        ]
+    },
+    "Robert Bloch": {
+        "stats": {
+            "avg_rating": 4.09,
+            "ratings_count": 168646,
+            "reviews_count": 8269,
+            "shelvings_count": 378179
+        },
+        "books": [
+            {
+                "title": "Psycho",
+                "avg_rating": 4.1,
+                "ratings_count": 59681,
+                "id": "156427.Psycho"
+            },
+            {
+                "title": "Psycho II",
+                "avg_rating": 3.19,
+                "ratings_count": 1931,
+                "id": "156422.Psycho_II"
+            },
+            {
+                "title": "Mysteries of the Worm",
+                "avg_rating": 3.98,
+                "ratings_count": 752,
+                "id": "219324.Mysteries_of_the_Worm"
+            },
+            {
+                "title": "Psycho House",
+                "avg_rating": 2.74,
+                "ratings_count": 819,
+                "id": "219325.Psycho_House"
+            },
+            {
+                "title": "This Crowded Earth",
+                "avg_rating": 3.56,
+                "ratings_count": 530,
+                "id": "6314423-this-crowded-earth"
+            },
+            {
+                "title": "Night of the Ripper",
+                "avg_rating": 3.59,
+                "ratings_count": 441,
+                "id": "219326.Night_of_the_Ripper"
+            },
+            {
+                "title": "American Gothic",
+                "avg_rating": 3.32,
+                "ratings_count": 466,
+                "id": "156425.American_Gothic"
+            },
+            {
+                "title": "Robert Bloch's Psychos",
+                "avg_rating": 3.78,
+                "ratings_count": 345,
+                "id": "122518.Robert_Bloch_s_Psychos"
+            },
+            {
+                "title": "The Best of Robert Bloch",
+                "avg_rating": 4.2,
+                "ratings_count": 283,
+                "id": "156428.The_Best_of_Robert_Bloch"
+            },
+            {
+                "title": "Strange Eons",
+                "avg_rating": 3.64,
+                "ratings_count": 267,
+                "id": "116096.Strange_Eons"
+            },
+            {
+                "title": "The Complete Stories, Vol. 1: Final Reckonings",
+                "avg_rating": 4.13,
+                "ratings_count": 233,
+                "id": "116499.The_Complete_Stories_Vol_1"
+            },
+            {
+                "title": "Shooting Star / Spiderweb",
+                "avg_rating": 3.61,
+                "ratings_count": 261,
+                "id": "2261903.Shooting_Star_Spiderweb"
+            },
+            {
+                "title": "\u0642\u0637\u0627\u0631 \u0627\u0644\u062c\u062d\u064a\u0645",
+                "avg_rating": 3.64,
+                "ratings_count": 250,
+                "id": "8773729"
+            },
+            {
+                "title": "Lori",
+                "avg_rating": 3.16,
+                "ratings_count": 252,
+                "id": "730591.Lori"
+            },
+            {
+                "title": "(\u0627\u0644\u0631\u062c\u0644 \u0627\u0644\u0630\u064a \u064a\u062c\u0645\u0639 \u0643\u062a\u0628 (\u0628\u0648",
+                "avg_rating": 3.37,
+                "ratings_count": 213,
+                "id": "11500379"
+            },
+            {
+                "title": "The Shambler from the Stars",
+                "avg_rating": 3.6,
+                "ratings_count": 192,
+                "id": "29489106-the-shambler-from-the-stars"
+            },
+            {
+                "title": "Yours Truly, Jack The Ripper",
+                "avg_rating": 3.75,
+                "ratings_count": 170,
+                "id": "2292005.Yours_Truly_Jack_The_Ripper"
+            },
+            {
+                "title": "The Opener of the Way",
+                "avg_rating": 3.77,
+                "ratings_count": 149,
+                "id": "3051048-the-opener-of-the-way"
+            },
+            {
+                "title": "Night-World",
+                "avg_rating": 3.3,
+                "ratings_count": 151,
+                "id": "2261908.Night_World"
+            },
+            {
+                "title": "Twilight Zone: The Movie",
+                "avg_rating": 3.26,
+                "ratings_count": 146,
+                "id": "1931809.Twilight_Zone"
+            },
+            {
+                "title": "Firebug",
+                "avg_rating": 3.22,
+                "ratings_count": 133,
+                "id": "662807.Firebug"
+            },
+            {
+                "title": "Midnight Pleasures",
+                "avg_rating": 3.87,
+                "ratings_count": 108,
+                "id": "1012706.Midnight_Pleasures"
+            },
+            {
+                "title": "Pleasant Dreams",
+                "avg_rating": 4.03,
+                "ratings_count": 102,
+                "id": "1490134.Pleasant_Dreams"
+            },
+            {
+                "title": "The Scarf",
+                "avg_rating": 3.73,
+                "ratings_count": 106,
+                "id": "3405579-the-scarf"
+            },
+            {
+                "title": "Three Complete Novels",
+                "avg_rating": 3.78,
+                "ratings_count": 91,
+                "id": "122515.Three_Complete_Novels"
+            },
+            {
+                "title": "Notebook Found in a Deserted House",
+                "avg_rating": 3.88,
+                "ratings_count": 78,
+                "id": "42447700-notebook-found-in-a-deserted-house"
+            },
+            {
+                "title": "The Complete Stories, Vol. 2: Bitter Ends",
+                "avg_rating": 4.22,
+                "ratings_count": 67,
+                "id": "156423.The_Complete_Stories_Vol_2"
+            },
+            {
+                "title": "Tales in a Jugular Vein",
+                "avg_rating": 3.46,
+                "ratings_count": 79,
+                "id": "12160835-tales-in-a-jugular-vein"
+            },
+            {
+                "title": "Atoms and Evil: Robert Bloch's Tales of Terror",
+                "avg_rating": 3.54,
+                "ratings_count": 70,
+                "id": "1796592.Atoms_and_Evil"
+            },
+            {
+                "title": "The Kidnapper",
+                "avg_rating": 3.85,
+                "ratings_count": 60,
+                "id": "219329.The_Kidnapper"
+            }
+        ]
+    },
+    "Harlan Ellison": {
+        "stats": {
+            "avg_rating": 4.17,
+            "ratings_count": 197172,
+            "reviews_count": 12120,
+            "shelvings_count": 428795
+        },
+        "books": [
+            {
+                "title": "I Have No Mouth and I Must Scream",
+                "avg_rating": 3.95,
+                "ratings_count": 22559,
+                "id": "415459.I_Have_No_Mouth_and_I_Must_Scream"
+            },
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Deathbird Stories",
+                "avg_rating": 4.15,
+                "ratings_count": 4156,
+                "id": "219376.Deathbird_Stories"
+            },
+            {
+                "title": "Again, Dangerous Visions",
+                "avg_rating": 4.17,
+                "ratings_count": 3748,
+                "id": "600350.Again_Dangerous_Visions"
+            },
+            {
+                "title": "\"Repent, Harlequin!\" Said the Ticktockman",
+                "avg_rating": 4.17,
+                "ratings_count": 2897,
+                "id": "90629._Repent_Harlequin_Said_the_Ticktockman"
+            },
+            {
+                "title": "Shatterday",
+                "avg_rating": 4.15,
+                "ratings_count": 2613,
+                "id": "41008380-shatterday"
+            },
+            {
+                "title": "I Have No Mouth & I Must Scream",
+                "avg_rating": 3.73,
+                "ratings_count": 2846,
+                "id": "20813135-i-have-no-mouth-i-must-scream"
+            },
+            {
+                "title": "Strange Wine",
+                "avg_rating": 4.14,
+                "ratings_count": 2092,
+                "id": "182547.Strange_Wine"
+            },
+            {
+                "title": "Angry Candy",
+                "avg_rating": 4.14,
+                "ratings_count": 2034,
+                "id": "92544.Angry_Candy"
+            },
+            {
+                "title": "The Beast That Shouted Love at the Heart of the World",
+                "avg_rating": 4.11,
+                "ratings_count": 2014,
+                "id": "216185.The_Beast_That_Shouted_Love_at_the_Heart_of_the_World"
+            },
+            {
+                "title": "The Essential Ellison: A 50 Year Retrospective",
+                "avg_rating": 4.54,
+                "ratings_count": 1392,
+                "id": "182543.The_Essential_Ellison"
+            },
+            {
+                "title": "Paingod and Other Delusions",
+                "avg_rating": 4.07,
+                "ratings_count": 1325,
+                "id": "182549.Paingod_and_Other_Delusions"
+            },
+            {
+                "title": "The City on the Edge of Forever: The Original Teleplay",
+                "avg_rating": 3.84,
+                "ratings_count": 1381,
+                "id": "216177.The_City_on_the_Edge_of_Forever"
+            },
+            {
+                "title": "Ellison Wonderland",
+                "avg_rating": 3.99,
+                "ratings_count": 1186,
+                "id": "216182.Ellison_Wonderland"
+            },
+            {
+                "title": "The Essential Ellison",
+                "avg_rating": 4.46,
+                "ratings_count": 1042,
+                "id": "458604.The_Essential_Ellison"
+            },
+            {
+                "title": "A Boy and His Dog",
+                "avg_rating": 3.9,
+                "ratings_count": 1181,
+                "id": "30286680-a-boy-and-his-dog"
+            },
+            {
+                "title": "Slippage: Previously Uncollected, Precariously Poised Stories",
+                "avg_rating": 4.11,
+                "ratings_count": 990,
+                "id": "182544.Slippage"
+            },
+            {
+                "title": "The Glass Teat",
+                "avg_rating": 4.17,
+                "ratings_count": 945,
+                "id": "453228.The_Glass_Teat"
+            },
+            {
+                "title": "Alone Against Tomorrow: Stories of Alienation in Speculative Fiction",
+                "avg_rating": 4.06,
+                "ratings_count": 790,
+                "id": "332286.Alone_Against_Tomorrow"
+            },
+            {
+                "title": "Approaching Oblivion",
+                "avg_rating": 4.02,
+                "ratings_count": 797,
+                "id": "332287.Approaching_Oblivion"
+            },
+            {
+                "title": "Stalking the Nightmare",
+                "avg_rating": 4.18,
+                "ratings_count": 733,
+                "id": "772695.Stalking_the_Nightmare"
+            },
+            {
+                "title": "I, Robot: The Illustrated Screenplay",
+                "avg_rating": 4.02,
+                "ratings_count": 655,
+                "id": "138545.I_Robot"
+            },
+            {
+                "title": "Harlan Ellison's Watching",
+                "avg_rating": 4.14,
+                "ratings_count": 628,
+                "id": "216179.Harlan_Ellison_s_Watching"
+            },
+            {
+                "title": "Vic and Blood",
+                "avg_rating": 4.02,
+                "ratings_count": 623,
+                "id": "16091263-vic-and-blood"
+            },
+            {
+                "title": "Mefisto in Onyx",
+                "avg_rating": 4.1,
+                "ratings_count": 598,
+                "id": "332281.Mefisto_in_Onyx"
+            },
+            {
+                "title": "A Boy and His Dog & \"Repent, Harlequin!\" said the Ticktockman",
+                "avg_rating": 4.12,
+                "ratings_count": 594,
+                "id": "2643113-a-boy-and-his-dog-repent-harlequin-said-the-ticktockman"
+            },
+            {
+                "title": "Spider Kiss",
+                "avg_rating": 3.77,
+                "ratings_count": 635,
+                "id": "216191.Spider_Kiss"
+            },
+            {
+                "title": "The Other Glass Teat",
+                "avg_rating": 4.16,
+                "ratings_count": 562,
+                "id": "332267.The_Other_Glass_Teat"
+            },
+            {
+                "title": "Mind Fields",
+                "avg_rating": 4.27,
+                "ratings_count": 537,
+                "id": "772699.Mind_Fields"
+            },
+            {
+                "title": "Dangerous Visions 2",
+                "avg_rating": 4.13,
+                "ratings_count": 504,
+                "id": "5187114-dangerous-visions-2"
+            }
+        ]
+    },
+    "Brian W. Aldiss": {
+        "stats": {
+            "avg_rating": 3.89,
+            "ratings_count": 211702,
+            "reviews_count": 9046,
+            "shelvings_count": 421929
+        },
+        "books": [
+            {
+                "title": "Non-Stop",
+                "avg_rating": 3.88,
+                "ratings_count": 5876,
+                "id": "384579.Non_Stop"
+            },
+            {
+                "title": "Hothouse",
+                "avg_rating": 3.62,
+                "ratings_count": 4031,
+                "id": "845078.Hothouse"
+            },
+            {
+                "title": "Helliconia Spring",
+                "avg_rating": 3.61,
+                "ratings_count": 3719,
+                "id": "672244.Helliconia_Spring"
+            },
+            {
+                "title": "Helliconia Winter",
+                "avg_rating": 3.78,
+                "ratings_count": 1922,
+                "id": "672245.Helliconia_Winter"
+            },
+            {
+                "title": "Helliconia Summer",
+                "avg_rating": 3.74,
+                "ratings_count": 1672,
+                "id": "672243.Helliconia_Summer"
+            },
+            {
+                "title": "Greybeard",
+                "avg_rating": 3.54,
+                "ratings_count": 1756,
+                "id": "669100.Greybeard"
+            },
+            {
+                "title": "Supertoys Last All Summer Long and Other Stories of Future Time",
+                "avg_rating": 3.49,
+                "ratings_count": 999,
+                "id": "436090.Supertoys_Last_All_Summer_Long_and_Other_Stories_of_Future_Time"
+            },
+            {
+                "title": "Helliconia Trilogy",
+                "avg_rating": 3.92,
+                "ratings_count": 854,
+                "id": "1118348.Helliconia_Trilogy"
+            },
+            {
+                "title": "Galaxies Like Grains of Sand",
+                "avg_rating": 3.66,
+                "ratings_count": 611,
+                "id": "384589.Galaxies_Like_Grains_of_Sand"
+            },
+            {
+                "title": "Frankenstein Unbound",
+                "avg_rating": 3.25,
+                "ratings_count": 670,
+                "id": "35251.Frankenstein_Unbound"
+            },
+            {
+                "title": "A Science Fiction Omnibus",
+                "avg_rating": 4.03,
+                "ratings_count": 477,
+                "id": "2271206.A_Science_Fiction_Omnibus"
+            },
+            {
+                "title": "The Dark Light Years",
+                "avg_rating": 3.46,
+                "ratings_count": 483,
+                "id": "1351129.The_Dark_Light_Years"
+            },
+            {
+                "title": "Trillion Year Spree: The History of Science Fiction",
+                "avg_rating": 4.08,
+                "ratings_count": 383,
+                "id": "964267.Trillion_Year_Spree"
+            },
+            {
+                "title": "Cryptozoic!",
+                "avg_rating": 3.07,
+                "ratings_count": 505,
+                "id": "1043449.Cryptozoic_"
+            },
+            {
+                "title": "The Malacia Tapestry",
+                "avg_rating": 3.34,
+                "ratings_count": 357,
+                "id": "973545.The_Malacia_Tapestry"
+            },
+            {
+                "title": "Barefoot in the Head",
+                "avg_rating": 3.31,
+                "ratings_count": 352,
+                "id": "462550.Barefoot_in_the_Head"
+            },
+            {
+                "title": "The Saliva Tree and Other Strange Growths",
+                "avg_rating": 3.52,
+                "ratings_count": 320,
+                "id": "1846821.The_Saliva_Tree_and_Other_Strange_Growths"
+            },
+            {
+                "title": "Earthworks",
+                "avg_rating": 3.08,
+                "ratings_count": 360,
+                "id": "1118325.Earthworks"
+            },
+            {
+                "title": "Finches of Mars",
+                "avg_rating": 2.45,
+                "ratings_count": 406,
+                "id": "25203687-finches-of-mars"
+            },
+            {
+                "title": "Galactic Empires 1",
+                "avg_rating": 3.75,
+                "ratings_count": 249,
+                "id": "1881079.Galactic_Empires_1"
+            },
+            {
+                "title": "Report on Probability A",
+                "avg_rating": 3.12,
+                "ratings_count": 291,
+                "id": "312350.Report_on_Probability_A"
+            },
+            {
+                "title": "Dracula Unbound",
+                "avg_rating": 3.0,
+                "ratings_count": 291,
+                "id": "902989.Dracula_Unbound"
+            },
+            {
+                "title": "Billion Year Spree: The True History of Science Fiction",
+                "avg_rating": 3.88,
+                "ratings_count": 193,
+                "id": "902990.Billion_Year_Spree"
+            },
+            {
+                "title": "Three Types of Solitude",
+                "avg_rating": 3.49,
+                "ratings_count": 210,
+                "id": "41713585-three-types-of-solitude"
+            },
+            {
+                "title": "Harm",
+                "avg_rating": 3.04,
+                "ratings_count": 241,
+                "id": "384585.Harm"
+            },
+            {
+                "title": "Who Can Replace a Man?",
+                "avg_rating": 3.65,
+                "ratings_count": 190,
+                "id": "1876500.Who_Can_Replace_a_Man_"
+            },
+            {
+                "title": "Enemies of the System",
+                "avg_rating": 3.22,
+                "ratings_count": 201,
+                "id": "2902831-enemies-of-the-system"
+            },
+            {
+                "title": "Galactic Empires 2",
+                "avg_rating": 3.72,
+                "ratings_count": 172,
+                "id": "2963654-galactic-empires-2"
+            },
+            {
+                "title": "The Hand-Reared Boy",
+                "avg_rating": 3.41,
+                "ratings_count": 176,
+                "id": "1117218.The_Hand_Reared_Boy"
+            },
+            {
+                "title": "Space, Time And Nathaniel",
+                "avg_rating": 3.51,
+                "ratings_count": 158,
+                "id": "2012478.Space_Time_And_Nathaniel"
+            }
+        ]
+    },
+    "Howard Rodman": {
+        "stats": {
+            "avg_rating": 3.71,
+            "ratings_count": 95,
+            "reviews_count": 22,
+            "shelvings_count": 559
+        },
+        "books": [
+            {
+                "title": "The Great Eastern",
+                "avg_rating": 3.76,
+                "ratings_count": 86,
+                "id": "42902488-the-great-eastern"
+            },
+            {
+                "title": "Destiny Express",
+                "avg_rating": 3.22,
+                "ratings_count": 9,
+                "id": "2344122.Destiny_Express"
+            }
+        ]
+    },
+    "Philip K. Dick": {
+        "stats": {
+            "avg_rating": 3.92,
+            "ratings_count": 1210250,
+            "reviews_count": 62678,
+            "shelvings_count": 2436618
+        },
+        "books": [
+            {
+                "title": "Do Androids Dream of Electric Sheep?",
+                "avg_rating": 4.08,
+                "ratings_count": 385896,
+                "id": "36402034-do-androids-dream-of-electric-sheep"
+            },
+            {
+                "title": "The Man in the High Castle",
+                "avg_rating": 3.62,
+                "ratings_count": 196255,
+                "id": "216363.The_Man_in_the_High_Castle"
+            },
+            {
+                "title": "A Scanner Darkly",
+                "avg_rating": 4.0,
+                "ratings_count": 105558,
+                "id": "14817.A_Scanner_Darkly"
+            },
+            {
+                "title": "Ubik",
+                "avg_rating": 4.07,
+                "ratings_count": 97016,
+                "id": "22590.Ubik"
+            },
+            {
+                "title": "Flow My Tears, the Policeman Said",
+                "avg_rating": 3.91,
+                "ratings_count": 38037,
+                "id": "22584.Flow_My_Tears_the_Policeman_Said"
+            },
+            {
+                "title": "The Three Stigmata of Palmer Eldritch",
+                "avg_rating": 4.01,
+                "ratings_count": 35274,
+                "id": "14185.The_Three_Stigmata_of_Palmer_Eldritch"
+            },
+            {
+                "title": "VALIS",
+                "avg_rating": 3.93,
+                "ratings_count": 27936,
+                "id": "216377.VALIS"
+            },
+            {
+                "title": "The Minority Report",
+                "avg_rating": 3.85,
+                "ratings_count": 21364,
+                "id": "581125.The_Minority_Report"
+            },
+            {
+                "title": "Time Out of Joint",
+                "avg_rating": 3.86,
+                "ratings_count": 11930,
+                "id": "698034.Time_Out_of_Joint"
+            },
+            {
+                "title": "Martian Time-Slip",
+                "avg_rating": 3.76,
+                "ratings_count": 11385,
+                "id": "697251.Martian_Time_Slip"
+            },
+            {
+                "title": "The Collected Stories of Philip K. Dick 4: The Minority Report",
+                "avg_rating": 4.19,
+                "ratings_count": 8852,
+                "id": "156724.The_Collected_Stories_of_Philip_K_Dick_4"
+            },
+            {
+                "title": "The Penultimate Truth",
+                "avg_rating": 3.78,
+                "ratings_count": 8436,
+                "id": "41064.The_Penultimate_Truth"
+            },
+            {
+                "title": "The Divine Invasion",
+                "avg_rating": 3.81,
+                "ratings_count": 7804,
+                "id": "216398.The_Divine_Invasion"
+            },
+            {
+                "title": "The Collected Stories of Philip K. Dick 2: We Can Remember it for You Wholesale",
+                "avg_rating": 4.22,
+                "ratings_count": 6957,
+                "id": "22581.The_Collected_Stories_of_Philip_K_Dick_2"
+            },
+            {
+                "title": "Dr. Bloodmoney",
+                "avg_rating": 3.68,
+                "ratings_count": 7840,
+                "id": "636108.Dr_Bloodmoney"
+            },
+            {
+                "title": "We Can Remember It for You Wholesale",
+                "avg_rating": 3.95,
+                "ratings_count": 7207,
+                "id": "6561374-we-can-remember-it-for-you-wholesale"
+            },
+            {
+                "title": "The Transmigration of Timothy Archer",
+                "avg_rating": 3.88,
+                "ratings_count": 7312,
+                "id": "106585.The_Transmigration_of_Timothy_Archer"
+            },
+            {
+                "title": "A Maze of Death",
+                "avg_rating": 3.8,
+                "ratings_count": 7258,
+                "id": "216399.A_Maze_of_Death"
+            },
+            {
+                "title": "Now Wait for Last Year",
+                "avg_rating": 3.89,
+                "ratings_count": 6178,
+                "id": "216378.Now_Wait_for_Last_Year"
+            },
+            {
+                "title": "Radio Free Albemuth",
+                "avg_rating": 3.8,
+                "ratings_count": 5728,
+                "id": "226475.Radio_Free_Albemuth"
+            },
+            {
+                "title": "The Collected Stories of Philip K. Dick 1: The Short Happy Life of the Brown Oxford",
+                "avg_rating": 4.23,
+                "ratings_count": 4971,
+                "id": "22592.The_Collected_Stories_of_Philip_K_Dick_1"
+            },
+            {
+                "title": "Eye in the Sky",
+                "avg_rating": 3.74,
+                "ratings_count": 5577,
+                "id": "165908.Eye_in_the_Sky"
+            },
+            {
+                "title": "Clans of the Alphane Moon",
+                "avg_rating": 3.74,
+                "ratings_count": 5116,
+                "id": "226486.Clans_of_the_Alphane_Moon"
+            },
+            {
+                "title": "The Simulacra",
+                "avg_rating": 3.62,
+                "ratings_count": 4896,
+                "id": "226460.The_Simulacra"
+            },
+            {
+                "title": "Confessions of a Crap Artist",
+                "avg_rating": 3.69,
+                "ratings_count": 4544,
+                "id": "65030.Confessions_of_a_Crap_Artist"
+            },
+            {
+                "title": "Galactic Pot-Healer",
+                "avg_rating": 3.61,
+                "ratings_count": 4502,
+                "id": "498123.Galactic_Pot_Healer"
+            },
+            {
+                "title": "The Game-Players of Titan",
+                "avg_rating": 3.65,
+                "ratings_count": 4237,
+                "id": "100692.The_Game_Players_of_Titan"
+            },
+            {
+                "title": "Selected Stories of Philip K. Dick",
+                "avg_rating": 4.25,
+                "ratings_count": 3585,
+                "id": "14180.Selected_Stories_of_Philip_K_Dick"
+            },
+            {
+                "title": "Counter-Clock World",
+                "avg_rating": 3.55,
+                "ratings_count": 4300,
+                "id": "156723.Counter_Clock_World"
+            },
+            {
+                "title": "Philip K. Dick's Electric Dreams",
+                "avg_rating": 4.12,
+                "ratings_count": 3507,
+                "id": "38650847-philip-k-dick-s-electric-dreams"
+            }
+        ]
+    },
+    "Larry Niven": {
+        "stats": {
+            "avg_rating": 3.92,
+            "ratings_count": 495219,
+            "reviews_count": 17661,
+            "shelvings_count": 858657
+        },
+        "books": [
+            {
+                "title": "Ringworld",
+                "avg_rating": 3.96,
+                "ratings_count": 112056,
+                "id": "61179.Ringworld"
+            },
+            {
+                "title": "The Mote in God's Eye",
+                "avg_rating": 4.07,
+                "ratings_count": 67023,
+                "id": "100365.The_Mote_in_God_s_Eye"
+            },
+            {
+                "title": "Lucifer's Hammer",
+                "avg_rating": 3.99,
+                "ratings_count": 43084,
+                "id": "218467.Lucifer_s_Hammer"
+            },
+            {
+                "title": "The Ringworld Engineers",
+                "avg_rating": 3.88,
+                "ratings_count": 31759,
+                "id": "61181.The_Ringworld_Engineers"
+            },
+            {
+                "title": "Footfall",
+                "avg_rating": 3.92,
+                "ratings_count": 17442,
+                "id": "116356.Footfall"
+            },
+            {
+                "title": "Neutron Star",
+                "avg_rating": 4.13,
+                "ratings_count": 12157,
+                "id": "100366.Neutron_Star"
+            },
+            {
+                "title": "The Gripping Hand",
+                "avg_rating": 3.82,
+                "ratings_count": 11053,
+                "id": "218453.The_Gripping_Hand"
+            },
+            {
+                "title": "Protector",
+                "avg_rating": 4.07,
+                "ratings_count": 9712,
+                "id": "100344.Protector"
+            },
+            {
+                "title": "The Ringworld Throne",
+                "avg_rating": 3.54,
+                "ratings_count": 10285,
+                "id": "64467.The_Ringworld_Throne"
+            },
+            {
+                "title": "The Integral Trees",
+                "avg_rating": 3.76,
+                "ratings_count": 8507,
+                "id": "939740.The_Integral_Trees"
+            },
+            {
+                "title": "Ringworld's Children",
+                "avg_rating": 3.75,
+                "ratings_count": 8422,
+                "id": "64466.Ringworld_s_Children"
+            },
+            {
+                "title": "The Legacy of Heorot",
+                "avg_rating": 3.94,
+                "ratings_count": 6748,
+                "id": "899392.The_Legacy_of_Heorot"
+            },
+            {
+                "title": "Tales of Known Space: The Universe of Larry Niven",
+                "avg_rating": 4.19,
+                "ratings_count": 5776,
+                "id": "100359.Tales_of_Known_Space"
+            },
+            {
+                "title": "Inferno",
+                "avg_rating": 3.83,
+                "ratings_count": 5569,
+                "id": "100369.Inferno"
+            },
+            {
+                "title": "A World Out of Time",
+                "avg_rating": 3.81,
+                "ratings_count": 5578,
+                "id": "64725.A_World_Out_of_Time"
+            },
+            {
+                "title": "The Man-Kzin Wars",
+                "avg_rating": 3.7,
+                "ratings_count": 4314,
+                "id": "302546.The_Man_Kzin_Wars"
+            },
+            {
+                "title": "The Long Arm of Gil Hamilton",
+                "avg_rating": 3.9,
+                "ratings_count": 3871,
+                "id": "116355.The_Long_Arm_of_Gil_Hamilton"
+            },
+            {
+                "title": "Flatlander",
+                "avg_rating": 3.99,
+                "ratings_count": 3600,
+                "id": "40932142-flatlander"
+            },
+            {
+                "title": "Dream Park",
+                "avg_rating": 3.82,
+                "ratings_count": 3640,
+                "id": "357922.Dream_Park"
+            },
+            {
+                "title": "Beowulf's Children",
+                "avg_rating": 3.78,
+                "ratings_count": 3606,
+                "id": "69448.Beowulf_s_Children"
+            },
+            {
+                "title": "Fleet of Worlds",
+                "avg_rating": 3.84,
+                "ratings_count": 3544,
+                "id": "302537.Fleet_of_Worlds"
+            },
+            {
+                "title": "The Smoke Ring",
+                "avg_rating": 3.78,
+                "ratings_count": 3494,
+                "id": "100351.The_Smoke_Ring"
+            },
+            {
+                "title": "The Integral Trees / The Smoke Ring",
+                "avg_rating": 3.71,
+                "ratings_count": 3454,
+                "id": "218460.The_Integral_Trees_The_Smoke_Ring"
+            },
+            {
+                "title": "Oath of Fealty",
+                "avg_rating": 3.74,
+                "ratings_count": 3357,
+                "id": "583441.Oath_of_Fealty"
+            },
+            {
+                "title": "A Gift from Earth",
+                "avg_rating": 3.84,
+                "ratings_count": 3265,
+                "id": "218461.A_Gift_from_Earth"
+            },
+            {
+                "title": "The World of Ptavvs",
+                "avg_rating": 3.82,
+                "ratings_count": 3087,
+                "id": "218463.The_World_of_Ptavvs"
+            },
+            {
+                "title": "Destiny's Road",
+                "avg_rating": 3.45,
+                "ratings_count": 3400,
+                "id": "64750.Destiny_s_Road"
+            },
+            {
+                "title": "All the Myriad Ways",
+                "avg_rating": 4.07,
+                "ratings_count": 2869,
+                "id": "218479.All_the_Myriad_Ways"
+            },
+            {
+                "title": "A Hole in Space",
+                "avg_rating": 4.0,
+                "ratings_count": 2583,
+                "id": "218473.A_Hole_in_Space"
+            },
+            {
+                "title": "N-Space",
+                "avg_rating": 3.94,
+                "ratings_count": 2553,
+                "id": "100363.N_Space"
+            }
+        ]
+    },
+    "Fritz Leiber": {
+        "stats": {
+            "avg_rating": 3.94,
+            "ratings_count": 104442,
+            "reviews_count": 7039,
+            "shelvings_count": 261547
+        },
+        "books": [
+            {
+                "title": "Swords and Deviltry",
+                "avg_rating": 3.88,
+                "ratings_count": 11595,
+                "id": "57950.Swords_and_Deviltry"
+            },
+            {
+                "title": "Swords Against Death",
+                "avg_rating": 4.05,
+                "ratings_count": 6612,
+                "id": "218716.Swords_Against_Death"
+            },
+            {
+                "title": "Swords in the Mist",
+                "avg_rating": 4.06,
+                "ratings_count": 4434,
+                "id": "41015723-swords-in-the-mist"
+            },
+            {
+                "title": "Swords Against Wizardry",
+                "avg_rating": 4.1,
+                "ratings_count": 4107,
+                "id": "102241.Swords_Against_Wizardry"
+            },
+            {
+                "title": "The Swords of Lankhmar",
+                "avg_rating": 4.09,
+                "ratings_count": 3174,
+                "id": "430961.The_Swords_of_Lankhmar"
+            },
+            {
+                "title": "Ill Met in Lankhmar",
+                "avg_rating": 4.16,
+                "ratings_count": 2788,
+                "id": "102266.Ill_Met_in_Lankhmar"
+            },
+            {
+                "title": "Swords and Ice Magic",
+                "avg_rating": 3.97,
+                "ratings_count": 2750,
+                "id": "102247.Swords_and_Ice_Magic"
+            },
+            {
+                "title": "The Big Time",
+                "avg_rating": 3.23,
+                "ratings_count": 3334,
+                "id": "102281.The_Big_Time"
+            },
+            {
+                "title": "The Wanderer",
+                "avg_rating": 3.43,
+                "ratings_count": 2896,
+                "id": "218709.The_Wanderer"
+            },
+            {
+                "title": "Conjure Wife",
+                "avg_rating": 3.83,
+                "ratings_count": 2215,
+                "id": "722251.Conjure_Wife"
+            },
+            {
+                "title": "The First Book of Lankhmar",
+                "avg_rating": 4.11,
+                "ratings_count": 1968,
+                "id": "102283.The_First_Book_of_Lankhmar"
+            },
+            {
+                "title": "The Knight and Knave of Swords",
+                "avg_rating": 3.84,
+                "ratings_count": 1899,
+                "id": "297387.The_Knight_and_Knave_of_Swords"
+            },
+            {
+                "title": "Our Lady of Darkness",
+                "avg_rating": 3.66,
+                "ratings_count": 1963,
+                "id": "102267.Our_Lady_of_Darkness"
+            },
+            {
+                "title": "Gather, Darkness!",
+                "avg_rating": 3.61,
+                "ratings_count": 1076,
+                "id": "561311.Gather_Darkness_"
+            },
+            {
+                "title": "Lean Times in Lankhmar",
+                "avg_rating": 4.25,
+                "ratings_count": 898,
+                "id": "456059.Lean_Times_in_Lankhmar"
+            },
+            {
+                "title": "Return to Lankhmar",
+                "avg_rating": 4.18,
+                "ratings_count": 614,
+                "id": "218708.Return_to_Lankhmar"
+            },
+            {
+                "title": "The Adventures of Fafhrd and the Gray Mouser Volume One: Swords and Deviltry, Swords Against Death, and Swords in the Mist",
+                "avg_rating": 4.02,
+                "ratings_count": 621,
+                "id": "36001641-the-adventures-of-fafhrd-and-the-gray-mouser-volume-one"
+            },
+            {
+                "title": "The Best of Fritz Leiber",
+                "avg_rating": 4.01,
+                "ratings_count": 552,
+                "id": "102269.The_Best_of_Fritz_Leiber"
+            },
+            {
+                "title": "The Second Book of Lankhmar",
+                "avg_rating": 4.03,
+                "ratings_count": 431,
+                "id": "102274.The_Second_Book_of_Lankhmar"
+            },
+            {
+                "title": "The Night of the Long Knives",
+                "avg_rating": 3.61,
+                "ratings_count": 434,
+                "id": "6290519-the-night-of-the-long-knives"
+            },
+            {
+                "title": "Dark Ladies: Conjure Wife/Our Lady of Darkness",
+                "avg_rating": 3.99,
+                "ratings_count": 326,
+                "id": "102270.Dark_Ladies"
+            },
+            {
+                "title": "A Pail of Air",
+                "avg_rating": 3.89,
+                "ratings_count": 324,
+                "id": "297432.A_Pail_of_Air"
+            },
+            {
+                "title": "A Spectre Is Haunting Texas",
+                "avg_rating": 3.5,
+                "ratings_count": 328,
+                "id": "297438.A_Spectre_Is_Haunting_Texas"
+            },
+            {
+                "title": "Selected Stories",
+                "avg_rating": 3.89,
+                "ratings_count": 242,
+                "id": "7042374-selected-stories"
+            },
+            {
+                "title": "Night's Black Agents",
+                "avg_rating": 4.15,
+                "ratings_count": 220,
+                "id": "1613812.Night_s_Black_Agents"
+            },
+            {
+                "title": "The Green Millennium",
+                "avg_rating": 3.47,
+                "ratings_count": 256,
+                "id": "129491.The_Green_Millennium"
+            },
+            {
+                "title": "Swords' Masters",
+                "avg_rating": 4.07,
+                "ratings_count": 218,
+                "id": "129073.Swords_Masters"
+            },
+            {
+                "title": "Ill Met in Lakhmar/The Fair in Emain Macha",
+                "avg_rating": 3.96,
+                "ratings_count": 197,
+                "id": "8506143-ill-met-in-lakhmar-the-fair-in-emain-macha"
+            },
+            {
+                "title": "Gonna Roll the Bones",
+                "avg_rating": 3.54,
+                "ratings_count": 219,
+                "id": "138071.Gonna_Roll_the_Bones"
+            },
+            {
+                "title": "The Night of the Long Knives and Other Works",
+                "avg_rating": 3.79,
+                "ratings_count": 204,
+                "id": "11066691-the-night-of-the-long-knives-and-other-works"
+            }
+        ]
+    },
+    "Joe L. Hensley": {
+        "stats": {
+            "avg_rating": 4.11,
+            "ratings_count": 10463,
+            "reviews_count": 462,
+            "shelvings_count": 23795
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Ellison Wonderland",
+                "avg_rating": 3.99,
+                "ratings_count": 1186,
+                "id": "52852294-ellison-wonderland"
+            },
+            {
+                "title": "100 Great Science Fiction Short Short Stories",
+                "avg_rating": 4.05,
+                "ratings_count": 958,
+                "id": "4612017-100-great-science-fiction-short-short-stories"
+            },
+            {
+                "title": "Alchemy and Academe : A Collection of Original Stories Concerning Themselves with Transmutations, Mental and Elemental, Alchemical and Academic",
+                "avg_rating": 3.73,
+                "ratings_count": 836,
+                "id": "614556.Alchemy_and_Academe_"
+            },
+            {
+                "title": "Dangerous Visions 2",
+                "avg_rating": 4.13,
+                "ratings_count": 504,
+                "id": "5187114-dangerous-visions-2"
+            },
+            {
+                "title": "Now We Are Three",
+                "avg_rating": 2.44,
+                "ratings_count": 16,
+                "id": "13420794-now-we-are-three"
+            },
+            {
+                "title": "Snowbird's Blood",
+                "avg_rating": 2.67,
+                "ratings_count": 9,
+                "id": "3369666-snowbird-s-blood"
+            },
+            {
+                "title": "Lord Randy, My Son",
+                "avg_rating": 3.67,
+                "ratings_count": 6,
+                "id": "38917304-lord-randy-my-son"
+            },
+            {
+                "title": "Final Doors",
+                "avg_rating": 4.0,
+                "ratings_count": 5,
+                "id": "5151312-final-doors"
+            },
+            {
+                "title": "Robak's Fire",
+                "avg_rating": 4.0,
+                "ratings_count": 4,
+                "id": "12577960-robak-s-fire"
+            },
+            {
+                "title": "Robak's Witch",
+                "avg_rating": 3.0,
+                "ratings_count": 5,
+                "id": "4897155-robak-s-witch"
+            },
+            {
+                "title": "A killing in gold",
+                "avg_rating": 3.0,
+                "ratings_count": 5,
+                "id": "5554358-a-killing-in-gold"
+            },
+            {
+                "title": "Robak in Black",
+                "avg_rating": 3.25,
+                "ratings_count": 4,
+                "id": "4313231-robak-in-black"
+            },
+            {
+                "title": "Color Him Guilty",
+                "avg_rating": 3.67,
+                "ratings_count": 3,
+                "id": "3287446-color-him-guilty"
+            },
+            {
+                "title": "Grim City",
+                "avg_rating": 2.5,
+                "ratings_count": 4,
+                "id": "3699685-grim-city"
+            },
+            {
+                "title": "Deliver us to evil",
+                "avg_rating": 2.25,
+                "ratings_count": 4,
+                "id": "6352428-deliver-us-to-evil"
+            },
+            {
+                "title": "The Black Roads",
+                "avg_rating": 3.0,
+                "ratings_count": 3,
+                "id": "8799818-the-black-roads"
+            },
+            {
+                "title": "The Poison Summer",
+                "avg_rating": 2.67,
+                "ratings_count": 3,
+                "id": "9903014-the-poison-summer"
+            },
+            {
+                "title": "Legislative Body",
+                "avg_rating": 2.33,
+                "ratings_count": 3,
+                "id": "9330755-legislative-body"
+            },
+            {
+                "title": "Loose Coins: A Mystery",
+                "avg_rating": 2.33,
+                "ratings_count": 3,
+                "id": "3369664-loose-coins"
+            },
+            {
+                "title": "Outcasts",
+                "avg_rating": 3.0,
+                "ratings_count": 2,
+                "id": "6151491-outcasts"
+            },
+            {
+                "title": "Rivertown Risk",
+                "avg_rating": 3.0,
+                "ratings_count": 2,
+                "id": "141071.Rivertown_Risk"
+            },
+            {
+                "title": "Song of Corpus Juris",
+                "avg_rating": 2.5,
+                "ratings_count": 2,
+                "id": "3369667-song-of-corpus-juris"
+            },
+            {
+                "title": "Forts Law",
+                "avg_rating": 2.0,
+                "ratings_count": 2,
+                "id": "3648807-forts-law"
+            },
+            {
+                "title": "Minor Murders",
+                "avg_rating": 2.0,
+                "ratings_count": 2,
+                "id": "4723703-minor-murders"
+            },
+            {
+                "title": "Robak's Firm",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "8741166-robak-s-firm"
+            },
+            {
+                "title": "Robak's Run",
+                "avg_rating": 2.0,
+                "ratings_count": 1,
+                "id": "3369665-robak-s-run"
+            },
+            {
+                "title": "Robak's Cross",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "12577963-robak-s-cross"
+            },
+            {
+                "title": "The Color of Hate",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "50512406-the-color-of-hate"
+            },
+            {
+                "title": "Deadly Hunger and Other Tales",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "2007493.Deadly_Hunger_and_Other_Tales"
+            }
+        ]
+    },
+    "Poul Anderson": {
+        "stats": {
+            "avg_rating": 3.83,
+            "ratings_count": 127396,
+            "reviews_count": 7970,
+            "shelvings_count": 302201
+        },
+        "books": [
+            {
+                "title": "Tau Zero",
+                "avg_rating": 3.86,
+                "ratings_count": 14255,
+                "id": "240617.Tau_Zero"
+            },
+            {
+                "title": "The Broken Sword",
+                "avg_rating": 3.86,
+                "ratings_count": 5792,
+                "id": "40500762-the-broken-sword"
+            },
+            {
+                "title": "Three Hearts and Three Lions",
+                "avg_rating": 3.87,
+                "ratings_count": 4338,
+                "id": "338329.Three_Hearts_and_Three_Lions"
+            },
+            {
+                "title": "The Boat of a Million Years",
+                "avg_rating": 3.83,
+                "ratings_count": 4336,
+                "id": "338327.The_Boat_of_a_Million_Years"
+            },
+            {
+                "title": "The High Crusade",
+                "avg_rating": 3.89,
+                "ratings_count": 3797,
+                "id": "338325.The_High_Crusade"
+            },
+            {
+                "title": "Brain Wave",
+                "avg_rating": 3.74,
+                "ratings_count": 2938,
+                "id": "1228628.Brain_Wave"
+            },
+            {
+                "title": "Trader to the Stars",
+                "avg_rating": 3.92,
+                "ratings_count": 2520,
+                "id": "1228331.Trader_to_the_Stars"
+            },
+            {
+                "title": "Ensign Flandry",
+                "avg_rating": 3.9,
+                "ratings_count": 2318,
+                "id": "445655.Ensign_Flandry"
+            },
+            {
+                "title": "Time Patrol",
+                "avg_rating": 3.73,
+                "ratings_count": 1831,
+                "id": "261499.Time_Patrol"
+            },
+            {
+                "title": "Guardians of Time",
+                "avg_rating": 3.78,
+                "ratings_count": 1627,
+                "id": "866153.Guardians_of_Time"
+            },
+            {
+                "title": "There Will Be Time",
+                "avg_rating": 3.66,
+                "ratings_count": 1121,
+                "id": "602758.There_Will_Be_Time"
+            },
+            {
+                "title": "Conan the Rebel",
+                "avg_rating": 3.86,
+                "ratings_count": 1012,
+                "id": "1895286.Conan_the_Rebel"
+            },
+            {
+                "title": "Harvest of Stars",
+                "avg_rating": 3.57,
+                "ratings_count": 966,
+                "id": "924513.Harvest_of_Stars"
+            },
+            {
+                "title": "Operation Chaos",
+                "avg_rating": 3.8,
+                "ratings_count": 874,
+                "id": "445654.Operation_Chaos"
+            },
+            {
+                "title": "The Corridors of Time",
+                "avg_rating": 3.62,
+                "ratings_count": 878,
+                "id": "890300.The_Corridors_of_Time"
+            },
+            {
+                "title": "The People of the Wind",
+                "avg_rating": 3.73,
+                "ratings_count": 731,
+                "id": "1228442.The_People_of_the_Wind"
+            },
+            {
+                "title": "David Falkayn: Star Trader",
+                "avg_rating": 3.99,
+                "ratings_count": 650,
+                "id": "3664560-david-falkayn"
+            },
+            {
+                "title": "Starfarers",
+                "avg_rating": 3.57,
+                "ratings_count": 710,
+                "id": "445653.Starfarers"
+            },
+            {
+                "title": "The Van Rijn Method",
+                "avg_rating": 3.7,
+                "ratings_count": 646,
+                "id": "2607073-the-van-rijn-method"
+            },
+            {
+                "title": "A Midsummer Tempest",
+                "avg_rating": 3.54,
+                "ratings_count": 674,
+                "id": "503156.A_Midsummer_Tempest"
+            },
+            {
+                "title": "The Shield of Time",
+                "avg_rating": 3.73,
+                "ratings_count": 605,
+                "id": "1170925.The_Shield_of_Time"
+            },
+            {
+                "title": "Hrolf Kraki's Saga",
+                "avg_rating": 3.98,
+                "ratings_count": 558,
+                "id": "462595.Hrolf_Kraki_s_Saga"
+            },
+            {
+                "title": "The Avatar",
+                "avg_rating": 3.47,
+                "ratings_count": 634,
+                "id": "1234701.The_Avatar"
+            },
+            {
+                "title": "The Enemy Stars",
+                "avg_rating": 3.59,
+                "ratings_count": 595,
+                "id": "1410692.The_Enemy_Stars"
+            },
+            {
+                "title": "Flandry of Terra",
+                "avg_rating": 3.78,
+                "ratings_count": 522,
+                "id": "715296.Flandry_of_Terra"
+            },
+            {
+                "title": "The Trouble Twisters",
+                "avg_rating": 3.66,
+                "ratings_count": 514,
+                "id": "638985.The_Trouble_Twisters"
+            },
+            {
+                "title": "Orion Shall Rise",
+                "avg_rating": 3.58,
+                "ratings_count": 505,
+                "id": "1547127.Orion_Shall_Rise"
+            },
+            {
+                "title": "The Dancer From Atlantis",
+                "avg_rating": 3.35,
+                "ratings_count": 533,
+                "id": "940988.The_Dancer_From_Atlantis"
+            },
+            {
+                "title": "The Star Fox",
+                "avg_rating": 3.57,
+                "ratings_count": 476,
+                "id": "1369357.The_Star_Fox"
+            },
+            {
+                "title": "Agent of the Terran Empire",
+                "avg_rating": 3.73,
+                "ratings_count": 435,
+                "id": "715300.Agent_of_the_Terran_Empire"
+            }
+        ]
+    },
+    "David R. Bunch": {
+        "stats": {
+            "avg_rating": 4.16,
+            "ratings_count": 9438,
+            "reviews_count": 437,
+            "shelvings_count": 22675
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Dangerous Visions 2",
+                "avg_rating": 4.13,
+                "ratings_count": 504,
+                "id": "5187114-dangerous-visions-2"
+            },
+            {
+                "title": "Moderan",
+                "avg_rating": 3.78,
+                "ratings_count": 280,
+                "id": "2699898-moderan"
+            },
+            {
+                "title": "Christmas Magic",
+                "avg_rating": 3.5,
+                "ratings_count": 42,
+                "id": "531484.Christmas_Magic"
+            },
+            {
+                "title": "The Year's Best SF 10",
+                "avg_rating": 3.71,
+                "ratings_count": 34,
+                "id": "5712190-the-year-s-best-sf-10"
+            },
+            {
+                "title": "The Year's Best SF 11",
+                "avg_rating": 3.94,
+                "ratings_count": 32,
+                "id": "6349429-the-year-s-best-sf-11"
+            },
+            {
+                "title": "Bunch!",
+                "avg_rating": 4.38,
+                "ratings_count": 24,
+                "id": "1788088.Bunch_"
+            },
+            {
+                "title": "New Dimensions 4",
+                "avg_rating": 3.79,
+                "ratings_count": 19,
+                "id": "6538852-new-dimensions-4"
+            },
+            {
+                "title": "Protostars",
+                "avg_rating": 3.24,
+                "ratings_count": 17,
+                "id": "136664.Protostars"
+            },
+            {
+                "title": "Ciencia Ficci\u00f3n, selecci\u00f3n 10",
+                "avg_rating": 3.33,
+                "ratings_count": 15,
+                "id": "21975903-ciencia-ficci-n-selecci-n-10"
+            },
+            {
+                "title": "Generation: An Anthology of Speculative Fiction",
+                "avg_rating": 3.5,
+                "ratings_count": 12,
+                "id": "8511351-generation"
+            },
+            {
+                "title": "Best From Fantasy And Science Fiction: 18th Series",
+                "avg_rating": 3.42,
+                "ratings_count": 12,
+                "id": "1824582.Best_From_Fantasy_And_Science_Fiction"
+            },
+            {
+                "title": "Isaac Asimov's Aliens & Outworlders",
+                "avg_rating": 3.64,
+                "ratings_count": 11,
+                "id": "1640191.Isaac_Asimov_s_Aliens_Outworlders"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, September 1968",
+                "avg_rating": 4.5,
+                "ratings_count": 6,
+                "id": "6628556-the-magazine-of-fantasy-and-science-fiction-september-1968"
+            },
+            {
+                "title": "The Magazine of Fantasy & Science Fiction, September 1997",
+                "avg_rating": 4.4,
+                "ratings_count": 5,
+                "id": "34201485-the-magazine-of-fantasy-science-fiction-september-1997"
+            },
+            {
+                "title": "Isaac Asimov's Science Fiction Magazine, January 19, 1981",
+                "avg_rating": 3.67,
+                "ratings_count": 6,
+                "id": "24284472-isaac-asimov-s-science-fiction-magazine-january-19-1981"
+            },
+            {
+                "title": "Nueva Dimensi\u00f3n #1-2",
+                "avg_rating": 4.0,
+                "ratings_count": 5,
+                "id": "17415729-nueva-dimensi-n-1-2"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, January 1972",
+                "avg_rating": 4.25,
+                "ratings_count": 4,
+                "id": "33260290-the-magazine-of-fantasy-and-science-fiction-january-1972"
+            },
+            {
+                "title": "Nueva Dimensi\u00f3n #2",
+                "avg_rating": 3.2,
+                "ratings_count": 5,
+                "id": "18242819-nueva-dimensi-n-2"
+            },
+            {
+                "title": "The Heartacher And The Warehouseman",
+                "avg_rating": 4.33,
+                "ratings_count": 3,
+                "id": "6628551-the-heartacher-and-the-warehouseman"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, June 1968",
+                "avg_rating": 4.0,
+                "ratings_count": 3,
+                "id": "30240444-the-magazine-of-fantasy-and-science-fiction-june-1968"
+            },
+            {
+                "title": "Frohes Fest : 13 schlimme Bescherungen / 17 sch\u00f6ne Bescherungen",
+                "avg_rating": 4.0,
+                "ratings_count": 3,
+                "id": "56336085-frohes-fest"
+            },
+            {
+                "title": "Isaac Asimov's Wonders of the World",
+                "avg_rating": 3.67,
+                "ratings_count": 3,
+                "id": "85507.Isaac_Asimov_s_Wonders_of_the_World"
+            },
+            {
+                "title": "Nueva Dimensi\u00f3n 14",
+                "avg_rating": 3.0,
+                "ratings_count": 3,
+                "id": "17841100-nueva-dimensi-n-14"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, March 1968",
+                "avg_rating": 2.67,
+                "ratings_count": 3,
+                "id": "30240329-the-magazine-of-fantasy-and-science-fiction-march-1968"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, September 1970",
+                "avg_rating": 3.5,
+                "ratings_count": 2,
+                "id": "33191505-the-magazine-of-fantasy-and-science-fiction-september-1970"
+            },
+            {
+                "title": "Isaac Asimov's Science Fiction Magazine, April 1982",
+                "avg_rating": 3.0,
+                "ratings_count": 2,
+                "id": "34313884-isaac-asimov-s-science-fiction-magazine-april-1982"
+            },
+            {
+                "title": "Isaac Asimov's Science Fiction Magazine, August 1982",
+                "avg_rating": 2.0,
+                "ratings_count": 3,
+                "id": "34313896-isaac-asimov-s-science-fiction-magazine-august-1982"
+            },
+            {
+                "title": "IF Worlds of Science Fiction, 1957 December",
+                "avg_rating": 5.0,
+                "ratings_count": 1,
+                "id": "6337582-if-worlds-of-science-fiction-1957-december"
+            },
+            {
+                "title": "Isaac Asimov's Science Fiction Magazine, October 1985",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "34313958-isaac-asimov-s-science-fiction-magazine-october-1985"
+            }
+        ]
+    },
+    "Hugh J. Parry": {
+        "stats": {
+            "avg_rating": 0.0,
+            "ratings_count": 0,
+            "reviews_count": 0,
+            "shelvings_count": 0
+        },
+        "books": [
+            {
+                "title": "Root of Evil",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "54599042-root-of-evil"
+            }
+        ]
+    },
+    "Carol Emshwiller": {
+        "stats": {
+            "avg_rating": 3.89,
+            "ratings_count": 39546,
+            "reviews_count": 3369,
+            "shelvings_count": 121272
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Wastelands: Stories of the Apocalypse",
+                "avg_rating": 3.77,
+                "ratings_count": 9485,
+                "id": "1705697.Wastelands"
+            },
+            {
+                "title": "Firebirds Rising: An Anthology of Original Science Fiction and Fantasy",
+                "avg_rating": 3.92,
+                "ratings_count": 2967,
+                "id": "44328.Firebirds_Rising"
+            },
+            {
+                "title": "The Green Man: Tales from the Mythic Forest",
+                "avg_rating": 3.95,
+                "ratings_count": 2895,
+                "id": "249855.The_Green_Man"
+            },
+            {
+                "title": "McSweeney's #10: Mammoth Treasury of Thrilling Tales",
+                "avg_rating": 3.54,
+                "ratings_count": 2734,
+                "id": "111088.McSweeney_s_10"
+            },
+            {
+                "title": "After: Nineteen Stories of Apocalypse and Dystopia",
+                "avg_rating": 3.61,
+                "ratings_count": 1987,
+                "id": "13455518-after"
+            },
+            {
+                "title": "The Mount",
+                "avg_rating": 3.66,
+                "ratings_count": 1453,
+                "id": "94702.The_Mount"
+            },
+            {
+                "title": "The Coyote Road: Trickster Tales",
+                "avg_rating": 3.98,
+                "ratings_count": 1197,
+                "id": "463033.The_Coyote_Road"
+            },
+            {
+                "title": "Sisters of the Revolution: A Feminist Speculative Fiction Anthology",
+                "avg_rating": 4.12,
+                "ratings_count": 1041,
+                "id": "22181319-sisters-of-the-revolution"
+            },
+            {
+                "title": "Alchemy and Academe : A Collection of Original Stories Concerning Themselves with Transmutations, Mental and Elemental, Alchemical and Academic",
+                "avg_rating": 3.73,
+                "ratings_count": 836,
+                "id": "614556.Alchemy_and_Academe_"
+            },
+            {
+                "title": "Firebirds Soaring: An Anthology of Original Speculative Fiction",
+                "avg_rating": 3.9,
+                "ratings_count": 607,
+                "id": "2865290-firebirds-soaring"
+            },
+            {
+                "title": "Feeling Very Strange: The Slipstream Anthology",
+                "avg_rating": 3.81,
+                "ratings_count": 571,
+                "id": "424609.Feeling_Very_Strange"
+            },
+            {
+                "title": "Dangerous Visions 2",
+                "avg_rating": 4.13,
+                "ratings_count": 504,
+                "id": "5187114-dangerous-visions-2"
+            },
+            {
+                "title": "Carmen Dog",
+                "avg_rating": 3.5,
+                "ratings_count": 251,
+                "id": "94724.Carmen_Dog"
+            },
+            {
+                "title": "The Secret City",
+                "avg_rating": 3.39,
+                "ratings_count": 138,
+                "id": "94701.The_Secret_City"
+            },
+            {
+                "title": "Report to the Men's Club and Other Stories",
+                "avg_rating": 3.68,
+                "ratings_count": 69,
+                "id": "94711.Report_to_the_Men_s_Club_and_Other_Stories"
+            },
+            {
+                "title": "Mister Boots",
+                "avg_rating": 3.54,
+                "ratings_count": 57,
+                "id": "1941500.Mister_Boots"
+            },
+            {
+                "title": "The Start Of The End Of It All And Other Stories",
+                "avg_rating": 3.93,
+                "ratings_count": 45,
+                "id": "3191431-the-start-of-the-end-of-it-all-and-other-stories"
+            },
+            {
+                "title": "I Live with You",
+                "avg_rating": 3.58,
+                "ratings_count": 48,
+                "id": "94700.I_Live_with_You"
+            },
+            {
+                "title": "Ledoyt",
+                "avg_rating": 4.16,
+                "ratings_count": 32,
+                "id": "94699.Ledoyt"
+            },
+            {
+                "title": "Leaping Man Hill",
+                "avg_rating": 3.88,
+                "ratings_count": 25,
+                "id": "94720.Leaping_Man_Hill"
+            },
+            {
+                "title": "The Collected Stories of Carol Emshwiller, Vol. 1",
+                "avg_rating": 4.09,
+                "ratings_count": 22,
+                "id": "8590808-the-collected-stories-of-carol-emshwiller-vol-1"
+            },
+            {
+                "title": "Verging on the Pertinent",
+                "avg_rating": 4.0,
+                "ratings_count": 13,
+                "id": "94704.Verging_on_the_Pertinent"
+            },
+            {
+                "title": "La Monture",
+                "avg_rating": 4.4,
+                "ratings_count": 5,
+                "id": "59127590-la-monture"
+            },
+            {
+                "title": "Joy In Our Cause: Short Stories",
+                "avg_rating": 3.8,
+                "ratings_count": 5,
+                "id": "94703.Joy_In_Our_Cause"
+            },
+            {
+                "title": "Creature",
+                "avg_rating": 4.25,
+                "ratings_count": 4,
+                "id": "23693438-creature"
+            },
+            {
+                "title": "The Collected Stories, Vol. 2",
+                "avg_rating": 5.0,
+                "ratings_count": 3,
+                "id": "15806431-the-collected-stories-vol-2"
+            },
+            {
+                "title": "Day at the Beach",
+                "avg_rating": 3.0,
+                "ratings_count": 5,
+                "id": "34868141-day-at-the-beach"
+            },
+            {
+                "title": "In The Time Of War & Master Of The Road To Nowhere [Jhc]",
+                "avg_rating": 4.67,
+                "ratings_count": 3,
+                "id": "12495226-in-the-time-of-war-master-of-the-road-to-nowhere-jhc"
+            },
+            {
+                "title": "The Secret City: A Novel",
+                "avg_rating": 4.5,
+                "ratings_count": 2,
+                "id": "54852100-the-secret-city"
+            }
+        ]
+    },
+    "Damon Knight": {
+        "stats": {
+            "avg_rating": 4.1,
+            "ratings_count": 41739,
+            "reviews_count": 2210,
+            "shelvings_count": 96266
+        },
+        "books": [
+            {
+                "title": "Creating Short Fiction: The Classic Guide to Writing Short Fiction",
+                "avg_rating": 4.05,
+                "ratings_count": 648,
+                "id": "263357.Creating_Short_Fiction"
+            },
+            {
+                "title": "To Serve Man",
+                "avg_rating": 3.88,
+                "ratings_count": 304,
+                "id": "6082238-to-serve-man"
+            },
+            {
+                "title": "Nebula Award Stories",
+                "avg_rating": 3.76,
+                "ratings_count": 266,
+                "id": "6409790-nebula-award-stories"
+            },
+            {
+                "title": "The Best of Damon Knight",
+                "avg_rating": 3.86,
+                "ratings_count": 144,
+                "id": "1835204.The_Best_of_Damon_Knight"
+            },
+            {
+                "title": "A for Anything",
+                "avg_rating": 3.23,
+                "ratings_count": 155,
+                "id": "832939.A_for_Anything"
+            },
+            {
+                "title": "Why Do Birds",
+                "avg_rating": 3.29,
+                "ratings_count": 148,
+                "id": "317398.Why_Do_Birds"
+            },
+            {
+                "title": "The Man in the Tree",
+                "avg_rating": 3.62,
+                "ratings_count": 93,
+                "id": "1875613.The_Man_in_the_Tree"
+            },
+            {
+                "title": "A Century of Science Fiction",
+                "avg_rating": 3.86,
+                "ratings_count": 81,
+                "id": "1173069.A_Century_of_Science_Fiction"
+            },
+            {
+                "title": "The Futurians",
+                "avg_rating": 3.71,
+                "ratings_count": 75,
+                "id": "832940.The_Futurians"
+            },
+            {
+                "title": "Far Out",
+                "avg_rating": 3.65,
+                "ratings_count": 75,
+                "id": "5950028-far-out"
+            },
+            {
+                "title": "Hell's Pavement",
+                "avg_rating": 3.32,
+                "ratings_count": 81,
+                "id": "3324381-hell-s-pavement"
+            },
+            {
+                "title": "Beyond the Barrier",
+                "avg_rating": 3.19,
+                "ratings_count": 80,
+                "id": "2679851-beyond-the-barrier"
+            },
+            {
+                "title": "The World and Thorinn",
+                "avg_rating": 3.38,
+                "ratings_count": 73,
+                "id": "1171823.The_World_and_Thorinn"
+            },
+            {
+                "title": "Humpty Dumpty: An Oval",
+                "avg_rating": 3.12,
+                "ratings_count": 75,
+                "id": "1295210.Humpty_Dumpty"
+            },
+            {
+                "title": "Science Fiction of the 30's",
+                "avg_rating": 3.68,
+                "ratings_count": 60,
+                "id": "5416568-science-fiction-of-the-30-s"
+            },
+            {
+                "title": "The Country of the Kind",
+                "avg_rating": 3.33,
+                "ratings_count": 66,
+                "id": "52140973-the-country-of-the-kind"
+            },
+            {
+                "title": "In Deep",
+                "avg_rating": 3.6,
+                "ratings_count": 57,
+                "id": "7078352-in-deep"
+            },
+            {
+                "title": "In Search of Wonder",
+                "avg_rating": 3.69,
+                "ratings_count": 55,
+                "id": "1173067.In_Search_of_Wonder"
+            },
+            {
+                "title": "A Science Fiction Argosy",
+                "avg_rating": 4.08,
+                "ratings_count": 48,
+                "id": "1824487.A_Science_Fiction_Argosy"
+            },
+            {
+                "title": "CV",
+                "avg_rating": 3.2,
+                "ratings_count": 60,
+                "id": "1678868.CV"
+            },
+            {
+                "title": "Orbit 1",
+                "avg_rating": 3.4,
+                "ratings_count": 52,
+                "id": "6583554-orbit-1"
+            },
+            {
+                "title": "First Contact",
+                "avg_rating": 3.43,
+                "ratings_count": 47,
+                "id": "6359456-first-contact"
+            },
+            {
+                "title": "Worlds to Come: Science Fiction Adventure Classics",
+                "avg_rating": 3.82,
+                "ratings_count": 39,
+                "id": "1833164.Worlds_to_Come"
+            },
+            {
+                "title": "Orbit 3",
+                "avg_rating": 3.41,
+                "ratings_count": 37,
+                "id": "6172773-orbit-3"
+            },
+            {
+                "title": "Beyond Tomorrow",
+                "avg_rating": 3.57,
+                "ratings_count": 35,
+                "id": "1604911.Beyond_Tomorrow"
+            },
+            {
+                "title": "The Dark Side",
+                "avg_rating": 3.67,
+                "ratings_count": 33,
+                "id": "6694758-the-dark-side"
+            },
+            {
+                "title": "The Worshippers",
+                "avg_rating": 3.43,
+                "ratings_count": 35,
+                "id": "6328933-the-worshippers"
+            },
+            {
+                "title": "Antolog\u00eda de Ciencia Ficci\u00f3n",
+                "avg_rating": 3.64,
+                "ratings_count": 33,
+                "id": "13574431-antolog-a-de-ciencia-ficci-n"
+            },
+            {
+                "title": "Off Centre",
+                "avg_rating": 3.43,
+                "ratings_count": 35,
+                "id": "3226537-off-centre"
+            },
+            {
+                "title": "Special Delivery",
+                "avg_rating": 3.22,
+                "ratings_count": 36,
+                "id": "11924842-special-delivery"
+            }
+        ]
+    },
+    "Theodore Sturgeon": {
+        "stats": {
+            "avg_rating": 4.07,
+            "ratings_count": 129987,
+            "reviews_count": 7980,
+            "shelvings_count": 316549
+        },
+        "books": [
+            {
+                "title": "More Than Human",
+                "avg_rating": 3.96,
+                "ratings_count": 18133,
+                "id": "541024.More_Than_Human"
+            },
+            {
+                "title": "The Dreaming Jewels",
+                "avg_rating": 3.91,
+                "ratings_count": 2715,
+                "id": "307403.The_Dreaming_Jewels"
+            },
+            {
+                "title": "Venus Plus X",
+                "avg_rating": 3.73,
+                "ratings_count": 1858,
+                "id": "845074.Venus_Plus_X"
+            },
+            {
+                "title": "Some of Your Blood",
+                "avg_rating": 3.83,
+                "ratings_count": 1579,
+                "id": "595394.Some_of_Your_Blood"
+            },
+            {
+                "title": "E Pluribus Unicorn",
+                "avg_rating": 4.03,
+                "ratings_count": 842,
+                "id": "872302.E_Pluribus_Unicorn"
+            },
+            {
+                "title": "Godbody",
+                "avg_rating": 3.98,
+                "ratings_count": 790,
+                "id": "182538.Godbody"
+            },
+            {
+                "title": "To Marry Medusa",
+                "avg_rating": 3.68,
+                "ratings_count": 799,
+                "id": "872293.To_Marry_Medusa"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume 1: The Ultimate Egoist",
+                "avg_rating": 4.01,
+                "ratings_count": 443,
+                "id": "274619.The_Complete_Stories_of_Theodore_Sturgeon_Volume_1"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume II: Microcosmic God",
+                "avg_rating": 4.22,
+                "ratings_count": 388,
+                "id": "274618.The_Complete_Stories_of_Theodore_Sturgeon_Volume_II"
+            },
+            {
+                "title": "Selected Stories",
+                "avg_rating": 4.08,
+                "ratings_count": 351,
+                "id": "19098692-selected-stories"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume III: Killdozer!",
+                "avg_rating": 4.18,
+                "ratings_count": 331,
+                "id": "274620.The_Complete_Stories_of_Theodore_Sturgeon_Volume_III"
+            },
+            {
+                "title": "A Touch of Strange",
+                "avg_rating": 3.87,
+                "ratings_count": 281,
+                "id": "872296.A_Touch_of_Strange"
+            },
+            {
+                "title": "Microcosmic God",
+                "avg_rating": 4.12,
+                "ratings_count": 235,
+                "id": "22732444-microcosmic-god"
+            },
+            {
+                "title": "Sturgeon is Alive and Well",
+                "avg_rating": 4.02,
+                "ratings_count": 217,
+                "id": "274621.Sturgeon_is_Alive_and_Well"
+            },
+            {
+                "title": "Caviar",
+                "avg_rating": 3.83,
+                "ratings_count": 218,
+                "id": "650160.Caviar"
+            },
+            {
+                "title": "Case and the Dreamer and Other Stories",
+                "avg_rating": 3.92,
+                "ratings_count": 211,
+                "id": "218500.Case_and_the_Dreamer_and_Other_Stories"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume 7: A Saucer of Loneliness",
+                "avg_rating": 4.44,
+                "ratings_count": 178,
+                "id": "43416.The_Complete_Stories_of_Theodore_Sturgeon_Volume_7"
+            },
+            {
+                "title": "The Golden Helix",
+                "avg_rating": 3.96,
+                "ratings_count": 196,
+                "id": "840743.The_Golden_Helix"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume VI: Baby Is Three",
+                "avg_rating": 4.34,
+                "ratings_count": 173,
+                "id": "583286.The_Complete_Stories_of_Theodore_Sturgeon_Volume_VI"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume 4: Thunder and Roses",
+                "avg_rating": 4.29,
+                "ratings_count": 171,
+                "id": "953428.The_Complete_Stories_of_Theodore_Sturgeon_Volume_4"
+            },
+            {
+                "title": "Starshine",
+                "avg_rating": 3.67,
+                "ratings_count": 193,
+                "id": "1836757.Starshine"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume 5: The Perfect Host",
+                "avg_rating": 4.27,
+                "ratings_count": 158,
+                "id": "274623.The_Complete_Stories_of_Theodore_Sturgeon_Volume_5"
+            },
+            {
+                "title": "The Worlds of Theodore Sturgeon",
+                "avg_rating": 4.08,
+                "ratings_count": 153,
+                "id": "1836756.The_Worlds_of_Theodore_Sturgeon"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume X: The Man Who Lost the Sea",
+                "avg_rating": 4.38,
+                "ratings_count": 141,
+                "id": "274622.The_Complete_Stories_of_Theodore_Sturgeon_Volume_X"
+            },
+            {
+                "title": "A Way Home",
+                "avg_rating": 3.83,
+                "ratings_count": 132,
+                "id": "872297.A_Way_Home"
+            },
+            {
+                "title": "Slow Sculpture: Complete Stories of Theodore Sturgeon, Volume XII",
+                "avg_rating": 4.25,
+                "ratings_count": 104,
+                "id": "6275175-slow-sculpture"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume VIII: Bright Segment",
+                "avg_rating": 4.55,
+                "ratings_count": 94,
+                "id": "451116.The_Complete_Stories_of_Theodore_Sturgeon_Volume_VIII"
+            },
+            {
+                "title": "The Stars Are the Styx",
+                "avg_rating": 3.95,
+                "ratings_count": 104,
+                "id": "2301083.The_Stars_Are_the_Styx"
+            },
+            {
+                "title": "The Complete Stories of Theodore Sturgeon, Volume IX: And Now the News...",
+                "avg_rating": 4.53,
+                "ratings_count": 85,
+                "id": "650161.The_Complete_Stories_of_Theodore_Sturgeon_Volume_IX"
+            },
+            {
+                "title": "The Man Who Lost the Sea",
+                "avg_rating": 3.89,
+                "ratings_count": 92,
+                "id": "13572615-the-man-who-lost-the-sea"
+            }
+        ]
+    },
+    "Larry Eisenberg": {
+        "stats": {
+            "avg_rating": 4.18,
+            "ratings_count": 8808,
+            "reviews_count": 372,
+            "shelvings_count": 20130
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Dangerous Visions 3",
+                "avg_rating": 3.9,
+                "ratings_count": 202,
+                "id": "3765936-dangerous-visions-3"
+            },
+            {
+                "title": "The Arbor House Treasury of Modern Science Fiction",
+                "avg_rating": 4.19,
+                "ratings_count": 58,
+                "id": "1807266.The_Arbor_House_Treasury_of_Modern_Science_Fiction"
+            },
+            {
+                "title": "The Year's Best SF 10",
+                "avg_rating": 3.71,
+                "ratings_count": 34,
+                "id": "5712190-the-year-s-best-sf-10"
+            },
+            {
+                "title": "Alpha 1",
+                "avg_rating": 3.78,
+                "ratings_count": 32,
+                "id": "1962506.Alpha_1"
+            },
+            {
+                "title": "The Best Laid Schemes",
+                "avg_rating": 3.3,
+                "ratings_count": 10,
+                "id": "4899257-the-best-laid-schemes"
+            },
+            {
+                "title": "IF Worlds of Science Fiction, 1970 July-August",
+                "avg_rating": 4.14,
+                "ratings_count": 7,
+                "id": "6339212-if-worlds-of-science-fiction-1970-july-august"
+            },
+            {
+                "title": "IF Worlds of Science Fiction, 1970 May-June",
+                "avg_rating": 4.0,
+                "ratings_count": 7,
+                "id": "1549273.IF_Worlds_of_Science_Fiction_1970_May_June"
+            },
+            {
+                "title": "Isaac Asimov's Science Fiction Magazine, March 1979",
+                "avg_rating": 3.71,
+                "ratings_count": 7,
+                "id": "13115189-isaac-asimov-s-science-fiction-magazine-march-1979"
+            },
+            {
+                "title": "IF Worlds of Science Fiction, 1970 February",
+                "avg_rating": 4.6,
+                "ratings_count": 5,
+                "id": "6339132-if-worlds-of-science-fiction-1970-february"
+            },
+            {
+                "title": "Ciencia ficci\u00f3n, selecci\u00f3n 14",
+                "avg_rating": 3.6,
+                "ratings_count": 5,
+                "id": "10817707-ciencia-ficci-n-selecci-n-14"
+            },
+            {
+                "title": "The Magazine of Fantasy & Science Fiction, February 1986",
+                "avg_rating": 5.0,
+                "ratings_count": 3,
+                "id": "33869720-the-magazine-of-fantasy-science-fiction-february-1986"
+            },
+            {
+                "title": "If Worlds of Science Fiction, 1970 January",
+                "avg_rating": 4.67,
+                "ratings_count": 3,
+                "id": "6339112-if-worlds-of-science-fiction-1970-january"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, March 1988",
+                "avg_rating": 4.67,
+                "ratings_count": 3,
+                "id": "19545576-the-magazine-of-fantasy-and-science-fiction-march-1988"
+            },
+            {
+                "title": "\u0427\u0443\u0436\u0430\u044f \u0430\u0433\u043e\u043d\u0438\u044f. \u0421\u0431\u043e\u0440\u043d\u0438\u043a \u043d\u0430\u0443\u0447\u043d\u043e-\u0444\u0430\u043d\u0442\u0430\u0441\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0445 \u0440\u0430\u0441\u0441\u043a\u0430\u0437\u043e\u0432",
+                "avg_rating": 4.0,
+                "ratings_count": 3,
+                "id": "35963685--"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, August 1978",
+                "avg_rating": 4.0,
+                "ratings_count": 3,
+                "id": "33633899-the-magazine-of-fantasy-and-science-fiction-august-1978"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, April 1967",
+                "avg_rating": 5.0,
+                "ratings_count": 2,
+                "id": "32829376-the-magazine-of-fantasy-and-science-fiction-april-1967"
+            },
+            {
+                "title": "Una galaxia llamada Roma",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "18552652-una-galaxia-llamada-roma"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, December 1967",
+                "avg_rating": 4.5,
+                "ratings_count": 2,
+                "id": "32829509-the-magazine-of-fantasy-and-science-fiction-december-1967"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, August 1975",
+                "avg_rating": 4.0,
+                "ratings_count": 2,
+                "id": "33411585-the-magazine-of-fantasy-and-science-fiction-august-1975"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, January 1970",
+                "avg_rating": 3.5,
+                "ratings_count": 2,
+                "id": "30240573-the-magazine-of-fantasy-and-science-fiction-january-1970"
+            },
+            {
+                "title": "Det h\u00e4nde i morgon 13",
+                "avg_rating": 3.0,
+                "ratings_count": 2,
+                "id": "24244604-det-h-nde-i-morgon-13"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, March 1970",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "30240599-the-magazine-of-fantasy-and-science-fiction-march-1970"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, April 1968",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "32905072-the-magazine-of-fantasy-and-science-fiction-april-1968"
+            },
+            {
+                "title": "IF Worlds of Science Fiction, 1970 September-October",
+                "avg_rating": 3.0,
+                "ratings_count": 1,
+                "id": "6339402-if-worlds-of-science-fiction-1970-september-october"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, November 1974",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "33299284-the-magazine-of-fantasy-and-science-fiction-november-1974"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, September 1974",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "33299269-the-magazine-of-fantasy-and-science-fiction-september-1974"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, August 1977",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "33617352-the-magazine-of-fantasy-and-science-fiction-august-1977"
+            }
+        ]
+    },
+    "Henry Slesar": {
+        "stats": {
+            "avg_rating": 4.03,
+            "ratings_count": 15868,
+            "reviews_count": 1142,
+            "shelvings_count": 42643
+        },
+        "books": [
+            {
+                "title": "Examination Day",
+                "avg_rating": 4.0,
+                "ratings_count": 255,
+                "id": "23301136-examination-day"
+            },
+            {
+                "title": "My Father, the Cat",
+                "avg_rating": 3.47,
+                "ratings_count": 64,
+                "id": "8848388-my-father-the-cat"
+            },
+            {
+                "title": "Reluctant Genius",
+                "avg_rating": 3.22,
+                "ratings_count": 45,
+                "id": "12219464-reluctant-genius"
+            },
+            {
+                "title": "The Success Machine",
+                "avg_rating": 3.34,
+                "ratings_count": 32,
+                "id": "12308919-the-success-machine"
+            },
+            {
+                "title": "The Thing at the Door",
+                "avg_rating": 3.23,
+                "ratings_count": 30,
+                "id": "733936.The_Thing_at_the_Door"
+            },
+            {
+                "title": "The Delegate From Venus",
+                "avg_rating": 3.36,
+                "ratings_count": 28,
+                "id": "6328980-the-delegate-from-venus"
+            },
+            {
+                "title": "Dream Town",
+                "avg_rating": 3.57,
+                "ratings_count": 21,
+                "id": "10700573-dream-town"
+            },
+            {
+                "title": "The Grey Flannel Shroud",
+                "avg_rating": 3.37,
+                "ratings_count": 19,
+                "id": "1176456.The_Grey_Flannel_Shroud"
+            },
+            {
+                "title": "Alfred Hitchcock Presents Clean Crimes and Neat Murders",
+                "avg_rating": 4.45,
+                "ratings_count": 11,
+                "id": "10096350-alfred-hitchcock-presents-clean-crimes-and-neat-murders"
+            },
+            {
+                "title": "Heart",
+                "avg_rating": 3.33,
+                "ratings_count": 12,
+                "id": "11450679-heart"
+            },
+            {
+                "title": "Murders Most Macabre",
+                "avg_rating": 3.9,
+                "ratings_count": 10,
+                "id": "1176458.Murders_Most_Macabre"
+            },
+            {
+                "title": "20 Million Miles to Earth",
+                "avg_rating": 4.0,
+                "ratings_count": 9,
+                "id": "18147150-20-million-miles-to-earth"
+            },
+            {
+                "title": "Murder at Heartbreak Hospital",
+                "avg_rating": 3.25,
+                "ratings_count": 8,
+                "id": "2473203.Murder_at_Heartbreak_Hospital"
+            },
+            {
+                "title": "Death on Television: The Best of Henry Slesar's Alfred Hitchcock Stories",
+                "avg_rating": 4.0,
+                "ratings_count": 6,
+                "id": "1052789.Death_on_Television"
+            },
+            {
+                "title": "The Stuff",
+                "avg_rating": 2.88,
+                "ratings_count": 8,
+                "id": "35529351-the-stuff"
+            },
+            {
+                "title": "Victory  Parade",
+                "avg_rating": 4.4,
+                "ratings_count": 5,
+                "id": "38751877-victory-parade"
+            },
+            {
+                "title": "Alfred Hitchcock Introduces A Crime for Mothers and Others",
+                "avg_rating": 4.4,
+                "ratings_count": 5,
+                "id": "6392392-alfred-hitchcock-introduces-a-crime-for-mothers-and-others"
+            },
+            {
+                "title": "Coole Geschichten f\u00fcr clevere Leser",
+                "avg_rating": 3.67,
+                "ratings_count": 6,
+                "id": "5390129-coole-geschichten-f-r-clevere-leser"
+            },
+            {
+                "title": "Schlimme Geschichten F\u00fcr Schlaue Leser",
+                "avg_rating": 4.4,
+                "ratings_count": 5,
+                "id": "4637235-schlimme-geschichten-f-r-schlaue-leser"
+            },
+            {
+                "title": "\u099c\u09be\u09a6\u09c1\u0995\u09b0",
+                "avg_rating": 3.8,
+                "ratings_count": 5,
+                "id": "32798512"
+            },
+            {
+                "title": "Fiese Geschichten f\u00fcr fixe Leser",
+                "avg_rating": 4.5,
+                "ratings_count": 4,
+                "id": "5390166-fiese-geschichten-f-r-fixe-leser"
+            },
+            {
+                "title": "Enter Murderers",
+                "avg_rating": 3.6,
+                "ratings_count": 5,
+                "id": "13141323-enter-murderers"
+            },
+            {
+                "title": "The Delegate From Venus and Other Science Fiction Stories",
+                "avg_rating": 3.6,
+                "ratings_count": 5,
+                "id": "25083075-the-delegate-from-venus-and-other-science-fiction-stories"
+            },
+            {
+                "title": "The Best of Henry Slesar",
+                "avg_rating": 4.25,
+                "ratings_count": 4,
+                "id": "25401860-the-best-of-henry-slesar"
+            },
+            {
+                "title": "Secret Of Marracott Deep & Pawn Of The Black Fleet",
+                "avg_rating": 3.75,
+                "ratings_count": 4,
+                "id": "13096747-secret-of-marracott-deep-pawn-of-the-black-fleet"
+            },
+            {
+                "title": "Quarto Reich e altri racconti",
+                "avg_rating": 2.6,
+                "ratings_count": 5,
+                "id": "15822194-quarto-reich-e-altri-racconti"
+            },
+            {
+                "title": "Listige Geschichten F\u00fcr Arglose Leser",
+                "avg_rating": 3.67,
+                "ratings_count": 3,
+                "id": "5390152-listige-geschichten-f-r-arglose-leser"
+            },
+            {
+                "title": "Chief",
+                "avg_rating": 2.75,
+                "ratings_count": 4,
+                "id": "41750541-chief"
+            },
+            {
+                "title": "Das t\u00f6dliche Telefon: Die besten Krimistorys",
+                "avg_rating": 3.67,
+                "ratings_count": 3,
+                "id": "43589009-das-t-dliche-telefon"
+            },
+            {
+                "title": "Teuflische Geschichten F\u00fcr Tapfere Leser",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "5390164-teuflische-geschichten-f-r-tapfere-leser"
+            }
+        ]
+    },
+    "Sonya Dorman": {
+        "stats": {
+            "avg_rating": 4.13,
+            "ratings_count": 10169,
+            "reviews_count": 457,
+            "shelvings_count": 24054
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Alchemy and Academe : A Collection of Original Stories Concerning Themselves with Transmutations, Mental and Elemental, Alchemical and Academic",
+                "avg_rating": 3.73,
+                "ratings_count": 836,
+                "id": "614556.Alchemy_and_Academe_"
+            },
+            {
+                "title": "Women of Wonder: Science-Fiction Stories by Women about Women",
+                "avg_rating": 3.96,
+                "ratings_count": 310,
+                "id": "2211959.Women_of_Wonder"
+            },
+            {
+                "title": "Dangerous Visions 3",
+                "avg_rating": 3.9,
+                "ratings_count": 202,
+                "id": "3765936-dangerous-visions-3"
+            },
+            {
+                "title": "The New Women of Wonder",
+                "avg_rating": 3.94,
+                "ratings_count": 123,
+                "id": "555910.The_New_Women_of_Wonder"
+            },
+            {
+                "title": "Nebula Award Stories 2",
+                "avg_rating": 3.83,
+                "ratings_count": 82,
+                "id": "1964669.Nebula_Award_Stories_2"
+            },
+            {
+                "title": "Rediscovery: Science Fiction by Women",
+                "avg_rating": 4.09,
+                "ratings_count": 46,
+                "id": "50045426-rediscovery"
+            },
+            {
+                "title": "Orbit 1",
+                "avg_rating": 3.4,
+                "ratings_count": 52,
+                "id": "6437432-orbit-1"
+            },
+            {
+                "title": "New Eves: Science Fiction About the Extraordinary Women of Today and Tomorrow",
+                "avg_rating": 4.03,
+                "ratings_count": 39,
+                "id": "2168406.New_Eves"
+            },
+            {
+                "title": "The Best of Sci-Fi 12",
+                "avg_rating": 3.79,
+                "ratings_count": 28,
+                "id": "2214025.The_Best_of_Sci_Fi_12"
+            },
+            {
+                "title": "The Putnam Tradition",
+                "avg_rating": 3.0,
+                "ratings_count": 23,
+                "id": "11776288-the-putnam-tradition"
+            },
+            {
+                "title": "Ciencia Ficci\u00f3n, selecci\u00f3n 8",
+                "avg_rating": 3.4,
+                "ratings_count": 15,
+                "id": "24496869-ciencia-ficci-n-selecci-n-8"
+            },
+            {
+                "title": "Best From Fantasy And Science Fiction: 18th Series",
+                "avg_rating": 3.42,
+                "ratings_count": 12,
+                "id": "1824582.Best_From_Fantasy_And_Science_Fiction"
+            },
+            {
+                "title": "When I Was Miss Dow",
+                "avg_rating": 3.08,
+                "ratings_count": 13,
+                "id": "36154590-when-i-was-miss-dow"
+            },
+            {
+                "title": "Analog Science Fiction and Fact, 1975 March",
+                "avg_rating": 3.6,
+                "ratings_count": 10,
+                "id": "6334886-analog-science-fiction-and-fact-1975-march"
+            },
+            {
+                "title": "Short Science Fiction Collection 012",
+                "avg_rating": 3.33,
+                "ratings_count": 9,
+                "id": "31835568-short-science-fiction-collection-012"
+            },
+            {
+                "title": "SF Author's Choice 3",
+                "avg_rating": 3.22,
+                "ratings_count": 9,
+                "id": "6778282-sf-author-s-choice-3"
+            },
+            {
+                "title": "Nebula Award Stories 2",
+                "avg_rating": 3.67,
+                "ratings_count": 6,
+                "id": "32060062-nebula-award-stories-2"
+            },
+            {
+                "title": "Short Science Fiction Collection 018",
+                "avg_rating": 3.6,
+                "ratings_count": 5,
+                "id": "32612387-short-science-fiction-collection-018"
+            },
+            {
+                "title": "Quark/2",
+                "avg_rating": 4.0,
+                "ratings_count": 4,
+                "id": "33980269-quark-2"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, September 1972",
+                "avg_rating": 4.67,
+                "ratings_count": 3,
+                "id": "33260490-the-magazine-of-fantasy-and-science-fiction-september-1972"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, November 1970",
+                "avg_rating": 4.33,
+                "ratings_count": 3,
+                "id": "33191675-the-magazine-of-fantasy-and-science-fiction-november-1970"
+            },
+            {
+                "title": "The Magazine of Fantasy and Science Fiction, January 1971",
+                "avg_rating": 4.33,
+                "ratings_count": 3,
+                "id": "33228766-the-magazine-of-fantasy-and-science-fiction-january-1971"
+            },
+            {
+                "title": "Short Science Fiction Collection 053",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "31144140-short-science-fiction-collection-053"
+            },
+            {
+                "title": "Planet Patrol",
+                "avg_rating": 3.0,
+                "ratings_count": 2,
+                "id": "4607450-planet-patrol"
+            },
+            {
+                "title": "Stretching Fence",
+                "avg_rating": 3.0,
+                "ratings_count": 1,
+                "id": "2320015.Stretching_Fence"
+            },
+            {
+                "title": "Poems",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "2320013.Poems"
+            },
+            {
+                "title": "Far Traveller",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "12280001-far-traveller"
+            },
+            {
+                "title": "Fiction n\u00b0271",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "35499325-fiction-n-271"
+            },
+            {
+                "title": "Carrying What You Love: Poems",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "3321421-carrying-what-you-love"
+            }
+        ]
+    },
+    "John Sladek": {
+        "stats": {
+            "avg_rating": 4.06,
+            "ratings_count": 11726,
+            "reviews_count": 690,
+            "shelvings_count": 30111
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Lies, Inc.",
+                "avg_rating": 3.16,
+                "ratings_count": 2784,
+                "id": "90509.Lies_Inc_"
+            },
+            {
+                "title": "Tik-Tok",
+                "avg_rating": 3.76,
+                "ratings_count": 612,
+                "id": "236202.Tik_Tok"
+            },
+            {
+                "title": "The Complete Roderick",
+                "avg_rating": 3.7,
+                "ratings_count": 468,
+                "id": "968863.The_Complete_Roderick"
+            },
+            {
+                "title": "Roderick",
+                "avg_rating": 3.51,
+                "ratings_count": 361,
+                "id": "845587.Roderick"
+            },
+            {
+                "title": "The Ascent of Wonder: The Evolution of Hard SF",
+                "avg_rating": 4.15,
+                "ratings_count": 219,
+                "id": "490271.The_Ascent_of_Wonder"
+            },
+            {
+                "title": "The Reproductive System",
+                "avg_rating": 3.48,
+                "ratings_count": 240,
+                "id": "1260524.The_Reproductive_System"
+            },
+            {
+                "title": "Dangerous Visions 3",
+                "avg_rating": 3.9,
+                "ratings_count": 202,
+                "id": "3765936-dangerous-visions-3"
+            },
+            {
+                "title": "Black Alice",
+                "avg_rating": 3.82,
+                "ratings_count": 196,
+                "id": "1100133.Black_Alice"
+            },
+            {
+                "title": "Roderick at Random",
+                "avg_rating": 3.76,
+                "ratings_count": 127,
+                "id": "968865.Roderick_at_Random"
+            },
+            {
+                "title": "The Muller-Fokker Effect",
+                "avg_rating": 3.52,
+                "ratings_count": 123,
+                "id": "1260526.The_Muller_Fokker_Effect"
+            },
+            {
+                "title": "The Steam-Driven Boy and Other Strangers",
+                "avg_rating": 3.72,
+                "ratings_count": 74,
+                "id": "212175.The_Steam_Driven_Boy_and_Other_Strangers"
+            },
+            {
+                "title": "New Worlds: An Anthology",
+                "avg_rating": 3.53,
+                "ratings_count": 55,
+                "id": "1532128.New_Worlds"
+            },
+            {
+                "title": "The New Apocrypha: A Guide to Strange Science and Occult Beliefs",
+                "avg_rating": 4.06,
+                "ratings_count": 47,
+                "id": "893725.The_New_Apocrypha"
+            },
+            {
+                "title": "Keep the Giraffe Burning",
+                "avg_rating": 3.49,
+                "ratings_count": 53,
+                "id": "6633272-keep-the-giraffe-burning"
+            },
+            {
+                "title": "Invisible Green",
+                "avg_rating": 3.83,
+                "ratings_count": 35,
+                "id": "942601.Invisible_Green"
+            },
+            {
+                "title": "The Best of John Sladek",
+                "avg_rating": 4.16,
+                "ratings_count": 32,
+                "id": "1560770.The_Best_of_John_Sladek"
+            },
+            {
+                "title": "Bugs",
+                "avg_rating": 3.42,
+                "ratings_count": 36,
+                "id": "2431170.Bugs"
+            },
+            {
+                "title": "Black Aura",
+                "avg_rating": 3.64,
+                "ratings_count": 33,
+                "id": "1260525.Black_Aura"
+            },
+            {
+                "title": "Drabble II: Double Century",
+                "avg_rating": 4.08,
+                "ratings_count": 25,
+                "id": "2792208-drabble-ii"
+            },
+            {
+                "title": "Alien Accounts",
+                "avg_rating": 3.8,
+                "ratings_count": 20,
+                "id": "7670321-alien-accounts"
+            },
+            {
+                "title": "The Lunatics of Terra",
+                "avg_rating": 3.65,
+                "ratings_count": 20,
+                "id": "1961704.The_Lunatics_of_Terra"
+            },
+            {
+                "title": "Wholly Smokes",
+                "avg_rating": 4.06,
+                "ratings_count": 17,
+                "id": "1260527.Wholly_Smokes"
+            },
+            {
+                "title": "Maps: The Uncollected John Sladek",
+                "avg_rating": 4.0,
+                "ratings_count": 16,
+                "id": "833294.Maps"
+            },
+            {
+                "title": "John Sladek SF Gateway Omnibus: The Reproductive System, The Muller-Fokker Effect, Tik-Tok",
+                "avg_rating": 3.73,
+                "ratings_count": 11,
+                "id": "18722198-john-sladek-sf-gateway-omnibus"
+            },
+            {
+                "title": "Roderick \u00e0 Solta - 1",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "23219066-roderick-solta---1"
+            },
+            {
+                "title": "The Book of Clues",
+                "avg_rating": 4.5,
+                "ratings_count": 2,
+                "id": "18631502-the-book-of-clues"
+            },
+            {
+                "title": "Roderick \u00e0 Solta - 2",
+                "avg_rating": 2.0,
+                "ratings_count": 1,
+                "id": "23219072-roderick-solta---2"
+            },
+            {
+                "title": "Die Menschen Sind Los! Science Fiction Stories",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "2590192-die-menschen-sind-los-science-fiction-stories"
+            },
+            {
+                "title": "Isaac Asimov's Science Fiction Magazine, August 1983",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "51986234-isaac-asimov-s-science-fiction-magazine-august-1983"
+            }
+        ]
+    },
+    "Jonathan Brand": {
+        "stats": {
+            "avg_rating": 4.19,
+            "ratings_count": 8674,
+            "reviews_count": 339,
+            "shelvings_count": 19637
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Dangerous Visions 3",
+                "avg_rating": 3.9,
+                "ratings_count": 202,
+                "id": "3765936-dangerous-visions-3"
+            },
+            {
+                "title": "World's Best Science Fiction 1966",
+                "avg_rating": 3.79,
+                "ratings_count": 34,
+                "id": "6766864-world-s-best-science-fiction-1966"
+            },
+            {
+                "title": "The If Reader of Science Fiction",
+                "avg_rating": 3.08,
+                "ratings_count": 13,
+                "id": "6483916-the-if-reader-of-science-fiction"
+            },
+            {
+                "title": "Investing: Bring Wall Street to Your Street - Simple Investing Strategies with Stocks, Bonds, ETFs, and Options",
+                "avg_rating": 3.2,
+                "ratings_count": 5,
+                "id": "26835849-investing"
+            },
+            {
+                "title": "Lower East and Upper West: New York City Photographs 1957-1968",
+                "avg_rating": 3.67,
+                "ratings_count": 3,
+                "id": "34144507-lower-east-and-upper-west"
+            },
+            {
+                "title": "Il recupero e altri racconti",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "16001589-il-recupero-e-altri-racconti"
+            },
+            {
+                "title": "Science Fiction Stories 60",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "39790584-science-fiction-stories-60"
+            }
+        ]
+    },
+    "Kris Neville": {
+        "stats": {
+            "avg_rating": 4.15,
+            "ratings_count": 9293,
+            "reviews_count": 443,
+            "shelvings_count": 22128
+        },
+        "books": [
+            {
+                "title": "Dangerous Visions",
+                "avg_rating": 4.19,
+                "ratings_count": 8675,
+                "id": "600349.Dangerous_Visions"
+            },
+            {
+                "title": "Dangerous Visions 3",
+                "avg_rating": 3.9,
+                "ratings_count": 202,
+                "id": "3765936-dangerous-visions-3"
+            },
+            {
+                "title": "The Astounding Science Fiction Anthology",
+                "avg_rating": 3.89,
+                "ratings_count": 62,
+                "id": "8855182-the-astounding-science-fiction-anthology"
+            },
+            {
+                "title": "New Tales of Space and Time",
+                "avg_rating": 3.67,
+                "ratings_count": 45,
+                "id": "6280132-new-tales-of-space-and-time"
+            },
+            {
+                "title": "The Science Fiction Archive #2",
+                "avg_rating": 3.44,
+                "ratings_count": 41,
+                "id": "40021567-the-science-fiction-archive-2"
+            },
+            {
+                "title": "The 33rd Golden Age of Science Fiction MEGAPACK\u00ae: Kris Neville",
+                "avg_rating": 4.11,
+                "ratings_count": 19,
+                "id": "29431668-the-33rd-golden-age-of-science-fiction-megapack"
+            },
+            {
+                "title": "The Unearth People",
+                "avg_rating": 2.33,
+                "ratings_count": 15,
+                "id": "1909163.The_Unearth_People"
+            },
+            {
+                "title": "Earth Alert!",
+                "avg_rating": 3.0,
+                "ratings_count": 9,
+                "id": "11448855-earth-alert"
+            },
+            {
+                "title": "She Knew He Was Coming",
+                "avg_rating": 3.86,
+                "ratings_count": 7,
+                "id": "22671915-she-knew-he-was-coming"
+            },
+            {
+                "title": "Bettyann",
+                "avg_rating": 3.57,
+                "ratings_count": 7,
+                "id": "9617913-bettyann"
+            },
+            {
+                "title": "Invaders On The Moon",
+                "avg_rating": 2.67,
+                "ratings_count": 6,
+                "id": "11424652-invaders-on-the-moon"
+            },
+            {
+                "title": "Earth Alert!: And Other Science Fiction Tales",
+                "avg_rating": 3.2,
+                "ratings_count": 5,
+                "id": "7904291-earth-alert"
+            },
+            {
+                "title": "The Science Fiction of Kris Neville",
+                "avg_rating": 4.0,
+                "ratings_count": 4,
+                "id": "5067930-the-science-fiction-of-kris-neville"
+            },
+            {
+                "title": "Special Delivery & No Time for Toffee",
+                "avg_rating": 3.5,
+                "ratings_count": 4,
+                "id": "31324378-special-delivery-no-time-for-toffee"
+            },
+            {
+                "title": "General Max Shorter",
+                "avg_rating": 2.75,
+                "ratings_count": 4,
+                "id": "6568288-general-max-shorter"
+            },
+            {
+                "title": "Peril of the Starmen & the Forgotten Planet",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "31324411-peril-of-the-starmen-the-forgotten-planet"
+            },
+            {
+                "title": "New Apples in the Garden",
+                "avg_rating": 3.33,
+                "ratings_count": 3,
+                "id": "20957067-new-apples-in-the-garden"
+            },
+            {
+                "title": "Hunt the Hunter",
+                "avg_rating": 2.67,
+                "ratings_count": 3,
+                "id": "33820471-hunt-the-hunter"
+            },
+            {
+                "title": "The Mutants",
+                "avg_rating": 2.0,
+                "ratings_count": 3,
+                "id": "11052024-the-mutants"
+            },
+            {
+                "title": "Mission: Manstop",
+                "avg_rating": 2.5,
+                "ratings_count": 2,
+                "id": "3005180-mission"
+            },
+            {
+                "title": "\u0412\u043e\u0439\u043d\u0430 \u043f\u043e \u0432\u0441\u0435\u043c \u043f\u0440\u0430\u0432\u0438\u043b\u0430\u043c",
+                "avg_rating": 4.0,
+                "ratings_count": 1,
+                "id": "31134587"
+            },
+            {
+                "title": "Shamar's War",
+                "avg_rating": 3.0,
+                "ratings_count": 1,
+                "id": "32908438-shamar-s-war"
+            },
+            {
+                "title": "Voyage to Far N'Jurd",
+                "avg_rating": 3.0,
+                "ratings_count": 1,
+                "id": "34196990-voyage-to-far-n-jurd"
+            },
+            {
+                "title": "Too Many Eggs",
+                "avg_rating": 3.0,
+                "ratings_count": 1,
+                "id": "51117770-too-many-eggs"
+            },
+            {
+                "title": "Special Delivery/Star Gladiator",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "18744898-special-delivery-star-gladiator"
+            },
+            {
+                "title": "Three Short Stories by Kris Neville: Fantastic Short Science Fiction Novels",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "32068382-three-short-stories-by-kris-neville"
+            },
+            {
+                "title": "Peril of the Starmen & Tyrants of Time",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "23337260-peril-of-the-starmen-tyrants-of-time"
+            },
+            {
+                "title": "Science Fiction Classics of Kris Neville",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "26223313-science-fiction-classics-of-kris-neville"
+            },
+            {
+                "title": "The Winning of the Moon",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "55258351-the-winning-of-the-moon"
+            },
+            {
+                "title": "The Classic Works of Kris Neville",
+                "avg_rating": 0.0,
+                "ratings_count": 0,
+                "id": "23239569-the-classic-works-of-kris-neville"
+            }
+        ]
+    },
+    "R. A. Lafferty": {
+        "stats": {
+            "avg_rating": 4.0,
+            "ratings_count": 24352,
+            "reviews_count": 1800,
+            "shelvings_count": 71916
+        },
+        "books": [
+            {
+                "title": "Nine Hundred Grandmothers",
+                "avg_rating": 4.17,
+                "ratings_count": 687,
+                "id": "492773.Nine_Hundred_Grandmothers"
+            },
+            {
+                "title": "Past Master",
+                "avg_rating": 3.7,
+                "ratings_count": 680,
+                "id": "492772.Past_Master"
+            },
+            {
+                "title": "Fourth Mansions",
+                "avg_rating": 4.02,
+                "ratings_count": 320,
+                "id": "689957.Fourth_Mansions"
+            },
+            {
+                "title": "The Best of R.A. Lafferty",
+                "avg_rating": 3.95,
+                "ratings_count": 217,
+                "id": "42114304-the-best-of-r-a-lafferty"
+            },
+            {
+                "title": "The Six Fingers of Time",
+                "avg_rating": 4.05,
+                "ratings_count": 200,
+                "id": "9696929-the-six-fingers-of-time"
+            },
+            {
+                "title": "The Devil Is Dead",
+                "avg_rating": 4.05,
+                "ratings_count": 184,
+                "id": "1292067.The_Devil_Is_Dead"
+            },
+            {
+                "title": "The Reefs of Earth",
+                "avg_rating": 3.86,
+                "ratings_count": 173,
+                "id": "492774.The_Reefs_of_Earth"
+            },
+            {
+                "title": "Okla Hannali",
+                "avg_rating": 4.21,
+                "ratings_count": 151,
+                "id": "667700.Okla_Hannali"
+            },
+            {
+                "title": "Strange Doings",
+                "avg_rating": 4.19,
+                "ratings_count": 128,
+                "id": "721785.Strange_Doings"
+            },
+            {
+                "title": "Sodom and Gomorrah, Texas",
+                "avg_rating": 3.74,
+                "ratings_count": 133,
+                "id": "6298637-sodom-and-gomorrah-texas"
+            },
+            {
+                "title": "Space Chantey",
+                "avg_rating": 3.69,
+                "ratings_count": 124,
+                "id": "2154101.Space_Chantey"
+            },
+            {
+                "title": "The R.A. Lafferty Fantastic MEGAPACK\u00ae",
+                "avg_rating": 4.07,
+                "ratings_count": 107,
+                "id": "29744123-the-r-a-lafferty-fantastic-megapack"
+            },
+            {
+                "title": "Arrive at Easterwine: The Autobiography of a Ktistec Machine",
+                "avg_rating": 3.82,
+                "ratings_count": 102,
+                "id": "2700590-arrive-at-easterwine"
+            },
+            {
+                "title": "Does Anyone Else Have Something Further to Add?",
+                "avg_rating": 4.13,
+                "ratings_count": 94,
+                "id": "721745.Does_Anyone_Else_Have_Something_Further_to_Add_"
+            },
+            {
+                "title": "Not To Mention Camels: A Wild Trip Through Time And Space",
+                "avg_rating": 3.8,
+                "ratings_count": 75,
+                "id": "721748.Not_To_Mention_Camels"
+            },
+            {
+                "title": "The Fall of Rome",
+                "avg_rating": 4.43,
+                "ratings_count": 60,
+                "id": "2806990-the-fall-of-rome"
+            },
+            {
+                "title": "Annals of Klepsis",
+                "avg_rating": 3.83,
+                "ratings_count": 64,
+                "id": "721770.Annals_of_Klepsis"
+            },
+            {
+                "title": "Apocalypses",
+                "avg_rating": 4.1,
+                "ratings_count": 52,
+                "id": "1736950.Apocalypses"
+            },
+            {
+                "title": "Ringing Changes",
+                "avg_rating": 4.07,
+                "ratings_count": 46,
+                "id": "721747.Ringing_Changes"
+            },
+            {
+                "title": "Slow Tuesday Night",
+                "avg_rating": 3.37,
+                "ratings_count": 49,
+                "id": "29387995-slow-tuesday-night"
+            },
+            {
+                "title": "Lafferty in Orbit",
+                "avg_rating": 4.35,
+                "ratings_count": 37,
+                "id": "492776.Lafferty_in_Orbit"
+            },
+            {
+                "title": "The Man Who Made Models: The Collected Short Fiction Volume 1",
+                "avg_rating": 4.68,
+                "ratings_count": 34,
+                "id": "17675126-the-man-who-made-models"
+            },
+            {
+                "title": "Iron Tears",
+                "avg_rating": 4.46,
+                "ratings_count": 26,
+                "id": "1292074.Iron_Tears"
+            },
+            {
+                "title": "The Man with the Aura: The Collected Short Fiction Volume 2",
+                "avg_rating": 4.75,
+                "ratings_count": 24,
+                "id": "18528026-the-man-with-the-aura"
+            },
+            {
+                "title": "More Fantastic Stories",
+                "avg_rating": 3.68,
+                "ratings_count": 25,
+                "id": "19189183-more-fantastic-stories"
+            },
+            {
+                "title": "Serpent's Egg",
+                "avg_rating": 4.1,
+                "ratings_count": 20,
+                "id": "721776.Serpent_s_Egg"
+            },
+            {
+                "title": "Dream World",
+                "avg_rating": 4.05,
+                "ratings_count": 20,
+                "id": "30744497-dream-world"
+            },
+            {
+                "title": "Aurelia",
+                "avg_rating": 3.76,
+                "ratings_count": 21,
+                "id": "435181.Aurelia"
+            },
+            {
+                "title": "Archipelago",
+                "avg_rating": 3.95,
+                "ratings_count": 20,
+                "id": "2700591-archipelago"
+            },
+            {
+                "title": "Golden Gate and Other Stories",
+                "avg_rating": 4.35,
+                "ratings_count": 17,
+                "id": "470849.Golden_Gate_and_Other_Stories"
+            }
+        ]
+    },
+    "J. G. Ballard": {
+        "stats": {
+            "avg_rating": 3.73,
+            "ratings_count": 182108,
+            "reviews_count": 11666,
+            "shelvings_count": 411704
+        },
+        "books": [
+            {
+                "title": "Crash",
+                "avg_rating": 3.69,
+                "ratings_count": 28779,
+                "id": "70241.Crash"
+            },
+            {
+                "title": "High-Rise",
+                "avg_rating": 3.61,
+                "ratings_count": 28791,
+                "id": "12331767-high-rise"
+            },
+            {
+                "title": "The Drowned World",
+                "avg_rating": 3.54,
+                "ratings_count": 23972,
+                "id": "16234584-the-drowned-world"
+            },
+            {
+                "title": "Empire of the Sun",
+                "avg_rating": 3.97,
+                "ratings_count": 18337,
+                "id": "56674.Empire_of_the_Sun"
+            },
+            {
+                "title": "Concrete Island",
+                "avg_rating": 3.77,
+                "ratings_count": 13233,
+                "id": "70251.Concrete_Island"
+            },
+            {
+                "title": "Cocaine Nights",
+                "avg_rating": 3.47,
+                "ratings_count": 6457,
+                "id": "70253.Cocaine_Nights"
+            },
+            {
+                "title": "The Atrocity Exhibition",
+                "avg_rating": 3.8,
+                "ratings_count": 5591,
+                "id": "70240.The_Atrocity_Exhibition"
+            },
+            {
+                "title": "Super-Cannes",
+                "avg_rating": 3.7,
+                "ratings_count": 4232,
+                "id": "70277.Super_Cannes"
+            },
+            {
+                "title": "The Crystal World",
+                "avg_rating": 3.62,
+                "ratings_count": 3891,
+                "id": "70255.The_Crystal_World"
+            },
+            {
+                "title": "Running Wild",
+                "avg_rating": 3.52,
+                "ratings_count": 2771,
+                "id": "70236.Running_Wild"
+            },
+            {
+                "title": "Kingdom Come",
+                "avg_rating": 3.44,
+                "ratings_count": 2613,
+                "id": "13812151-kingdom-come"
+            },
+            {
+                "title": "Millennium People",
+                "avg_rating": 3.37,
+                "ratings_count": 2382,
+                "id": "12885844-millennium-people"
+            },
+            {
+                "title": "The Drought",
+                "avg_rating": 3.56,
+                "ratings_count": 2198,
+                "id": "12362430-the-drought"
+            },
+            {
+                "title": "The Complete Short Stories",
+                "avg_rating": 4.43,
+                "ratings_count": 1534,
+                "id": "749720.The_Complete_Short_Stories"
+            },
+            {
+                "title": "The Best Short Stories",
+                "avg_rating": 4.19,
+                "ratings_count": 1541,
+                "id": "70239.The_Best_Short_Stories"
+            },
+            {
+                "title": "The Unlimited Dream Company",
+                "avg_rating": 3.66,
+                "ratings_count": 1713,
+                "id": "16234589-the-unlimited-dream-company"
+            },
+            {
+                "title": "Vermilion Sands",
+                "avg_rating": 3.9,
+                "ratings_count": 1532,
+                "id": "70238.Vermilion_Sands"
+            },
+            {
+                "title": "The Terminal Beach",
+                "avg_rating": 3.9,
+                "ratings_count": 1316,
+                "id": "1243377.The_Terminal_Beach"
+            },
+            {
+                "title": "The Kindness of Women",
+                "avg_rating": 3.76,
+                "ratings_count": 1243,
+                "id": "862540.The_Kindness_of_Women"
+            },
+            {
+                "title": "Miracles of Life: Shanghai to Shepperton: An Autobiography",
+                "avg_rating": 4.02,
+                "ratings_count": 1131,
+                "id": "1894306.Miracles_of_Life"
+            },
+            {
+                "title": "Hello America",
+                "avg_rating": 3.37,
+                "ratings_count": 1335,
+                "id": "16234588-hello-america"
+            },
+            {
+                "title": "The Day of Creation",
+                "avg_rating": 3.51,
+                "ratings_count": 952,
+                "id": "12919096-the-day-of-creation"
+            },
+            {
+                "title": "The Wind from Nowhere",
+                "avg_rating": 3.29,
+                "ratings_count": 787,
+                "id": "262359.The_Wind_from_Nowhere"
+            },
+            {
+                "title": "Rushing to Paradise",
+                "avg_rating": 3.34,
+                "ratings_count": 747,
+                "id": "16175851-rushing-to-paradise"
+            },
+            {
+                "title": "War Fever",
+                "avg_rating": 3.9,
+                "ratings_count": 487,
+                "id": "70252.War_Fever"
+            },
+            {
+                "title": "The Complete Short Stories: Volume 1",
+                "avg_rating": 4.32,
+                "ratings_count": 435,
+                "id": "862088.The_Complete_Short_Stories"
+            },
+            {
+                "title": "Myths of the Near Future",
+                "avg_rating": 3.86,
+                "ratings_count": 434,
+                "id": "879617.Myths_of_the_Near_Future"
+            },
+            {
+                "title": "A User's Guide to the Millennium: Essays and Reviews",
+                "avg_rating": 3.84,
+                "ratings_count": 409,
+                "id": "70254.A_User_s_Guide_to_the_Millennium"
+            },
+            {
+                "title": "The Voices Of Time",
+                "avg_rating": 3.89,
+                "ratings_count": 373,
+                "id": "436195.The_Voices_Of_Time"
+            },
+            {
+                "title": "The Disaster Area",
+                "avg_rating": 3.81,
+                "ratings_count": 343,
+                "id": "70271.The_Disaster_Area"
+            }
+        ]
+    },
+    "John Brunner": {
+        "stats": {
+            "avg_rating": 3.9,
+            "ratings_count": 64011,
+            "reviews_count": 3651,
+            "shelvings_count": 156088
+        },
+        "books": [
+            {
+                "title": "Stand on Zanzibar",
+                "avg_rating": 3.95,
+                "ratings_count": 17118,
+                "id": "41069.Stand_on_Zanzibar"
+            },
+            {
+                "title": "The Sheep Look Up",
+                "avg_rating": 3.93,
+                "ratings_count": 4606,
+                "id": "41074.The_Sheep_Look_Up"
+            },
+            {
+                "title": "The Shockwave Rider",
+                "avg_rating": 3.94,
+                "ratings_count": 3765,
+                "id": "41070.The_Shockwave_Rider"
+            },
+            {
+                "title": "The Crucible of Time",
+                "avg_rating": 3.73,
+                "ratings_count": 1048,
+                "id": "872586.The_Crucible_of_Time"
+            },
+            {
+                "title": "The Jagged Orbit",
+                "avg_rating": 3.73,
+                "ratings_count": 840,
+                "id": "470186.The_Jagged_Orbit"
+            },
+            {
+                "title": "The Compleat Traveller in Black",
+                "avg_rating": 3.85,
+                "ratings_count": 633,
+                "id": "41082.The_Compleat_Traveller_in_Black"
+            },
+            {
+                "title": "The Squares of the City",
+                "avg_rating": 3.41,
+                "ratings_count": 604,
+                "id": "1407130.The_Squares_of_the_City"
+            },
+            {
+                "title": "The Whole Man",
+                "avg_rating": 3.7,
+                "ratings_count": 481,
+                "id": "872226.The_Whole_Man"
+            },
+            {
+                "title": "Total Eclipse",
+                "avg_rating": 3.43,
+                "ratings_count": 414,
+                "id": "41087.Total_Eclipse"
+            },
+            {
+                "title": "Polymath",
+                "avg_rating": 3.57,
+                "ratings_count": 305,
+                "id": "41086.Polymath"
+            },
+            {
+                "title": "Times Without Number",
+                "avg_rating": 3.51,
+                "ratings_count": 245,
+                "id": "872224.Times_Without_Number"
+            },
+            {
+                "title": "The Long Result",
+                "avg_rating": 3.44,
+                "ratings_count": 232,
+                "id": "2881664-the-long-result"
+            },
+            {
+                "title": "Children of the Thunder",
+                "avg_rating": 3.31,
+                "ratings_count": 225,
+                "id": "882857.Children_of_the_Thunder"
+            },
+            {
+                "title": "The Stone That Never Came Down",
+                "avg_rating": 3.58,
+                "ratings_count": 205,
+                "id": "872228.The_Stone_That_Never_Came_Down"
+            },
+            {
+                "title": "A Maze of Stars",
+                "avg_rating": 3.48,
+                "ratings_count": 209,
+                "id": "872229.A_Maze_of_Stars"
+            },
+            {
+                "title": "The Wrong End of Time",
+                "avg_rating": 3.24,
+                "ratings_count": 199,
+                "id": "872222.The_Wrong_End_of_Time"
+            },
+            {
+                "title": "The Infinitive of Go",
+                "avg_rating": 3.38,
+                "ratings_count": 187,
+                "id": "872230.The_Infinitive_of_Go"
+            },
+            {
+                "title": "Players at the Game of People",
+                "avg_rating": 3.14,
+                "ratings_count": 187,
+                "id": "147542.Players_at_the_Game_of_People"
+            },
+            {
+                "title": "The Webs of Everywhere",
+                "avg_rating": 3.34,
+                "ratings_count": 173,
+                "id": "1406040.The_Webs_of_Everywhere"
+            },
+            {
+                "title": "The Dramaturges of Yan",
+                "avg_rating": 3.34,
+                "ratings_count": 166,
+                "id": "882868.The_Dramaturges_of_Yan"
+            },
+            {
+                "title": "Catch a Falling Star",
+                "avg_rating": 3.36,
+                "ratings_count": 153,
+                "id": "321742.Catch_a_Falling_Star"
+            },
+            {
+                "title": "Atlantic Abomination",
+                "avg_rating": 3.1,
+                "ratings_count": 141,
+                "id": "1442341.Atlantic_Abomination"
+            },
+            {
+                "title": "Bedlam Planet",
+                "avg_rating": 3.39,
+                "ratings_count": 125,
+                "id": "882855.Bedlam_Planet"
+            },
+            {
+                "title": "Born Under Mars",
+                "avg_rating": 3.08,
+                "ratings_count": 137,
+                "id": "2362278.Born_Under_Mars"
+            },
+            {
+                "title": "The Tides of Time",
+                "avg_rating": 3.08,
+                "ratings_count": 132,
+                "id": "869130.The_Tides_of_Time"
+            },
+            {
+                "title": "The Dreaming Earth",
+                "avg_rating": 3.42,
+                "ratings_count": 116,
+                "id": "332039.The_Dreaming_Earth"
+            },
+            {
+                "title": "To Conquer Chaos",
+                "avg_rating": 3.48,
+                "ratings_count": 110,
+                "id": "3234640-to-conquer-chaos"
+            },
+            {
+                "title": "Interstellar Empire",
+                "avg_rating": 3.21,
+                "ratings_count": 117,
+                "id": "882876.Interstellar_Empire"
+            },
+            {
+                "title": "The Productions of Time",
+                "avg_rating": 3.21,
+                "ratings_count": 107,
+                "id": "3734240-the-productions-of-time"
+            },
+            {
+                "title": "Quicksand",
+                "avg_rating": 3.2,
+                "ratings_count": 101,
+                "id": "470251.Quicksand"
+            }
+        ]
+    },
+    "Keith Laumer": {
+        "stats": {
+            "avg_rating": 3.99,
+            "ratings_count": 39786,
+            "reviews_count": 1702,
+            "shelvings_count": 77389
+        },
+        "books": [
+            {
+                "title": "Bolo",
+                "avg_rating": 4.12,
+                "ratings_count": 3759,
+                "id": "464042.Bolo"
+            },
+            {
+                "title": "Retief!",
+                "avg_rating": 3.98,
+                "ratings_count": 2244,
+                "id": "362550.Retief_"
+            },
+            {
+                "title": "Honor of the Regiment: Bolos 1",
+                "avg_rating": 4.11,
+                "ratings_count": 1297,
+                "id": "464055.Honor_of_the_Regiment"
+            },
+            {
+                "title": "Retief: Envoy to New Worlds",
+                "avg_rating": 3.98,
+                "ratings_count": 1153,
+                "id": "627089.Retief"
+            },
+            {
+                "title": "Keith Laumer: The Lighter Side",
+                "avg_rating": 3.74,
+                "ratings_count": 991,
+                "id": "57309.Keith_Laumer"
+            },
+            {
+                "title": "The Unconquerable: Bolos 2",
+                "avg_rating": 4.19,
+                "ratings_count": 721,
+                "id": "362562.The_Unconquerable"
+            },
+            {
+                "title": "Last Stand: Bolos 4",
+                "avg_rating": 4.21,
+                "ratings_count": 657,
+                "id": "362564.Last_Stand"
+            },
+            {
+                "title": "Retief's War",
+                "avg_rating": 3.96,
+                "ratings_count": 478,
+                "id": "627081.Retief_s_War"
+            },
+            {
+                "title": "The Compleat Bolo",
+                "avg_rating": 4.07,
+                "ratings_count": 449,
+                "id": "362561.The_Compleat_Bolo"
+            },
+            {
+                "title": "A Plague of Demons & Other Stories",
+                "avg_rating": 3.73,
+                "ratings_count": 433,
+                "id": "57369.A_Plague_of_Demons_Other_Stories"
+            },
+            {
+                "title": "Worlds of the Imperium",
+                "avg_rating": 3.67,
+                "ratings_count": 401,
+                "id": "2148843.Worlds_of_the_Imperium"
+            },
+            {
+                "title": "A Trace of Memory",
+                "avg_rating": 3.96,
+                "ratings_count": 360,
+                "id": "1549260.A_Trace_of_Memory"
+            },
+            {
+                "title": "Cold Steel",
+                "avg_rating": 4.2,
+                "ratings_count": 338,
+                "id": "464056.Cold_Steel"
+            },
+            {
+                "title": "Dinosaur Beach",
+                "avg_rating": 3.77,
+                "ratings_count": 376,
+                "id": "584217.Dinosaur_Beach"
+            },
+            {
+                "title": "Plague of Demons",
+                "avg_rating": 3.64,
+                "ratings_count": 383,
+                "id": "1829054.Plague_of_Demons"
+            },
+            {
+                "title": "Retief of the CDT",
+                "avg_rating": 3.91,
+                "ratings_count": 354,
+                "id": "362548.Retief_of_the_CDT"
+            },
+            {
+                "title": "Rogue Bolo",
+                "avg_rating": 4.01,
+                "ratings_count": 335,
+                "id": "470074.Rogue_Bolo"
+            },
+            {
+                "title": "Odyssey",
+                "avg_rating": 3.78,
+                "ratings_count": 274,
+                "id": "748387.Odyssey"
+            },
+            {
+                "title": "Retief: Emissary To The Stars",
+                "avg_rating": 3.84,
+                "ratings_count": 267,
+                "id": "362558.Retief"
+            },
+            {
+                "title": "Retief At Large",
+                "avg_rating": 3.96,
+                "ratings_count": 236,
+                "id": "421834.Retief_At_Large"
+            },
+            {
+                "title": "Retief and the Warlords",
+                "avg_rating": 3.81,
+                "ratings_count": 242,
+                "id": "422245.Retief_and_the_Warlords"
+            },
+            {
+                "title": "Retief: Diplomat at Arms",
+                "avg_rating": 3.94,
+                "ratings_count": 231,
+                "id": "627082.Retief"
+            },
+            {
+                "title": "Bolos: Their Finest Hour",
+                "avg_rating": 4.18,
+                "ratings_count": 215,
+                "id": "7171832-bolos"
+            },
+            {
+                "title": "The Return of Retief",
+                "avg_rating": 3.97,
+                "ratings_count": 226,
+                "id": "362549.The_Return_of_Retief"
+            },
+            {
+                "title": "The Great Time Machine Hoax",
+                "avg_rating": 3.56,
+                "ratings_count": 234,
+                "id": "473727.The_Great_Time_Machine_Hoax"
+            },
+            {
+                "title": "Earthblood",
+                "avg_rating": 3.71,
+                "ratings_count": 190,
+                "id": "464043.Earthblood"
+            },
+            {
+                "title": "The Time Bender",
+                "avg_rating": 3.56,
+                "ratings_count": 197,
+                "id": "2245551.The_Time_Bender"
+            },
+            {
+                "title": "Retief and the Pangalactic Pageant of Pulchritude",
+                "avg_rating": 3.91,
+                "ratings_count": 175,
+                "id": "627079.Retief_and_the_Pangalactic_Pageant_of_Pulchritude"
+            },
+            {
+                "title": "Retief to the Rescue",
+                "avg_rating": 3.79,
+                "ratings_count": 177,
+                "id": "362557.Retief_to_the_Rescue"
+            },
+            {
+                "title": "The World Shuffler",
+                "avg_rating": 3.44,
+                "ratings_count": 175,
+                "id": "2272066.The_World_Shuffler"
+            }
+        ]
+    },
+    "Norman Spinrad": {
+        "stats": {
+            "avg_rating": 3.96,
+            "ratings_count": 30873,
+            "reviews_count": 2032,
+            "shelvings_count": 72192
+        },
+        "books": [
+            {
+                "title": "Bug Jack Barron",
+                "avg_rating": 3.8,
+                "ratings_count": 1844,
+                "id": "633178.Bug_Jack_Barron"
+            },
+            {
+                "title": "The Iron Dream",
+                "avg_rating": 3.59,
+                "ratings_count": 1502,
+                "id": "633177.The_Iron_Dream"
+            },
+            {
+                "title": "The Void Captain's Tale",
+                "avg_rating": 3.63,
+                "ratings_count": 469,
+                "id": "633181.The_Void_Captain_s_Tale"
+            },
+            {
+                "title": "Little Heroes",
+                "avg_rating": 3.74,
+                "ratings_count": 411,
+                "id": "719900.Little_Heroes"
+            },
+            {
+                "title": "Child of Fortune",
+                "avg_rating": 4.05,
+                "ratings_count": 348,
+                "id": "633175.Child_of_Fortune"
+            },
+            {
+                "title": "Agent of Chaos",
+                "avg_rating": 3.49,
+                "ratings_count": 403,
+                "id": "633185.Agent_of_Chaos"
+            },
+            {
+                "title": "The Solarians",
+                "avg_rating": 3.39,
+                "ratings_count": 261,
+                "id": "1975477.The_Solarians"
+            },
+            {
+                "title": "Journals of the Plague Years",
+                "avg_rating": 3.98,
+                "ratings_count": 207,
+                "id": "202725.Journals_of_the_Plague_Years"
+            },
+            {
+                "title": "The Druid King",
+                "avg_rating": 3.39,
+                "ratings_count": 236,
+                "id": "633180.The_Druid_King"
+            },
+            {
+                "title": "The Men in the Jungle",
+                "avg_rating": 3.44,
+                "ratings_count": 202,
+                "id": "633190.The_Men_in_the_Jungle"
+            },
+            {
+                "title": "Mexica",
+                "avg_rating": 3.89,
+                "ratings_count": 159,
+                "id": "633179.Mexica"
+            },
+            {
+                "title": "Russian Spring",
+                "avg_rating": 3.89,
+                "ratings_count": 149,
+                "id": "633188.Russian_Spring"
+            },
+            {
+                "title": "Riding the Torch",
+                "avg_rating": 3.69,
+                "ratings_count": 142,
+                "id": "680457.Riding_the_Torch"
+            },
+            {
+                "title": "Songs from the Stars",
+                "avg_rating": 3.54,
+                "ratings_count": 147,
+                "id": "633202.Songs_from_the_Stars"
+            },
+            {
+                "title": "Other Americas",
+                "avg_rating": 3.85,
+                "ratings_count": 120,
+                "id": "633205.Other_Americas"
+            },
+            {
+                "title": "Deus X",
+                "avg_rating": 3.4,
+                "ratings_count": 134,
+                "id": "3034254-deus-x"
+            },
+            {
+                "title": "Pictures at 11",
+                "avg_rating": 3.61,
+                "ratings_count": 120,
+                "id": "633207.Pictures_at_11"
+            },
+            {
+                "title": "A World Between",
+                "avg_rating": 3.52,
+                "ratings_count": 120,
+                "id": "2438418.A_World_Between"
+            },
+            {
+                "title": "The Last Hurrah of the Golden Horde",
+                "avg_rating": 3.89,
+                "ratings_count": 101,
+                "id": "1987253.The_Last_Hurrah_of_the_Golden_Horde"
+            },
+            {
+                "title": "Greenhouse Summer",
+                "avg_rating": 3.18,
+                "ratings_count": 117,
+                "id": "680455.Greenhouse_Summer"
+            },
+            {
+                "title": "The Mind Game",
+                "avg_rating": 3.66,
+                "ratings_count": 101,
+                "id": "719893.The_Mind_Game"
+            },
+            {
+                "title": "He Walked Among Us",
+                "avg_rating": 3.01,
+                "ratings_count": 122,
+                "id": "6665904-he-walked-among-us"
+            },
+            {
+                "title": "The People's Police",
+                "avg_rating": 3.59,
+                "ratings_count": 68,
+                "id": "29939272-the-people-s-police"
+            },
+            {
+                "title": "Deus X and Other Stories",
+                "avg_rating": 3.59,
+                "ratings_count": 59,
+                "id": "621236.Deus_X_and_Other_Stories"
+            },
+            {
+                "title": "No Direction Home",
+                "avg_rating": 3.77,
+                "ratings_count": 52,
+                "id": "2277219.No_Direction_Home"
+            },
+            {
+                "title": "Osama the Gun",
+                "avg_rating": 3.83,
+                "ratings_count": 46,
+                "id": "12318934-osama-the-gun"
+            },
+            {
+                "title": "Carcinoma Angels",
+                "avg_rating": 3.63,
+                "ratings_count": 46,
+                "id": "3875856-carcinoma-angels"
+            },
+            {
+                "title": "Raising Hell",
+                "avg_rating": 3.36,
+                "ratings_count": 45,
+                "id": "18778486-raising-hell"
+            },
+            {
+                "title": "The Star-Spangled Future",
+                "avg_rating": 3.42,
+                "ratings_count": 43,
+                "id": "1975473.The_Star_Spangled_Future"
+            },
+            {
+                "title": "Subjectivity",
+                "avg_rating": 3.61,
+                "ratings_count": 36,
+                "id": "12318919-subjectivity"
+            }
+        ]
+    },
+    "Roger Zelazny": {
+        "stats": {
+            "avg_rating": 4.06,
+            "ratings_count": 697992,
+            "reviews_count": 25389,
+            "shelvings_count": 1248261
+        },
+        "books": [
+            {
+                "title": "Nine Princes in Amber",
+                "avg_rating": 4.04,
+                "ratings_count": 56922,
+                "id": "92121.Nine_Princes_in_Amber"
+            },
+            {
+                "title": "Lord of Light",
+                "avg_rating": 4.07,
+                "ratings_count": 31302,
+                "id": "13821.Lord_of_Light"
+            },
+            {
+                "title": "The Great Book of Amber",
+                "avg_rating": 4.31,
+                "ratings_count": 24776,
+                "id": "5367.The_Great_Book_of_Amber"
+            },
+            {
+                "title": "The Guns of Avalon",
+                "avg_rating": 4.15,
+                "ratings_count": 21686,
+                "id": "62012.The_Guns_of_Avalon"
+            },
+            {
+                "title": "The Courts of Chaos",
+                "avg_rating": 4.19,
+                "ratings_count": 21452,
+                "id": "359581.The_Courts_of_Chaos"
+            },
+            {
+                "title": "The Hand of Oberon",
+                "avg_rating": 4.21,
+                "ratings_count": 17893,
+                "id": "116982.The_Hand_of_Oberon"
+            },
+            {
+                "title": "Sign of the Unicorn",
+                "avg_rating": 4.14,
+                "ratings_count": 17654,
+                "id": "239917.Sign_of_the_Unicorn"
+            },
+            {
+                "title": "Trumps of Doom",
+                "avg_rating": 4.06,
+                "ratings_count": 14581,
+                "id": "536790.Trumps_of_Doom"
+            },
+            {
+                "title": "Blood of Amber",
+                "avg_rating": 4.04,
+                "ratings_count": 12483,
+                "id": "239924.Blood_of_Amber"
+            },
+            {
+                "title": "The Chronicles of Amber",
+                "avg_rating": 4.37,
+                "ratings_count": 10661,
+                "id": "316876.The_Chronicles_of_Amber"
+            },
+            {
+                "title": "This Immortal",
+                "avg_rating": 3.92,
+                "ratings_count": 10554,
+                "id": "13827.This_Immortal"
+            },
+            {
+                "title": "Prince of Chaos",
+                "avg_rating": 3.97,
+                "ratings_count": 9747,
+                "id": "61994.Prince_of_Chaos"
+            },
+            {
+                "title": "Sign of Chaos",
+                "avg_rating": 3.97,
+                "ratings_count": 9613,
+                "id": "62004.Sign_of_Chaos"
+            },
+            {
+                "title": "Knight of Shadows",
+                "avg_rating": 3.94,
+                "ratings_count": 9229,
+                "id": "62016.Knight_of_Shadows"
+            },
+            {
+                "title": "A Night in the Lonesome October",
+                "avg_rating": 4.2,
+                "ratings_count": 8429,
+                "id": "62005.A_Night_in_the_Lonesome_October"
+            },
+            {
+                "title": "Jack of Shadows",
+                "avg_rating": 4.0,
+                "ratings_count": 6266,
+                "id": "61986.Jack_of_Shadows"
+            },
+            {
+                "title": "Damnation Alley",
+                "avg_rating": 3.55,
+                "ratings_count": 4768,
+                "id": "239919.Damnation_Alley"
+            },
+            {
+                "title": "The Chronicles of Amber: Volume I",
+                "avg_rating": 4.34,
+                "ratings_count": 3801,
+                "id": "2216760.The_Chronicles_of_Amber"
+            },
+            {
+                "title": "Creatures of Light and Darkness",
+                "avg_rating": 3.97,
+                "ratings_count": 4070,
+                "id": "427252.Creatures_of_Light_and_Darkness"
+            },
+            {
+                "title": "The Doors of His Face, the Lamps of His Mouth",
+                "avg_rating": 4.07,
+                "ratings_count": 3751,
+                "id": "13824.The_Doors_of_His_Face_the_Lamps_of_His_Mouth"
+            },
+            {
+                "title": "Doorways in the Sand",
+                "avg_rating": 3.97,
+                "ratings_count": 3761,
+                "id": "61998.Doorways_in_the_Sand"
+            },
+            {
+                "title": "Bring Me the Head of Prince Charming",
+                "avg_rating": 3.74,
+                "ratings_count": 3520,
+                "id": "239922.Bring_Me_the_Head_of_Prince_Charming"
+            },
+            {
+                "title": "Roadmarks",
+                "avg_rating": 3.87,
+                "ratings_count": 2771,
+                "id": "939645.Roadmarks"
+            },
+            {
+                "title": "My Name is Legion",
+                "avg_rating": 3.82,
+                "ratings_count": 2789,
+                "id": "239923.My_Name_is_Legion"
+            },
+            {
+                "title": "The Dream Master",
+                "avg_rating": 3.63,
+                "ratings_count": 2508,
+                "id": "61992.The_Dream_Master"
+            },
+            {
+                "title": "Changeling",
+                "avg_rating": 3.7,
+                "ratings_count": 2184,
+                "id": "28807.Changeling"
+            },
+            {
+                "title": "The Second Chronicles of Amber",
+                "avg_rating": 4.24,
+                "ratings_count": 1839,
+                "id": "451521.The_Second_Chronicles_of_Amber"
+            },
+            {
+                "title": "Dilvish, the Damned",
+                "avg_rating": 3.79,
+                "ratings_count": 1914,
+                "id": "62017.Dilvish_the_Damned"
+            },
+            {
+                "title": "Unicorn Variations",
+                "avg_rating": 4.02,
+                "ratings_count": 1796,
+                "id": "536800.Unicorn_Variations"
+            },
+            {
+                "title": "Isle of the Dead",
+                "avg_rating": 3.83,
+                "ratings_count": 1763,
+                "id": "1124895.Isle_of_the_Dead"
+            }
+        ]
+    },
+    "Samuel R. Delany": {
+        "stats": {
+            "avg_rating": 3.88,
+            "ratings_count": 93961,
+            "reviews_count": 8419,
+            "shelvings_count": 279501
+        },
+        "books": [
+            {
+                "title": "Babel-17",
+                "avg_rating": 3.78,
+                "ratings_count": 16240,
+                "id": "1199688.Babel_17"
+            },
+            {
+                "title": "Dhalgren",
+                "avg_rating": 3.8,
+                "ratings_count": 11711,
+                "id": "40963358-dhalgren"
+            },
+            {
+                "title": "Nova",
+                "avg_rating": 3.82,
+                "ratings_count": 7012,
+                "id": "85863.Nova"
+            },
+            {
+                "title": "The Einstein Intersection",
+                "avg_rating": 3.56,
+                "ratings_count": 4718,
+                "id": "145354.The_Einstein_Intersection"
+            },
+            {
+                "title": "Stars in My Pocket Like Grains of Sand",
+                "avg_rating": 3.86,
+                "ratings_count": 2628,
+                "id": "85861.Stars_in_My_Pocket_Like_Grains_of_Sand"
+            },
+            {
+                "title": "Babel-17/Empire Star",
+                "avg_rating": 3.94,
+                "ratings_count": 1925,
+                "id": "145356.Babel_17_Empire_Star"
+            },
+            {
+                "title": "Trouble on Triton: An Ambiguous Heterotopia",
+                "avg_rating": 3.7,
+                "ratings_count": 1927,
+                "id": "85893.Trouble_on_Triton"
+            },
+            {
+                "title": "Times Square Red, Times Square Blue",
+                "avg_rating": 4.17,
+                "ratings_count": 1468,
+                "id": "85862.Times_Square_Red_Times_Square_Blue"
+            },
+            {
+                "title": "Tales of Nev\u00e8r\u00ffon",
+                "avg_rating": 3.9,
+                "ratings_count": 1376,
+                "id": "85866.Tales_of_Nev_r_on"
+            },
+            {
+                "title": "The Motion of Light in Water: Sex and Science Fiction Writing in the East Village",
+                "avg_rating": 4.3,
+                "ratings_count": 988,
+                "id": "353325.The_Motion_of_Light_in_Water"
+            },
+            {
+                "title": "Empire Star",
+                "avg_rating": 3.88,
+                "ratings_count": 936,
+                "id": "1150390.Empire_Star"
+            },
+            {
+                "title": "Aye, and Gomorrah",
+                "avg_rating": 4.01,
+                "ratings_count": 892,
+                "id": "85873.Aye_and_Gomorrah"
+            },
+            {
+                "title": "Hogg",
+                "avg_rating": 3.16,
+                "ratings_count": 861,
+                "id": "85865.Hogg"
+            },
+            {
+                "title": "The Ballad of Beta 2",
+                "avg_rating": 3.72,
+                "ratings_count": 707,
+                "id": "708568.The_Ballad_of_Beta_2"
+            },
+            {
+                "title": "The Jewels of Aptor",
+                "avg_rating": 3.29,
+                "ratings_count": 797,
+                "id": "262401.The_Jewels_of_Aptor"
+            },
+            {
+                "title": "Driftglass",
+                "avg_rating": 3.91,
+                "ratings_count": 659,
+                "id": "722587.Driftglass"
+            },
+            {
+                "title": "Nevery\u00f3na",
+                "avg_rating": 3.99,
+                "ratings_count": 579,
+                "id": "81758.Nevery_na"
+            },
+            {
+                "title": "The Fall of the Towers",
+                "avg_rating": 3.63,
+                "ratings_count": 596,
+                "id": "85874.The_Fall_of_the_Towers"
+            },
+            {
+                "title": "About Writing: Seven Essays, Four Letters, & Five Interviews",
+                "avg_rating": 4.27,
+                "ratings_count": 384,
+                "id": "85871.About_Writing"
+            },
+            {
+                "title": "Bread and Wine",
+                "avg_rating": 3.96,
+                "ratings_count": 394,
+                "id": "85886.Bread_and_Wine"
+            },
+            {
+                "title": "Flight from Nev\u00e8r\u00ffon",
+                "avg_rating": 4.09,
+                "ratings_count": 375,
+                "id": "85870.Flight_from_Nev_r_on"
+            },
+            {
+                "title": "Return to Nev\u00e8r\u00ffon",
+                "avg_rating": 3.97,
+                "ratings_count": 348,
+                "id": "85887.Return_to_Nev_r_on"
+            },
+            {
+                "title": "The Mad Man",
+                "avg_rating": 4.01,
+                "ratings_count": 252,
+                "id": "786182.The_Mad_Man"
+            },
+            {
+                "title": "Dark Reflections",
+                "avg_rating": 3.91,
+                "ratings_count": 258,
+                "id": "85868.Dark_Reflections"
+            },
+            {
+                "title": "They Fly at \u00c7iron",
+                "avg_rating": 3.22,
+                "ratings_count": 304,
+                "id": "390773.They_Fly_at_iron"
+            },
+            {
+                "title": "The Jewel-Hinged Jaw: Notes on the Language of Science Fiction",
+                "avg_rating": 4.23,
+                "ratings_count": 220,
+                "id": "602463.The_Jewel_Hinged_Jaw"
+            },
+            {
+                "title": "Heavenly Breakfast: An Essay on the Winter of Love",
+                "avg_rating": 3.97,
+                "ratings_count": 195,
+                "id": "85878.Heavenly_Breakfast"
+            },
+            {
+                "title": "Through the Valley of the Nest of Spiders",
+                "avg_rating": 3.99,
+                "ratings_count": 186,
+                "id": "7999236-through-the-valley-of-the-nest-of-spiders"
+            },
+            {
+                "title": "Out of the Dead City",
+                "avg_rating": 3.13,
+                "ratings_count": 232,
+                "id": "312252.Out_of_the_Dead_City"
+            },
+            {
+                "title": "Distant Stars",
+                "avg_rating": 3.86,
+                "ratings_count": 155,
+                "id": "336557.Distant_Stars"
+            }
+        ]
+    }
+}
