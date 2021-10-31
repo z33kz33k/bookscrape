@@ -11,8 +11,9 @@ import json
 import re
 import time
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
 
 import requests
@@ -21,7 +22,42 @@ from bs4.element import Tag
 from contexttimer import Timer
 from requests import Timeout
 
-from constants import DELAY, REQUEST_TIMOUT, TIMESTAMP_FORMAT, Renown
+from constants import DELAY, Json, REQUEST_TIMOUT, TIMESTAMP_FORMAT
+
+TOLKIEN_RATINGS_COUNT = 9_323_827
+
+
+class Renown(Enum):
+    SUPERSTAR = int(TOLKIEN_RATINGS_COUNT / 3)
+    STAR = range(int(TOLKIEN_RATINGS_COUNT / 10), int(TOLKIEN_RATINGS_COUNT / 3))
+    FAMOUS = range(int(TOLKIEN_RATINGS_COUNT / 30), int(TOLKIEN_RATINGS_COUNT / 10))
+    POPULAR = range(int(TOLKIEN_RATINGS_COUNT / 60), int(TOLKIEN_RATINGS_COUNT / 30))
+    WELL_KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 100), int(TOLKIEN_RATINGS_COUNT / 60))
+    KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 400), int(TOLKIEN_RATINGS_COUNT / 100))
+    SOMEWHAT_KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 200), int(TOLKIEN_RATINGS_COUNT / 400))
+    LITTLE_KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 1000), int(TOLKIEN_RATINGS_COUNT / 200))
+    OBSCURE = range(int(TOLKIEN_RATINGS_COUNT / 1000))
+
+    @property
+    def priority(self) -> int:
+        if self is Renown.SUPERSTAR:
+            return 8
+        elif self is Renown.STAR:
+            return 7
+        elif self is Renown.FAMOUS:
+            return 6
+        elif self is Renown.POPULAR:
+            return 5
+        elif self is Renown.WELL_KNOWN:
+            return 4
+        elif self is Renown.KNOWN:
+            return 3
+        elif self is Renown.SOMEWHAT_KNOWN:
+            return 2
+        elif self is Renown.LITTLE_KNOWN:
+            return 1
+        elif self is Renown.OBSCURE:
+            return 0
 
 
 @dataclass
@@ -127,7 +163,15 @@ class AuthorParser:
     """
     LIST_URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
 
-    def __init__(self, surname: str, *names: str) -> None:
+    def __init__(self, surname="", *names: str, **kwargs: Any) -> None:
+        if "fullname" in kwargs:
+            if surname:
+                raise ValueError(f"Invalid argument 'surname'={surname!r} when 'fullname' "
+                                 f"specified.")
+            if names:
+                raise ValueError(f"Invalid argument 'names'={names!r} when 'fullname' "
+                                 f"specified.")
+            *names, surname = kwargs["fullname"].split()
         self.surname = surname
         self.names = names
         self.stats: Optional[AuthorStats] = None
@@ -136,6 +180,10 @@ class AuthorParser:
     @property
     def allnames(self) -> List[str]:
         return [*self.names, self.surname]
+
+    @property
+    def fullname(self) -> str:
+        return " ".join(self.allnames)
 
     def find_author_link(self) -> str:
         """Find Goodreads author link.
@@ -269,7 +317,7 @@ class AuthorParser:
         count = int(count.replace(",", "").replace(t, ""))
         return Book(title, avg, count, id_)
 
-    def get_stats_and_books(self) -> None:
+    def fetch_stats_and_books(self) -> None:
         link = self.find_author_link()
         author_id = self.extract_id(link)
         self.stats, self.books = self.parse_author_list(author_id)
@@ -278,37 +326,46 @@ class AuthorParser:
         return f"{self.__class__.__name__}(stats={self.stats}, books={self.books[:5]})"
 
     def __str__(self) -> str:
-        return " ".join(self.allnames)
+        return self.fullname
+
+    @property
+    def as_dict(self) -> Json:
+        return {
+            self.fullname: {
+                "stats": self.stats.as_dict,
+                "books": [b.as_dict for b in self.books]
+            }
+        }
 
 
+# TODO
 class BookParser:
     """Goodreads book page parser.
     """
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
 
 
-def dump(*authors: Tuple[str, ...]) -> None:
+def dump(*authors: Tuple[str, ...], **kwargs: Any) -> None:
+    prefix = kwargs["prefix"] if "prefix" in kwargs else ""
     data = {}
     for i, author in enumerate(authors, start=1):
         print(f"Scraping author #{i}: {' '.join(author)!r}...")
         *names, surname = author
         parser = AuthorParser(surname, *names)
         try:
-            parser.get_stats_and_books()
+            parser.fetch_stats_and_books()
         except Timeout:
             print("Goodreads doesn't play nice. Timeout exceeded. Exiting.")
             break
-        data.update({
-            " ".join(parser.allnames): {
-                "stats": parser.stats.as_dict,
-                "books": [b.as_dict for b in parser.books]
-            }
-        })
+        data.update(parser.as_dict)
 
         print(f"Throttling for {DELAY} seconds...")
         time.sleep(DELAY)
         print()
 
-    dest = Path("output") / f"dump_{datetime.now().strftime(TIMESTAMP_FORMAT)}.json"
+    prefix = f"{prefix}_" if prefix else ""
+    dest = Path("output") / f"{prefix}dump_{datetime.now().strftime(TIMESTAMP_FORMAT)}.json"
     with dest.open("w", encoding="utf8") as f:
         json.dump(data, f, indent=4)
+
+

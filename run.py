@@ -8,7 +8,7 @@
 
 """
 from goodreads import dump
-from constants import OTHER_AUTHORS
+from meta import OTHER_AUTHORS
 
 dump(*OTHER_AUTHORS)
 
