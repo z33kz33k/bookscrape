@@ -155,7 +155,7 @@ def getsoup(url: str) -> BeautifulSoup:
 # TODO: parsing of author names with non-ASCII characters
 # Goodreads replaces a non-ASCII character with "_" in the author ID.
 # Example: '10991.Stanis_aw_Lem'
-# As the example above shows, underline is also used as a separator. Ff a non-ASCII character
+# As the example above shows, underline is also used as a separator. If a non-ASCII character
 # occurs at the name's limit, underlines ARE NOT doubled
 # Example: '10089.Philip_Jos_Farmer'
 class AuthorParser:
