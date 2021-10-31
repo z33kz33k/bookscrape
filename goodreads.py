@@ -23,6 +23,7 @@ from contexttimer import Timer
 from requests import Timeout
 
 from constants import DELAY, Json, REQUEST_TIMOUT, TIMESTAMP_FORMAT
+from utils import non_ascii_index
 
 TOLKIEN_RATINGS_COUNT = 9_323_827
 
@@ -191,17 +192,31 @@ class AuthorParser:
         Example:
             'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
         """
-        def parse_spans(spans_: List[Tag], *names: str) -> Optional[Tag]:
+        def parse_spans(spans_: List[Tag], *author_names: str) -> Optional[Tag]:
             i, result = 0, None
             while not result:
                 if i == len(spans_):
                     break
                 span = spans_[i]
-                re_parts = [f"(?=.*{name})" for name in names]
+                re_parts = [f"(?=.*{name})" for name in author_names]
                 result = span.find(href=re.compile("".join(re_parts)))
                 i += 1
 
             return result
+
+        # Goodreads replaces a non-ASCII character with "_" in the author ID.
+        # Example: '10991.Stanis_aw_Lem'
+        # As the example above shows, underline is also used as a separator.
+        # If a non-ASCII character occurs at the name's limit, underlines ARE NOT doubled
+        # Example: '10089.Philip_Jos_Farmer'
+        def handle_non_ascii(*author_names) -> List[str]:
+            handled_names = []
+            for name in author_names:
+                idx = non_ascii_index(name)
+                if idx != -1:
+                    name = name[:idx] + "_" + name[idx + 1:]
+                handled_names.append(name)
+            return handled_names
 
         query = "+".join(self.allnames)
         url_template = "https://www.goodreads.com/search?q={}"
@@ -211,11 +226,13 @@ class AuthorParser:
         if not spans:
             raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
 
-        a = parse_spans(spans, *self.allnames)
+        names = handle_non_ascii(*self.allnames)
+
+        a = parse_spans(spans, *names)
 
         if not a:
-            if len(self.allnames) > 2:
-                a = parse_spans(spans, self.allnames[0], self.allnames[-1])
+            if len(names) > 2:
+                a = parse_spans(spans, names[0], names[-1])
             if not a:
                 raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
 
@@ -255,17 +272,17 @@ class AuthorParser:
         text = div.text.strip()
         parts = [part.strip() for part in text.split("\n")[1:]]
         parts = [part.strip(" ·") for part in parts]
-        stats = self.parse_author_stats(parts)
+        stats = self._parse_author_stats(parts)
 
         # books
         table = container.find("table", class_="tableList")
         rows = table.find_all("tr")
-        books = [self.parse_book_table_row(row) for row in rows]
+        books = [self._parse_book_table_row(row) for row in rows]
 
         return stats, books
 
     @staticmethod
-    def parse_author_stats(parts: List[str]) -> AuthorStats:
+    def _parse_author_stats(parts: List[str]) -> AuthorStats:
         """Parse author stats string parts extracted from the author list page.
 
         Example string parts:
@@ -286,7 +303,7 @@ class AuthorParser:
         return AuthorStats(avg_rating, ratings_count, reviews_count, shelvings_count)
 
     @staticmethod
-    def parse_book_table_row(row: Tag) -> Book:
+    def _parse_book_table_row(row: Tag) -> Book:
         """Parse a book table row of the author page's book list.
 
         :param row: a BeautifulSoup Tag object representing the row
