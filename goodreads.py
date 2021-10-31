@@ -7,7 +7,11 @@
     @author: z33k
 
 """
+import json
 import re
+import time
+from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
 
@@ -15,8 +19,9 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from contexttimer import Timer
+from requests import Timeout
 
-from constants import REQUEST_TIMOUT
+from constants import DELAY, REQUEST_TIMOUT, TIMESTAMP_FORMAT, Renown
 
 
 @dataclass
@@ -43,6 +48,38 @@ class AuthorStats:
             data["reviews_count"],
             data["shelvings_count"],
         )
+
+    @property
+    def r2r(self) -> float:
+        return self.reviews_count / self.ratings_count if self.ratings_count else 0
+
+    @property
+    def r2r_percent(self) -> str:
+        r2r = self.r2r * 100
+        return f"{r2r:.2f} %"
+
+    @property
+    def renown(self) -> Renown:
+        if self.ratings_count > Renown.SUPERSTAR.value:
+            return Renown.SUPERSTAR
+        elif self.ratings_count in Renown.STAR.value:
+            return Renown.STAR
+        elif self.ratings_count in Renown.FAMOUS.value:
+            return Renown.FAMOUS
+        elif self.ratings_count in Renown.POPULAR.value:
+            return Renown.POPULAR
+        elif self.ratings_count in Renown.WELL_KNOWN.value:
+            return Renown.WELL_KNOWN
+        elif self.ratings_count in Renown.KNOWN.value:
+            return Renown.KNOWN
+        elif self.ratings_count in Renown.SOMEWHAT_KNOWN.value:
+            return Renown.SOMEWHAT_KNOWN
+        elif self.ratings_count in Renown.LITTLE_KNOWN.value:
+            return Renown.LITTLE_KNOWN
+        elif self.ratings_count in Renown.OBSCURE.value:
+            return Renown.OBSCURE
+        else:
+            raise ValueError(f"Invalid ratings count: {self.ratings_count:,}.")
 
 
 @dataclass
@@ -79,6 +116,12 @@ def getsoup(url: str) -> BeautifulSoup:
     return BeautifulSoup(markup, "lxml")
 
 
+# TODO: parsing of author names with non-ASCII characters
+# Goodreads replaces a non-ASCII character with "_" in the author ID.
+# Example: '10991.Stanis_aw_Lem'
+# As the example above shows, underline is also used as a separator. Ff a non-ASCII character
+# occurs at the name's limit, underlines ARE NOT doubled
+# Example: '10089.Philip_Jos_Farmer'
 class AuthorParser:
     """Goodreads author page parser.
     """
@@ -234,6 +277,9 @@ class AuthorParser:
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(stats={self.stats}, books={self.books[:5]})"
 
+    def __str__(self) -> str:
+        return " ".join(self.allnames)
+
 
 class BookParser:
     """Goodreads book page parser.
@@ -241,3 +287,28 @@ class BookParser:
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
 
 
+def dump(*authors: Tuple[str, ...]) -> None:
+    data = {}
+    for i, author in enumerate(authors, start=1):
+        print(f"Scraping author #{i}: {' '.join(author)!r}...")
+        *names, surname = author
+        parser = AuthorParser(surname, *names)
+        try:
+            parser.get_stats_and_books()
+        except Timeout:
+            print("Goodreads doesn't play nice. Timeout exceeded. Exiting.")
+            break
+        data.update({
+            " ".join(parser.allnames): {
+                "stats": parser.stats.as_dict,
+                "books": [b.as_dict for b in parser.books]
+            }
+        })
+
+        print(f"Throttling for {DELAY} seconds...")
+        time.sleep(DELAY)
+        print()
+
+    dest = Path("output") / f"dump_{datetime.now().strftime(TIMESTAMP_FORMAT)}.json"
+    with dest.open("w", encoding="utf8") as f:
+        json.dump(data, f, indent=4)
