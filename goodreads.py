@@ -161,7 +161,7 @@ def getsoup(url: str) -> BeautifulSoup:
 class AuthorParser:
     """Goodreads author page parser.
     """
-    LIST_URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
+    URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
 
     def __init__(self, surname="", *names: str, **kwargs: Any) -> None:
         if "fullname" in kwargs:
@@ -237,8 +237,8 @@ class AuthorParser:
         *_, id_ = author_link.split("/")
         return id_
 
-    def parse_author_list(self, author_id: str) -> Tuple[AuthorStats, List[Book]]:
-        """Parse Goodreads author list page.
+    def parse_author_page(self, author_id: str) -> Tuple[AuthorStats, List[Book]]:
+        """Parse Goodreads author page.
 
         Example URL:
             https://www.goodreads.com/author/list/7415.Harlan_Ellison
@@ -246,7 +246,7 @@ class AuthorParser:
         :param author_id: last part of the URL, e.g.: '7415.Harlan_Ellison'
         :return: AuthorStats object and a list of Book objects
         """
-        url = self.LIST_URL_TEMPLATE.format(author_id)
+        url = self.URL_TEMPLATE.format(author_id)
         soup = getsoup(url)
         container = soup.find("div", class_="leftContainer")
 
@@ -320,7 +320,7 @@ class AuthorParser:
     def fetch_stats_and_books(self) -> None:
         link = self.find_author_link()
         author_id = self.extract_id(link)
-        self.stats, self.books = self.parse_author_list(author_id)
+        self.stats, self.books = self.parse_author_page(author_id)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(stats={self.stats}, books={self.books[:5]})"
@@ -346,6 +346,27 @@ class BookParser:
 
 
 def dump(*authors: Tuple[str, ...], **kwargs: Any) -> None:
+    """Dump ``authors`` to JSON.
+
+    Each author has to be a tuple of author names.
+    Example authors: [
+        ("Isaac", "Asimov"),
+        ("Frank", "Herbert"),
+        ("Jacek", "Dukaj"),
+        ("Andrzej", "Sapkowski"),
+        ("J.", "R.", "R.", "Tolkien"),
+        ("C.", "S.", "Lewis"),
+        ("Cordwainer", "Smith"),
+        ("Michael", "Moorcock"),
+        ("Clifford", "D.", "Simak"),
+        ("George", "R.", "R.", "Martin"),
+        ("Joe", "Abercrombie"),
+        ("Ursula", "K.", "Le", "Guin"),
+    ]
+
+    :param authors: variable number of author names tuples
+    :param kwargs: optional arguments (e.g. a prefix for a dumpfile's name)
+    """
     prefix = kwargs["prefix"] if "prefix" in kwargs else ""
     data = {}
     for i, author in enumerate(authors, start=1):
