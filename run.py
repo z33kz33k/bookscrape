@@ -19,6 +19,10 @@
 # parser.fetch_stats_and_books()
 
 
-from meta.hn import scrape
+# from meta.hn import scrape
+# scrape(dump_json=True)
 
-scrape(dump_json=True)
+
+from meta.hn import Parser
+parser = Parser()
+parser.dump_reprs()
