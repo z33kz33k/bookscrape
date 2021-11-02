@@ -16,14 +16,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
 
-import requests
-from bs4 import BeautifulSoup
 from bs4.element import Tag
-from contexttimer import Timer
 from requests import Timeout
 
-from constants import DELAY, Json, REQUEST_TIMOUT, TIMESTAMP_FORMAT
-from utils import non_ascii_index
+from constants import DELAY, Json, TIMESTAMP_FORMAT
+from utils import getsoup, non_ascii_index
 
 TOLKIEN_RATINGS_COUNT = 9_323_827
 
@@ -57,7 +54,7 @@ class Renown(Enum):
             return 2
         elif self is Renown.LITTLE_KNOWN:
             return 1
-        elif self is Renown.OBSCURE:
+        else:
             return 0
 
 
@@ -97,7 +94,7 @@ class AuthorStats:
 
     @property
     def renown(self) -> Renown:
-        if self.ratings_count > Renown.SUPERSTAR.value:
+        if self.ratings_count >= Renown.SUPERSTAR.value:
             return Renown.SUPERSTAR
         elif self.ratings_count in Renown.STAR.value:
             return Renown.STAR
@@ -145,20 +142,6 @@ class Book:
         )
 
 
-def getsoup(url: str) -> BeautifulSoup:
-    print(f"Requesting: {url!r}")
-    with Timer() as t:
-        markup = requests.get(url, timeout=REQUEST_TIMOUT).text
-    print(f"Request completed in {t.elapsed:3f} seconds.")
-    return BeautifulSoup(markup, "lxml")
-
-
-# TODO: parsing of author names with non-ASCII characters
-# Goodreads replaces a non-ASCII character with "_" in the author ID.
-# Example: '10991.Stanis_aw_Lem'
-# As the example above shows, underline is also used as a separator. If a non-ASCII character
-# occurs at the name's limit, underlines ARE NOT doubled
-# Example: '10089.Philip_Jos_Farmer'
 class AuthorParser:
     """Goodreads author page parser.
     """
@@ -362,34 +345,32 @@ class BookParser:
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
 
 
-def dump(*authors: Tuple[str, ...], **kwargs: Any) -> None:
+def dump(*authors: str, **kwargs: Any) -> None:
     """Dump ``authors`` to JSON.
 
-    Each author has to be a tuple of author names.
     Example authors: [
-        ("Isaac", "Asimov"),
-        ("Frank", "Herbert"),
-        ("Jacek", "Dukaj"),
-        ("Andrzej", "Sapkowski"),
-        ("J.", "R.", "R.", "Tolkien"),
-        ("C.", "S.", "Lewis"),
-        ("Cordwainer", "Smith"),
-        ("Michael", "Moorcock"),
-        ("Clifford", "D.", "Simak"),
-        ("George", "R.", "R.", "Martin"),
-        ("Joe", "Abercrombie"),
-        ("Ursula", "K.", "Le", "Guin"),
+        "Isaac Asimov",
+        "Frank Herbert",
+        "Jacek Dukaj",
+        "Andrzej Sapkowski",
+        "J. R. R. Tolkien",
+        "C. S. Lewis",
+        "Cordwainer Smith",
+        "Michael Moorcock",
+        "Clifford D. Simak",
+        "George R. R. Martin",
+        "Joe Abercrombie",
+        "Ursula K. Le Guin",
     ]
 
-    :param authors: variable number of author names tuples
+    :param authors: variable number of author full names
     :param kwargs: optional arguments (e.g. a prefix for a dumpfile's name)
     """
     prefix = kwargs["prefix"] if "prefix" in kwargs else ""
     data = {}
     for i, author in enumerate(authors, start=1):
-        print(f"Scraping author #{i}: {' '.join(author)!r}...")
-        *names, surname = author
-        parser = AuthorParser(surname, *names)
+        print(f"Scraping author #{i}: {author!r}...")
+        parser = AuthorParser(fullname=author)
         try:
             parser.fetch_stats_and_books()
         except Timeout:

@@ -14,6 +14,11 @@
 #
 
 
-from goodreads import AuthorParser
-parser = AuthorParser(fullname="Philip José Farmer")
-parser.fetch_stats_and_books()
+# from goodreads import AuthorParser
+# parser = AuthorParser(fullname="Philip José Farmer")
+# parser.fetch_stats_and_books()
+
+
+from meta.hn import scrape
+
+scrape(dump_json=True)
