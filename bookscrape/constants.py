@@ -1,8 +1,8 @@
 """
 
-    constants.py
-    ~~~~~~~~~~~~
-    Script's constants.
+    bookscrape.constants.py
+    ~~~~~~~~~~~~~~~~~~~~~~~
+    Script's constants
 
     @author: z33k
 

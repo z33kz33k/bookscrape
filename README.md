@@ -1,6 +1,6 @@
-# wranking
-Writers' ranking based on data scraped from various book websites.
+# bookscrape
+Book and writers rankings based on data scraped from various book websites
 
 ### Usage
-Oh, sweet secrets.
+This is a hobby project with no other intents so far
 

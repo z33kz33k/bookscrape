@@ -1,8 +1,8 @@
 """
 
-    scrape.goodreads.py
-    ~~~~~~~~~~~~~~~~~~~
-    Scrape and parse Goodreads data.
+    bookscrape.goodreads.py
+    ~~~~~~~~~~~~~~~~~~~~~~~
+    Scrape and parse Goodreads data
 
     @author: z33k
 
@@ -20,8 +20,8 @@ import backoff
 from bs4.element import Tag
 from requests import Timeout
 
-from constants import DELAY, Json, TIMESTAMP_FORMAT
-from utils import getsoup, non_ascii_indices, extract_int, extract_float, from_iterable
+from bookscrape.constants import DELAY, Json, TIMESTAMP_FORMAT
+from bookscrape.utils import getsoup, non_ascii_indices, extract_int, extract_float, from_iterable
 
 
 # TODO: read it from and save it to a file
@@ -183,6 +183,7 @@ class Author:
             [Book.from_dict(book) for book in data["name"]["books"]]
         )
 
+
 # TODO: custom parse error, handling hyphenated author names like: 'Chi Ta-wei' (ID:
 #  '14640243.Chi_Ta_wei"), check if second non-ascii char in name would be handled
 class AuthorParser:
@@ -265,8 +266,11 @@ class AuthorParser:
     def extract_id(author_link: str) -> str:
         """Extract Goodreads author ID from ``author_link``.
 
-        :param author_link: Goodreads author link, e.g.: 'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
-        :return: author ID, e.g.: '7415.Harlan_Ellison'
+        Args:
+            author_link: Goodreads author link, e.g.: 'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
+
+        Returns:
+            an author ID, e.g.: '7415.Harlan_Ellison'
         """
         *_, id_ = author_link.split("/")
         return id_
@@ -277,8 +281,11 @@ class AuthorParser:
         Example URL:
             https://www.goodreads.com/author/list/7415.Harlan_Ellison
 
-        :param author_id: last part of the URL, e.g.: '7415.Harlan_Ellison'
-        :return: AuthorStats object and a list of Book objects
+        Args:
+            author_id: last part of the URL, e.g.: '7415.Harlan_Ellison'
+
+        Returns:
+            an AuthorStats object and a list of Book objects
         """
         url = self.URL_TEMPLATE.format(author_id)
         soup = getsoup(url)
@@ -351,8 +358,11 @@ class AuthorParser:
     def _parse_book_table_row(self, row: Tag) -> Book:
         """Parse a book table row of the author page's book list.
 
-        :param row: a BeautifulSoup Tag object representing the row
-        :return: Book object
+        Args:
+            row: a BeautifulSoup Tag object representing the row
+
+        Returns:
+            a Book object
         """
         a = row.find("a")
         if not a:
@@ -384,7 +394,7 @@ class AuthorParser:
         return self.fetch_data()
 
 
-# TODO
+# TODO: parse the individual Book page for detailed ratings data
 class BookParser:
     """Goodreads book page parser.
     """
@@ -409,8 +419,9 @@ def dump(*authors: str, **kwargs: Any) -> None:
         "Ursula K. Le Guin",
     ]
 
-    :param authors: variable number of author full names
-    :param kwargs: optional arguments (e.g. a prefix for a dumpfile's name)
+    Args:
+        authors: variable number of author full names
+        kwargs: optional arguments (e.g. a prefix for a dumpfile's name)
     """
     prefix = kwargs["prefix"] if "prefix" in kwargs else ""
     data = {}

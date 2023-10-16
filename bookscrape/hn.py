@@ -1,8 +1,8 @@
 """
 
-    scrape.hn.py
-    ~~~~~~~~~~~~
-    Scrape Hugo and Nebula awards data.
+    bookscrape.hn.py
+    ~~~~~~~~~~~~~~~~
+    Scrape Hugo and Nebula awards data
 
     @author: z33k
 
@@ -18,8 +18,9 @@ from typing import List, Optional, NamedTuple, Tuple, Union
 import numpy as np
 import pandas as pd
 
-from constants import Json
-from utils import first_df_row_as_columns, getsoup
+from bookscrape.constants import Json
+from bookscrape.utils import first_df_row_as_columns, getsoup
+
 
 URL = "http://www.nicholaswhyte.info/sf/nh2.htm"
 DEFAULT_JSON = Path("scrape") / "hugo_nebula.json"
@@ -28,8 +29,9 @@ DEFAULT_JSON = Path("scrape") / "hugo_nebula.json"
 def scrape(dump_json=False, dest: Optional[Path] = None) -> pd.DataFrame:
     """Scrape Hugo and Nebula winners data from ``URL`` into a pandas dataframe.
 
-    :param dump_json: flag for dumping data to JSON (default: do not dump)
-    :param dest: optional destination for dumping the data as JSON
+    Args:
+        dump_json: flag for dumping data to JSON (default: do not dump)
+        dest: optional destination for dumping the data as JSON
     """
     soup = getsoup(URL)
     table = soup.find("table")

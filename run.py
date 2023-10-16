@@ -27,7 +27,7 @@
 # parser = Parser()
 # parser.dump_reprs()
 
-from scrape.goodreads import AuthorParser
+from bookscrape.goodreads import AuthorParser
 author = AuthorParser("A.C. Crispin")
 r = author.fetch_data()
 pass

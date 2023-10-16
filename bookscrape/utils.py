@@ -1,8 +1,8 @@
 """
 
-    utils.py
-    ~~~~~~~~~~~~
-    Script's utilities.
+    bookscrape.utils.py
+    ~~~~~~~~~~~~~~~~~~~
+    Script's utilities
 
     @author: z33k
 
@@ -15,7 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 from contexttimer import Timer
 
-from constants import REQUEST_TIMOUT, T
+from bookscrape.constants import REQUEST_TIMOUT, T
 
 
 def non_ascii_indices(text: str) -> Iterator[int]:
@@ -29,8 +29,12 @@ def non_ascii_indices(text: str) -> Iterator[int]:
 def getsoup(url: str) -> BeautifulSoup:
     """Return BeautifulSoup object based on ``url``.
 
-    :param url: URL string
-    :return: BeautifulSoup object
+    Args:
+        url: URL string
+
+    Returns:
+
+        a BeautifulSoup object
     """
     print(f"Requesting: {url!r}")
     with Timer() as t:

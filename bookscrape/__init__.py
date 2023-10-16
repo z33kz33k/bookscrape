@@ -1,8 +1,8 @@
 """
 
-    scrape
-    ~~~~~~
-    Scrape writers' data.
+    bookscrape.__init__.py
+    ~~~~~~~~~~~~~~~~~~~~~~
+    Scrape books data.
 
     @author: z33k
 
@@ -41,18 +41,3 @@ DANGEROUS_VISIONS_AUTHORS = [
     "Roger Zelazny",
     "Samuel R. Delany",
 ]
-
-# OTHER_AUTHORS = [
-#     "Isaac Asimov",
-#     "Frank Herbert",
-#     "Jacek Dukaj",
-#     "Andrzej Sapkowski",
-#     "J. R. R. Tolkien",
-#     "C. S. Lewis",
-#     "Cordwainer Smith",
-#     "Michael Moorcock",
-#     "Clifford D. Simak",
-#     "George R. R. Martin",
-#     "Joe Abercrombie",
-#     "Ursula K. Le Guin",
-# ]
