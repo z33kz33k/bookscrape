@@ -1,6 +1,13 @@
+/.idea
 /data
 /temp
 /research
+/input
+/output
+*service_account.json
+*api_creds.json
+run.py
+tests.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

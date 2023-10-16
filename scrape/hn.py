@@ -1,8 +1,8 @@
 """
 
-    meta.hn.py
-    ~~~~~~~~~~
-    Scrape Hugo and Nebula awards meta data.
+    scrape.hn.py
+    ~~~~~~~~~~~~
+    Scrape Hugo and Nebula awards data.
 
     @author: z33k
 
@@ -22,11 +22,11 @@ from constants import Json
 from utils import first_df_row_as_columns, getsoup
 
 URL = "http://www.nicholaswhyte.info/sf/nh2.htm"
-DEFAULT_JSON = Path("input") / "hugo_nebula.json"
+DEFAULT_JSON = Path("scrape") / "hugo_nebula.json"
 
 
 def scrape(dump_json=False, dest: Optional[Path] = None) -> pd.DataFrame:
-    """Scrape Hugo and Nebula winners data from ``URL`` ito a pandas dataframe.
+    """Scrape Hugo and Nebula winners data from ``URL`` into a pandas dataframe.
 
     :param dump_json: flag for dumping data to JSON (default: do not dump)
     :param dest: optional destination for dumping the data as JSON
@@ -49,7 +49,7 @@ def scrape(dump_json=False, dest: Optional[Path] = None) -> pd.DataFrame:
     # replace the original source's non-ascii placeholder with the underline
     for col in df.columns[:4]:
         df[col] = df[col].str.replace("�", "_")
-    # remove trash strings from titles
+    # remove trash strings
     trash = (" [review]", " [see review]", " [discussion]", " (tie)", " (declined)")
     for col in df.columns[1:4]:
         for t in trash:
@@ -141,8 +141,8 @@ class Author:
 
     @property
     def rank(self) -> int:
-        hugorank = round(sum(work.category.weight for work in self.hugos) * 0.4, 1)
-        nebrank = round(sum(work.category.weight for work in self.nebulas) * 0.6, 1)
+        hugorank = round(sum(work.category.weight for work in self.hugos) * 0.4, 2)
+        nebrank = round(sum(work.category.weight for work in self.nebulas) * 0.6, 2)
         return round((hugorank + nebrank) * 10)
 
     def __repr__(self) -> str:

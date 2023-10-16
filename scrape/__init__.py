@@ -1,13 +1,12 @@
 """
 
-    meta.py
-    ~~~~~~~
-    Scrape meta data.
+    scrape
+    ~~~~~~
+    Scrape writers' data.
 
     @author: z33k
 
 """
-
 DANGEROUS_VISIONS_AUTHORS = [
     "Lester del Rey",
     "Robert Silverberg",

@@ -1,8 +1,8 @@
 """
 
-    goodreads.py
-    ~~~~~~~~~~~~
-    Goodreads scraping and parsing.
+    scrape.goodreads.py
+    ~~~~~~~~~~~~~~~~~~~
+    Scrape and parse Goodreads data.
 
     @author: z33k
 
@@ -16,13 +16,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
 
+import backoff
 from bs4.element import Tag
 from requests import Timeout
 
 from constants import DELAY, Json, TIMESTAMP_FORMAT
-from utils import getsoup, non_ascii_index
+from utils import getsoup, non_ascii_indices, extract_int, extract_float, from_iterable
 
-TOLKIEN_RATINGS_COUNT = 9_323_827
+TOLKIEN_RATINGS_COUNT = 10_669_209  # 15th Oct 2023
 
 
 class Renown(Enum):
@@ -72,11 +73,13 @@ class AuthorStats:
             "ratings_count": self.ratings_count,
             "reviews_count": self.reviews_count,
             "shelvings_count": self.shelvings_count,
+            "r2r": self.r2r_percent,
+            "renown": self.renown.name
         }
 
-    @staticmethod
-    def from_dict(data: Dict[str, Union[float, int]]) -> "AuthorStats":
-        return AuthorStats(
+    @classmethod
+    def from_dict(cls, data: Dict[str, Union[float, int]]) -> "AuthorStats":
+        return cls(
             data["avg_rating"],
             data["ratings_count"],
             data["reviews_count"],
@@ -119,55 +122,84 @@ class AuthorStats:
 @dataclass
 class Book:
     title: str
+    id: str
     avg_rating: float
     ratings_count: int
-    id: str
+    published_in: Optional[int]
+    editions_count: Optional[int]
 
     @property
     def as_dict(self) -> Dict[str, Union[str, int, float]]:
-        return {
+        data = {
             "title": self.title,
+            "id": self.id,
             "avg_rating": self.avg_rating,
             "ratings_count": self.ratings_count,
-            "id": self.id,
         }
+        if self.published_in is not None:
+            data.update({
+                "published_in": self.published_in,
+            })
+        if self.editions_count is not None:
+            data.update({
+                "editions_count": self.editions_count,
+            })
+        return data
 
-    @staticmethod
-    def from_dict(data: Dict[str, Union[str, int, float]]) -> "Book":
-        return Book(
+    @classmethod
+    def from_dict(cls, data: Dict[str, Union[str, int, float]]) -> "Book":
+        return cls(
             data["title"],
+            data["id"],
             data["avg_rating"],
             data["ratings_count"],
-            data["id"],
+            data.get("published_in"),
+            data.get("editions_count"),
         )
 
 
+@dataclass
+class Author:
+    name: str
+    stats: AuthorStats
+    books: List[Book]
+
+    @property
+    def as_dict(self) -> Json:
+        return {
+            self.name: {
+                "stats": self.stats.as_dict,
+                "books": [b.as_dict for b in self.books]
+            }
+        }
+
+    @classmethod
+    def from_dict(cls, data: Json) -> "Author":
+        return cls(
+            data["name"],
+            AuthorStats.from_dict(data["name"]["stats"]),
+            [Book.from_dict(book) for book in data["name"]["books"]]
+        )
+
+# TODO: custom parse error, handling hyphenated author names like: 'Chi Ta-wei' (ID:
+#  '14640243.Chi_Ta_wei"), check if second non-ascii char in name would be handled
 class AuthorParser:
     """Goodreads author page parser.
     """
     URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
 
-    def __init__(self, surname="", *names: str, **kwargs: Any) -> None:
-        if "fullname" in kwargs:
-            if surname:
-                raise ValueError(f"Invalid argument 'surname'={surname!r} when 'fullname' "
-                                 f"specified.")
-            if names:
-                raise ValueError(f"Invalid argument 'names'={names!r} when 'fullname' "
-                                 f"specified.")
-            *names, surname = kwargs["fullname"].split()
-        self.surname = surname
-        self.names = names
-        self.stats: Optional[AuthorStats] = None
-        self.books: List[Book] = []
-
-    @property
-    def allnames(self) -> List[str]:
-        return [*self.names, self.surname]
-
     @property
     def fullname(self) -> str:
-        return " ".join(self.allnames)
+        return self._fullname
+
+    @property
+    def _allnames(self) -> List[str]:
+        return [*self._names, self._surname]
+
+    def __init__(self, fullname: str) -> None:
+        self._fullname = fullname
+        *names, surname = fullname.split()
+        self._names, self._surname = names, surname
 
     def find_author_link(self) -> str:
         """Find Goodreads author link.
@@ -195,21 +227,21 @@ class AuthorParser:
         def handle_non_ascii(*author_names) -> List[str]:
             handled_names = []
             for name in author_names:
-                idx = non_ascii_index(name)
-                if idx != -1:
+                idx = next(non_ascii_indices(name), None)
+                if idx:
                     name = name[:idx] + "_" + name[idx + 1:]
                 handled_names.append(name)
             return handled_names
 
-        query = "+".join(self.allnames)
+        query = "+".join(self._allnames)
         url_template = "https://www.goodreads.com/search?q={}"
         url = url_template.format(query)
         soup = getsoup(url)
         spans = soup.find_all("span", itemprop="author")
         if not spans:
-            raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
+            raise ValueError(f"Not a valid Goodreads author name: {self.fullname!r}.")
 
-        names = handle_non_ascii(*self.allnames)
+        names = handle_non_ascii(*self._allnames)
 
         a = parse_spans(spans, *names)
 
@@ -217,11 +249,11 @@ class AuthorParser:
             if len(names) > 2:
                 a = parse_spans(spans, names[0], names[-1])
             if not a:
-                raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
+                raise ValueError(f"Not a valid Goodreads author name: {self.fullname!r}.")
 
         link = a.attrs.get("href")
         if not link:
-            raise ValueError(f"{self.allnames!r} are not valid Goodreads author names.")
+            raise ValueError(f"Not a valid Goodreads author name: {self.fullname!r}.")
         # link now ought to look like this:
         # 'https://www.goodreads.com/author/show/7415.Harlan_Ellison?from_search=true&from_srp=true'
         link, _ = link.split("?")  # stripping the trash part
@@ -286,7 +318,35 @@ class AuthorParser:
         return AuthorStats(avg_rating, ratings_count, reviews_count, shelvings_count)
 
     @staticmethod
-    def _parse_book_table_row(row: Tag) -> Book:
+    def _parse_published(row: Tag) -> Optional[int]:
+        tag = row.find(lambda t: t.name == "span" and "published" in t.text)
+        if tag is None:
+            return None
+        text = tag.text.strip()
+        parts = text.split("\n")
+        part = from_iterable(parts, lambda p: "published" in p)
+        if part is None:
+            return None
+        idx = parts.index(part)
+        idx += 1
+        try:
+            published = parts[idx]
+            return extract_int(published)
+        except (IndexError, ValueError):
+            return None
+
+    @staticmethod
+    def _parse_editions(row: Tag) -> Optional[int]:
+        editions = row.find(lambda t: t.name == "a" and "edition" in t.text)
+        if editions is None:
+            return None
+        editions = editions.text.strip()
+        try:
+            return extract_int(editions)
+        except ValueError:
+            return None
+
+    def _parse_book_table_row(self, row: Tag) -> Book:
         """Parse a book table row of the author page's book list.
 
         :param row: a BeautifulSoup Tag object representing the row
@@ -302,40 +362,24 @@ class AuthorParser:
         if not href:
             raise ValueError(f"Invalid row: {row}.")
         id_ = href.replace("/book/show/", "")
-        text = row.find("span", class_="minirating").text.strip()
-        trash = ("liked it ", "really liked it ", "really ", "it was amazing ", "it was ok ",
-                 "didn't like it ")
-        for t in trash:
-            if t in text:
-                text = text.replace(t, "")
-        avg, count = text.split(" — ")
-        avg = float(avg.replace(" avg rating", ""))
-        trash = (" ratings", " rating")
-        t = next((t for t in trash if t in count), None)
-        if not t:
-            raise ValueError(f"Invalid row: {row}.")
-        count = int(count.replace(",", "").replace(t, ""))
-        return Book(title, avg, count, id_)
+        ratings_text = row.find("span", class_="minirating").text.strip()
+        avg, ratings = ratings_text.split(" — ")
+        avg = extract_float(avg)
+        ratings = extract_int(ratings)
+        published = self._parse_published(row)
+        editions = self._parse_editions(row)
 
-    def fetch_stats_and_books(self) -> None:
+        return Book(title, id_, avg, ratings, published, editions)
+
+    def fetch_data(self) -> Author:
         link = self.find_author_link()
         author_id = self.extract_id(link)
-        self.stats, self.books = self.parse_author_page(author_id)
+        stats, books = self.parse_author_page(author_id)
+        return Author(self.fullname, stats, books)
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(stats={self.stats}, books={self.books[:5]})"
-
-    def __str__(self) -> str:
-        return self.fullname
-
-    @property
-    def as_dict(self) -> Json:
-        return {
-            self.fullname: {
-                "stats": self.stats.as_dict,
-                "books": [b.as_dict for b in self.books]
-            }
-        }
+    @backoff.on_exception(backoff.expo, Timeout, max_time=60)
+    def fetch_data_with_backoff(self) -> Author:
+        return self.fetch_data()
 
 
 # TODO
@@ -372,11 +416,11 @@ def dump(*authors: str, **kwargs: Any) -> None:
         print(f"Scraping author #{i}: {author!r}...")
         parser = AuthorParser(fullname=author)
         try:
-            parser.fetch_stats_and_books()
+            fetched = parser.fetch_data()
         except Timeout:
             print("Goodreads doesn't play nice. Timeout exceeded. Exiting.")
             break
-        data.update(parser.as_dict)
+        data.update(fetched.as_dict)
 
         print(f"Throttling for {DELAY} seconds...")
         time.sleep(DELAY)
@@ -386,5 +430,3 @@ def dump(*authors: str, **kwargs: Any) -> None:
     dest = Path("output") / f"{prefix}dump_{datetime.now().strftime(TIMESTAMP_FORMAT)}.json"
     with dest.open("w", encoding="utf8") as f:
         json.dump(data, f, indent=4)
-
-
