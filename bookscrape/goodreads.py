@@ -23,6 +23,8 @@ from requests import Timeout
 from constants import DELAY, Json, TIMESTAMP_FORMAT
 from utils import getsoup, non_ascii_indices, extract_int, extract_float, from_iterable
 
+
+# TODO: read it from and save it to a file
 TOLKIEN_RATINGS_COUNT = 10_669_209  # 15th Oct 2023
 
 
