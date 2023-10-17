@@ -20,12 +20,30 @@ import backoff
 from bs4.element import Tag
 from requests import Timeout
 
-from bookscrape.constants import DELAY, Json, TIMESTAMP_FORMAT
+from bookscrape.constants import DELAY, Json, TIMESTAMP_FORMAT, OUTPUT_DIR
 from bookscrape.utils import getsoup, non_ascii_indices, extract_int, extract_float, from_iterable
 
 
-# TODO: read it from and save it to a file
-TOLKIEN_RATINGS_COUNT = 10_669_209  # 15th Oct 2023
+def _read_tolkien() -> int:
+    source = Path(__file__).parent / "data" / "tolkien.json"
+    if not source.exists():
+        raise FileNotFoundError(f"'{source}' not found")
+
+    with source.open(encoding="utf8") as f:
+        data = json.load(f)
+
+    if not data:
+        raise ValueError(f"No data in '{source}'")
+
+    _, data = next(iter([*data.items()]))
+    try:
+        count = data["stats"]["ratings_count"]
+    except KeyError:
+        raise ValueError(f"Invalid data in '{source}'")
+    return count
+
+
+TOLKIEN_RATINGS_COUNT = _read_tolkien()  # 10_672_072 on 16th Oct 2023
 
 
 class Renown(Enum):
@@ -177,10 +195,11 @@ class Author:
 
     @classmethod
     def from_dict(cls, data: Json) -> "Author":
+        name, data = next(iter([*data.items()]))
         return cls(
-            data["name"],
-            AuthorStats.from_dict(data["name"]["stats"]),
-            [Book.from_dict(book) for book in data["name"]["books"]]
+            name,
+            AuthorStats.from_dict(data["stats"]),
+            [Book.from_dict(book) for book in data["books"]]
         )
 
 
@@ -421,9 +440,8 @@ def dump(*authors: str, **kwargs: Any) -> None:
 
     Args:
         authors: variable number of author full names
-        kwargs: optional arguments (e.g. a prefix for a dumpfile's name)
+        kwargs: optional arguments (e.g. a prefix for a dumpfile's name, an output directory)
     """
-    prefix = kwargs["prefix"] if "prefix" in kwargs else ""
     data = {}
     for i, author in enumerate(authors, start=1):
         print(f"Scraping author #{i}: {author!r}...")
@@ -435,11 +453,39 @@ def dump(*authors: str, **kwargs: Any) -> None:
             break
         data.update(fetched.as_dict)
 
-        print(f"Throttling for {DELAY} seconds...")
-        time.sleep(DELAY)
-        print()
+        if len(authors) > 1:
+            print(f"Throttling for {DELAY} seconds...")
+            time.sleep(DELAY)
+            print()
 
+    # kwargs
+    prefix = kwargs.get("prefix") or ""
     prefix = f"{prefix}_" if prefix else ""
-    dest = Path("output") / f"{prefix}dump_{datetime.now().strftime(TIMESTAMP_FORMAT)}.json"
+    use_timestamp = kwargs.get("use_timestamp") if kwargs.get("use_timestamp") is not None else \
+        True
+    timestamp = datetime.now().strftime(TIMESTAMP_FORMAT) if use_timestamp else ""
+    output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
+    output_dir = Path(output_dir)
+    if not output_dir.exists():
+        print(f"Creating missing output directory at: '{output_dir.resolve()}'")
+        output_dir.mkdir(exist_ok=True, parents=True)
+    filename = kwargs.get("filename")
+    if filename:
+        filename = f"{prefix}{filename}"
+    else:
+        filename = f"{prefix}dump_{timestamp}.json"
+
+    dest = output_dir / filename
     with dest.open("w", encoding="utf8") as f:
-        json.dump(data, f, indent=4)
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+    if dest.exists():
+        print(f"Successfully dumped '{dest}'")
+
+
+def update_tolkien() -> None:
+    outputdir = Path(__file__).parent / "data"
+    dump("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir, filename="tolkien.json")
+
+
+
