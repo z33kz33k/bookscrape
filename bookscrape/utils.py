@@ -18,14 +18,6 @@ from contexttimer import Timer
 from bookscrape.constants import REQUEST_TIMOUT, T
 
 
-def non_ascii_indices(text: str) -> Iterator[int]:
-    """Generate indices of non-ASCII characters in ``text``.
-    """
-    for i, char in enumerate(text):
-        if ord(char) not in range(128):
-            yield i
-
-
 def getsoup(url: str) -> BeautifulSoup:
     """Return BeautifulSoup object based on ``url``.
 

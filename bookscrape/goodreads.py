@@ -8,7 +8,6 @@
 
 """
 import json
-import re
 import time
 from datetime import datetime
 from enum import Enum
@@ -20,8 +19,9 @@ import backoff
 from bs4.element import Tag
 from requests import Timeout
 
-from bookscrape.constants import DELAY, Json, TIMESTAMP_FORMAT, OUTPUT_DIR
-from bookscrape.utils import getsoup, non_ascii_indices, extract_int, extract_float, from_iterable
+from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, READABLE_TIMESTAMP_FORMAT,
+                                  FILNAME_TIMESTAMP_FORMAT)
+from bookscrape.utils import getsoup, extract_int, extract_float, from_iterable
 
 
 def _read_tolkien() -> int:
@@ -35,15 +35,17 @@ def _read_tolkien() -> int:
     if not data:
         raise ValueError(f"No data in '{source}'")
 
-    _, data = next(iter([*data.items()]))
     try:
-        count = data["stats"]["ratings_count"]
-    except KeyError:
+        count = data["authors"][0]["stats"]["ratings_count"]
+    except (KeyError, IndexError):
         raise ValueError(f"Invalid data in '{source}'")
     return count
 
 
-TOLKIEN_RATINGS_COUNT = _read_tolkien()  # 10_672_072 on 16th Oct 2023
+try:
+    TOLKIEN_RATINGS_COUNT = _read_tolkien()  # 10_674_680 on 18th Oct 2023
+except ValueError:
+    TOLKIEN_RATINGS_COUNT = 10_674_680
 
 
 class Renown(Enum):
@@ -181,23 +183,24 @@ class Book:
 @dataclass
 class Author:
     name: str
+    id: str
     stats: AuthorStats
     books: List[Book]
 
     @property
     def as_dict(self) -> Json:
         return {
-            self.name: {
-                "stats": self.stats.as_dict,
-                "books": [b.as_dict for b in self.books]
-            }
+            "name": self.name,
+            "id": self.id,
+            "stats": self.stats.as_dict,
+            "books": [b.as_dict for b in self.books]
         }
 
     @classmethod
     def from_dict(cls, data: Json) -> "Author":
-        name, data = next(iter([*data.items()]))
         return cls(
-            name,
+            data["name"],
+            data["id"],
             AuthorStats.from_dict(data["stats"]),
             [Book.from_dict(book) for book in data["books"]]
         )
@@ -412,14 +415,14 @@ class AuthorParser:
             print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
                   "(60 seconds max)...")
             return self.fetch_data_with_backoff()
-        return Author(self.fullname, stats, books)
+        return Author(self.fullname, author_id, stats, books)
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def fetch_data_with_backoff(self) -> Author:
         link = self.find_author_link()
         author_id = self.extract_id(link)
         stats, books = self.parse_author_page(author_id)
-        return Author(self.fullname, stats, books)
+        return Author(self.fullname, author_id, stats, books)
 
 
 # TODO: parse the individual Book page for detailed ratings data
@@ -451,7 +454,12 @@ def dump(*authors: str, **kwargs: Any) -> None:
         authors: variable number of author full names
         kwargs: optional arguments (e.g. a prefix for a dumpfile's name, an output directory)
     """
-    data = {}
+    timestamp = datetime.now()
+    data = {
+        "timestamp": timestamp.strftime(READABLE_TIMESTAMP_FORMAT),
+        "provider": "goodreads.com",
+        "authors": [],
+    }
     delay = kwargs.get("delay") or DELAY
     for i, author in enumerate(authors, start=1):
         print(f"Scraping author #{i}: {author!r}...")
@@ -461,7 +469,7 @@ def dump(*authors: str, **kwargs: Any) -> None:
         except ParsingError as e:
             print(f"{e}. Skipping...")
             continue
-        data.update(fetched.as_dict)
+        data["authors"].append(fetched.as_dict)
 
         if len(authors) > 1:
             print(f"Throttling for {delay} seconds...")
@@ -473,7 +481,7 @@ def dump(*authors: str, **kwargs: Any) -> None:
     prefix = f"{prefix}_" if prefix else ""
     use_timestamp = kwargs.get("use_timestamp") if kwargs.get("use_timestamp") is not None else \
         True
-    timestamp = datetime.now().strftime(TIMESTAMP_FORMAT) if use_timestamp else ""
+    timestamp = timestamp.strftime(FILNAME_TIMESTAMP_FORMAT) if use_timestamp else ""
     output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
     output_dir = Path(output_dir)
     if not output_dir.exists():

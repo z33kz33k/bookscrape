@@ -13,7 +13,8 @@ from typing import Any, Dict, TypeVar
 Json = Dict[str, Any]
 DELAY = 1.1  # seconds
 REQUEST_TIMOUT = 5  # seconds
-TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"
+FILNAME_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"
+READABLE_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 T = TypeVar("T")
 
 OUTPUT_DIR = Path("temp") / "output"
