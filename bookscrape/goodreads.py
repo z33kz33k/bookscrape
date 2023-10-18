@@ -404,14 +404,22 @@ class AuthorParser:
         return Book(title, id_, avg, ratings, published, editions)
 
     def fetch_data(self) -> Author:
-        link = self.find_author_link()
-        author_id = self.extract_id(link)
-        stats, books = self.parse_author_page(author_id)
+        try:
+            link = self.find_author_link()
+            author_id = self.extract_id(link)
+            stats, books = self.parse_author_page(author_id)
+        except Timeout:
+            print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
+                  "(60 seconds max)...")
+            return self.fetch_data_with_backoff()
         return Author(self.fullname, stats, books)
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def fetch_data_with_backoff(self) -> Author:
-        return self.fetch_data()
+        link = self.find_author_link()
+        author_id = self.extract_id(link)
+        stats, books = self.parse_author_page(author_id)
+        return Author(self.fullname, stats, books)
 
 
 # TODO: parse the individual Book page for detailed ratings data
@@ -429,12 +437,12 @@ def dump(*authors: str, **kwargs: Any) -> None:
         "Frank Herbert",
         "Jacek Dukaj",
         "Andrzej Sapkowski",
-        "J. R. R. Tolkien",
-        "C. S. Lewis",
+        "J.R.R. Tolkien",
+        "C.S. Lewis",
         "Cordwainer Smith",
         "Michael Moorcock",
         "Clifford D. Simak",
-        "George R. R. Martin",
+        "George R.R. Martin",
         "Joe Abercrombie",
         "Ursula K. Le Guin",
     ]
@@ -444,19 +452,20 @@ def dump(*authors: str, **kwargs: Any) -> None:
         kwargs: optional arguments (e.g. a prefix for a dumpfile's name, an output directory)
     """
     data = {}
+    delay = kwargs.get("delay") or DELAY
     for i, author in enumerate(authors, start=1):
         print(f"Scraping author #{i}: {author!r}...")
         parser = AuthorParser(fullname=author)
         try:
-            fetched = parser.fetch_data()
-        except Timeout:
-            print("Goodreads doesn't play nice. Timeout exceeded. Exiting.")
-            break
+            fetched = parser.fetch_data_with_backoff()
+        except ParsingError as e:
+            print(f"{e}. Skipping...")
+            continue
         data.update(fetched.as_dict)
 
         if len(authors) > 1:
-            print(f"Throttling for {DELAY} seconds...")
-            time.sleep(DELAY)
+            print(f"Throttling for {delay} seconds...")
+            time.sleep(delay)
             print()
 
     # kwargs
