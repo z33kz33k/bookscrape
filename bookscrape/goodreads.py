@@ -345,13 +345,10 @@ class AuthorParser:
         """
         if len(parts) != 4:
             raise ParsingError(f"Invalid parts: {parts}")
-        avg_rating = float(parts[0].replace("Average rating ", "").replace(" ·", ""))
-        ratings = int(parts[1].replace(",", "").replace(" ratings", ""))
-        reviews = int(parts[2].replace(",", "").replace(" reviews", ""))
-        shelvings = int(parts[3]
-                              .replace(",", "")
-                              .replace("shelved ", "")
-                              .replace(" times", ""))
+        avg_rating = extract_float(parts[0])
+        ratings = extract_int(parts[1])
+        reviews = extract_int(parts[2])
+        shelvings = extract_int(parts[3])
         return AuthorStats(avg_rating, ratings, reviews, shelvings)
 
     @staticmethod
