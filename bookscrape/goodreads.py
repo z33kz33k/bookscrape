@@ -203,8 +203,11 @@ class Author:
         )
 
 
-# TODO: custom parse error, handling hyphenated author names like: 'Chi Ta-wei' (ID:
-#  '14640243.Chi_Ta_wei"), check if second non-ascii char in name would be handled
+class ParsingError(ValueError):
+    """Raised whenever parser's assumptions are not met.
+    """
+
+
 class AuthorParser:
     """Goodreads author page parser.
     """
@@ -215,13 +218,37 @@ class AuthorParser:
         return self._fullname
 
     @property
-    def _allnames(self) -> List[str]:
-        return [*self._names, self._surname]
+    def normalized_name(self) -> str:
+        # Goodreads logic that formulates author ID:
+
+        # 1) replace any whitespace with underscore
+        # Example: '589.Orson_Scott_Card'
+
+        # 2) replace any non-alphabetic character with underscore
+        # Apostrophe: 'Madeleine L'Engle' ==> '106.Madeleine_L_Engle'
+        # Hyphen: 'Chi Ta-wei' ==> '14640243.Chi_Ta_wei'
+        # Dot: 'George R.R. Martin' ==> '346732.George_R_R_Martin'
+
+        # 3) replace any non-ASCII character with underscore
+        # Example: 'Stanisław Lem' ==> '10991.Stanis_aw_Lem'
+
+        # 4) replace any immediately repeated underscore with only one instance
+        # Example: 'Ewa Białołęcka' ==> '554577.Ewa_Bia_o_cka'
+        chars, underscore_appended = [], False
+        for char in self.fullname:
+            if not (char.isalpha() and char.isascii()):
+                if not underscore_appended:
+                    chars.append("_")
+                    underscore_appended = True
+                else:
+                    continue
+            else:
+                chars.append(char)
+                underscore_appended = False
+        return "".join(chars)
 
     def __init__(self, fullname: str) -> None:
         self._fullname = fullname
-        *names, surname = fullname.split()
-        self._names, self._surname = names, surname
 
     def find_author_link(self) -> str:
         """Find Goodreads author link.
@@ -229,53 +256,27 @@ class AuthorParser:
         Example:
             'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
         """
-        def parse_spans(spans_: List[Tag], *author_names: str) -> Optional[Tag]:
-            i, result = 0, None
-            while not result:
-                if i == len(spans_):
-                    break
-                span = spans_[i]
-                re_parts = [f"(?=.*{name})" for name in author_names]
-                result = span.find(href=re.compile("".join(re_parts)))
-                i += 1
+        def parse_spans(spans_: List[Tag]) -> Optional[Tag]:
+            for span in spans_:
+                a_ = span.find(
+                    lambda t: t.name == "a" and self.normalized_name in t.attrs.get("href"))
+                if a_ is not None:
+                    return a_
+            return None
 
-            return result
-
-        # Goodreads replaces a non-ASCII character with "_" in the author ID.
-        # Example: '10991.Stanis_aw_Lem'
-        # As the example above shows, underline is also used as a separator.
-        # If a non-ASCII character occurs at the name's limit, underlines ARE NOT doubled
-        # Example: '10089.Philip_Jos_Farmer'
-        def handle_non_ascii(*author_names) -> List[str]:
-            handled_names = []
-            for name in author_names:
-                idx = next(non_ascii_indices(name), None)
-                if idx:
-                    name = name[:idx] + "_" + name[idx + 1:]
-                handled_names.append(name)
-            return handled_names
-
-        query = "+".join(self._allnames)
+        query = "+".join(self.fullname.split())
         url_template = "https://www.goodreads.com/search?q={}"
         url = url_template.format(query)
         soup = getsoup(url)
         spans = soup.find_all("span", itemprop="author")
         if not spans:
-            raise ValueError(f"Not a valid Goodreads author name: {self.fullname!r}.")
+            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}.")
 
-        names = handle_non_ascii(*self._allnames)
-
-        a = parse_spans(spans, *names)
-
+        a = parse_spans(spans)
         if not a:
-            if len(names) > 2:
-                a = parse_spans(spans, names[0], names[-1])
-            if not a:
-                raise ValueError(f"Not a valid Goodreads author name: {self.fullname!r}.")
+            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}.")
 
         link = a.attrs.get("href")
-        if not link:
-            raise ValueError(f"Not a valid Goodreads author name: {self.fullname!r}.")
         # link now ought to look like this:
         # 'https://www.goodreads.com/author/show/7415.Harlan_Ellison?from_search=true&from_srp=true'
         link, _ = link.split("?")  # stripping the trash part
@@ -335,7 +336,7 @@ class AuthorParser:
             'shelved 428,790 times']
         """
         if len(parts) != 4:
-            raise ValueError(f"Invalid parts: {parts}.")
+            raise ParsingError(f"Invalid parts: {parts}.")
         avg_rating = float(parts[0].replace("Average rating ", "").replace(" ·", ""))
         ratings_count = int(parts[1].replace(",", "").replace(" ratings", ""))
         reviews_count = int(parts[2].replace(",", "").replace(" reviews", ""))
@@ -385,13 +386,13 @@ class AuthorParser:
         """
         a = row.find("a")
         if not a:
-            raise ValueError(f"Invalid row: {row}.")
+            raise ParsingError(f"Invalid row: {row}.")
         title = a.attrs.get("title")
         if not title:
-            raise ValueError(f"Invalid row: {row}.")
+            raise ParsingError(f"Invalid row: {row}.")
         href = a.attrs.get("href")
         if not href:
-            raise ValueError(f"Invalid row: {row}.")
+            raise ParsingError(f"Invalid row: {row}.")
         id_ = href.replace("/book/show/", "")
         ratings_text = row.find("span", class_="minirating").text.strip()
         avg, ratings = ratings_text.split(" — ")
