@@ -36,16 +36,16 @@ def _read_tolkien() -> int:
         raise ValueError(f"No data in '{source}'")
 
     try:
-        count = data["authors"][0]["stats"]["ratings_count"]
+        count = data["authors"][0]["stats"]["ratings"]
     except (KeyError, IndexError):
         raise ValueError(f"Invalid data in '{source}'")
     return count
 
 
 try:
-    TOLKIEN_RATINGS_COUNT = _read_tolkien()  # 10_674_680 on 18th Oct 2023
+    TOLKIEN_RATINGS_COUNT = _read_tolkien()  # 10_674_789 on 18th Oct 2023
 except ValueError:
-    TOLKIEN_RATINGS_COUNT = 10_674_680
+    TOLKIEN_RATINGS_COUNT = 10_674_789
 
 
 class Renown(Enum):
@@ -84,17 +84,17 @@ class Renown(Enum):
 @dataclass
 class AuthorStats:
     avg_rating: float
-    ratings_count: int
-    reviews_count: int
-    shelvings_count: int
+    ratings: int
+    reviews: int
+    shelvings: int
 
     @property
     def as_dict(self) -> Dict[str, Union[float, int]]:
         return {
             "avg_rating": self.avg_rating,
-            "ratings_count": self.ratings_count,
-            "reviews_count": self.reviews_count,
-            "shelvings_count": self.shelvings_count,
+            "ratings": self.ratings,
+            "reviews": self.reviews,
+            "shelvings": self.shelvings,
             "r2r": self.r2r_percent,
             "renown": self.renown.name
         }
@@ -103,14 +103,14 @@ class AuthorStats:
     def from_dict(cls, data: Dict[str, Union[float, int]]) -> "AuthorStats":
         return cls(
             data["avg_rating"],
-            data["ratings_count"],
-            data["reviews_count"],
-            data["shelvings_count"],
+            data["ratings"],
+            data["reviews"],
+            data["shelvings"],
         )
 
     @property
     def r2r(self) -> float:
-        return self.reviews_count / self.ratings_count if self.ratings_count else 0
+        return self.reviews / self.ratings if self.ratings else 0
 
     @property
     def r2r_percent(self) -> str:
@@ -119,26 +119,26 @@ class AuthorStats:
 
     @property
     def renown(self) -> Renown:
-        if self.ratings_count >= Renown.SUPERSTAR.value:
+        if self.ratings >= Renown.SUPERSTAR.value:
             return Renown.SUPERSTAR
-        elif self.ratings_count in Renown.STAR.value:
+        elif self.ratings in Renown.STAR.value:
             return Renown.STAR
-        elif self.ratings_count in Renown.FAMOUS.value:
+        elif self.ratings in Renown.FAMOUS.value:
             return Renown.FAMOUS
-        elif self.ratings_count in Renown.POPULAR.value:
+        elif self.ratings in Renown.POPULAR.value:
             return Renown.POPULAR
-        elif self.ratings_count in Renown.WELL_KNOWN.value:
+        elif self.ratings in Renown.WELL_KNOWN.value:
             return Renown.WELL_KNOWN
-        elif self.ratings_count in Renown.KNOWN.value:
+        elif self.ratings in Renown.KNOWN.value:
             return Renown.KNOWN
-        elif self.ratings_count in Renown.SOMEWHAT_KNOWN.value:
+        elif self.ratings in Renown.SOMEWHAT_KNOWN.value:
             return Renown.SOMEWHAT_KNOWN
-        elif self.ratings_count in Renown.LITTLE_KNOWN.value:
+        elif self.ratings in Renown.LITTLE_KNOWN.value:
             return Renown.LITTLE_KNOWN
-        elif self.ratings_count in Renown.OBSCURE.value:
+        elif self.ratings in Renown.OBSCURE.value:
             return Renown.OBSCURE
         else:
-            raise ValueError(f"Invalid ratings count: {self.ratings_count:,}.")
+            raise ValueError(f"Invalid ratings count: {self.ratings:,}")
 
 
 @dataclass
@@ -146,9 +146,9 @@ class Book:
     title: str
     id: str
     avg_rating: float
-    ratings_count: int
+    ratings: int
     published_in: Optional[int]
-    editions_count: Optional[int]
+    editions: Optional[int]
 
     @property
     def as_dict(self) -> Dict[str, Union[str, int, float]]:
@@ -156,15 +156,15 @@ class Book:
             "title": self.title,
             "id": self.id,
             "avg_rating": self.avg_rating,
-            "ratings_count": self.ratings_count,
+            "ratings": self.ratings,
         }
         if self.published_in is not None:
             data.update({
                 "published_in": self.published_in,
             })
-        if self.editions_count is not None:
+        if self.editions is not None:
             data.update({
-                "editions_count": self.editions_count,
+                "editions": self.editions,
             })
         return data
 
@@ -174,9 +174,9 @@ class Book:
             data["title"],
             data["id"],
             data["avg_rating"],
-            data["ratings_count"],
+            data["ratings"],
             data.get("published_in"),
-            data.get("editions_count"),
+            data.get("editions"),
         )
 
 
@@ -193,6 +193,7 @@ class Author:
             "name": self.name,
             "id": self.id,
             "stats": self.stats.as_dict,
+            "total_editions": self.total_editions,
             "books": [b.as_dict for b in self.books]
         }
 
@@ -204,6 +205,10 @@ class Author:
             AuthorStats.from_dict(data["stats"]),
             [Book.from_dict(book) for book in data["books"]]
         )
+
+    @property
+    def total_editions(self) -> int:
+        return sum(book.editions for book in self.books if book.editions)
 
 
 class ParsingError(ValueError):
@@ -273,11 +278,11 @@ class AuthorParser:
         soup = getsoup(url)
         spans = soup.find_all("span", itemprop="author")
         if not spans:
-            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}.")
+            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}")
 
         a = parse_spans(spans)
         if not a:
-            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}.")
+            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}")
 
         link = a.attrs.get("href")
         # link now ought to look like this:
@@ -339,15 +344,15 @@ class AuthorParser:
             'shelved 428,790 times']
         """
         if len(parts) != 4:
-            raise ParsingError(f"Invalid parts: {parts}.")
+            raise ParsingError(f"Invalid parts: {parts}")
         avg_rating = float(parts[0].replace("Average rating ", "").replace(" ·", ""))
-        ratings_count = int(parts[1].replace(",", "").replace(" ratings", ""))
-        reviews_count = int(parts[2].replace(",", "").replace(" reviews", ""))
-        shelvings_count = int(parts[3]
+        ratings = int(parts[1].replace(",", "").replace(" ratings", ""))
+        reviews = int(parts[2].replace(",", "").replace(" reviews", ""))
+        shelvings = int(parts[3]
                               .replace(",", "")
                               .replace("shelved ", "")
                               .replace(" times", ""))
-        return AuthorStats(avg_rating, ratings_count, reviews_count, shelvings_count)
+        return AuthorStats(avg_rating, ratings, reviews, shelvings)
 
     @staticmethod
     def _parse_published(row: Tag) -> Optional[int]:
@@ -389,13 +394,13 @@ class AuthorParser:
         """
         a = row.find("a")
         if not a:
-            raise ParsingError(f"Invalid row: {row}.")
+            raise ParsingError(f"Invalid row: {row}")
         title = a.attrs.get("title")
         if not title:
-            raise ParsingError(f"Invalid row: {row}.")
+            raise ParsingError(f"Invalid row: {row}")
         href = a.attrs.get("href")
         if not href:
-            raise ParsingError(f"Invalid row: {row}.")
+            raise ParsingError(f"Invalid row: {row}")
         id_ = href.replace("/book/show/", "")
         ratings_text = row.find("span", class_="minirating").text.strip()
         avg, ratings = ratings_text.split(" — ")
@@ -504,6 +509,3 @@ def dump(*authors: str, **kwargs: Any) -> None:
 def update_tolkien() -> None:
     outputdir = Path(__file__).parent / "data"
     dump("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir, filename="tolkien.json")
-
-
-

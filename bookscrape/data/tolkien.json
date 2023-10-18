@@ -1,5 +1,5 @@
 {
-    "timestamp": "2023-10-18 22:35:18",
+    "timestamp": "2023-10-18 23:33:21",
     "provider": "goodreads.com",
     "authors": [
         {
@@ -7,252 +7,253 @@
             "id": "656983.J_R_R_Tolkien",
             "stats": {
                 "avg_rating": 4.36,
-                "ratings_count": 10674680,
-                "reviews_count": 194940,
-                "shelvings_count": 16643155,
+                "ratings": 10674789,
+                "reviews": 194945,
+                "shelvings": 16643155,
                 "r2r": "1.83 %",
                 "renown": "SUPERSTAR"
             },
+            "total_editions": 6372,
             "books": [
                 {
                     "title": "The Hobbit",
                     "id": "5907.The_Hobbit",
                     "avg_rating": 4.28,
-                    "ratings_count": 3779292,
+                    "ratings": 3779330,
                     "published_in": 1937,
-                    "editions_count": 474
+                    "editions": 492
                 },
                 {
                     "title": "The Fellowship of the Ring",
                     "id": "61215351-the-fellowship-of-the-ring",
                     "avg_rating": 4.39,
-                    "ratings_count": 2736926,
+                    "ratings": 2736941,
                     "published_in": 1954,
-                    "editions_count": 1043
+                    "editions": 1043
                 },
                 {
                     "title": "The Two Towers",
                     "id": "61215372-the-two-towers",
                     "avg_rating": 4.48,
-                    "ratings_count": 923069,
+                    "ratings": 923075,
                     "published_in": 1954,
-                    "editions_count": 854
+                    "editions": 854
                 },
                 {
                     "title": "The Return of the King",
                     "id": "61215384-the-return-of-the-king",
                     "avg_rating": 4.56,
-                    "ratings_count": 858697,
+                    "ratings": 858707,
                     "published_in": 1955,
-                    "editions_count": 868
+                    "editions": 868
                 },
                 {
                     "title": "The Lord of the Rings",
                     "id": "33.The_Lord_of_the_Rings",
                     "avg_rating": 4.52,
-                    "ratings_count": 657642,
+                    "ratings": 657650,
                     "published_in": 1955,
-                    "editions_count": 878
+                    "editions": 878
                 },
                 {
                     "title": "The Hobbit, Part One",
                     "id": "17157681-the-hobbit-part-one",
                     "avg_rating": 4.31,
-                    "ratings_count": 376914,
+                    "ratings": 376914,
                     "published_in": 1937,
-                    "editions_count": 6
+                    "editions": 6
                 },
                 {
                     "title": "The Silmarillion",
                     "id": "7332.The_Silmarillion",
                     "avg_rating": 4.0,
-                    "ratings_count": 279363,
+                    "ratings": 279367,
                     "published_in": 1977,
-                    "editions_count": 602
+                    "editions": 602
                 },
                 {
                     "title": "J.R.R. Tolkien 4-Book Boxed Set: The Hobbit and The Lord of the Rings",
                     "id": "30.J_R_R_Tolkien_4_Book_Boxed_Set",
                     "avg_rating": 4.61,
-                    "ratings_count": 130073,
+                    "ratings": 130075,
                     "published_in": 1954,
-                    "editions_count": 87
+                    "editions": 87
                 },
                 {
                     "title": "The History of the Hobbit, Part One: Mr. Baggins",
                     "id": "1081560.The_History_of_the_Hobbit_Part_One",
                     "avg_rating": 3.81,
-                    "ratings_count": 106070,
+                    "ratings": 106070,
                     "published_in": 2007,
-                    "editions_count": 3
+                    "editions": 3
                 },
                 {
                     "title": "The Children of Húrin",
                     "id": "597790.The_Children_of_H_rin",
                     "avg_rating": 4.02,
-                    "ratings_count": 80539,
+                    "ratings": 80541,
                     "published_in": 2007,
-                    "editions_count": 194
+                    "editions": 194
                 },
                 {
                     "title": "Unfinished Tales of Númenor and Middle-Earth",
                     "id": "7329.Unfinished_Tales_of_N_menor_and_Middle_Earth",
                     "avg_rating": 4.0,
-                    "ratings_count": 38409,
+                    "ratings": 38409,
                     "published_in": 1980,
-                    "editions_count": 235
+                    "editions": 235
                 },
                 {
                     "title": "Letters from Father Christmas",
                     "id": "7331.Letters_from_Father_Christmas",
                     "avg_rating": 4.28,
-                    "ratings_count": 19853,
+                    "ratings": 19853,
                     "published_in": 1976,
-                    "editions_count": 26
+                    "editions": 26
                 },
                 {
                     "title": "Beren and Lúthien",
                     "id": "41015249-beren-and-l-thien",
                     "avg_rating": 4.03,
-                    "ratings_count": 16831,
+                    "ratings": 16831,
                     "published_in": 2017,
-                    "editions_count": 69
+                    "editions": 69
                 },
                 {
                     "title": "The Book of Lost Tales, Part One",
                     "id": "7347.The_Book_of_Lost_Tales_Part_One",
                     "avg_rating": 3.86,
-                    "ratings_count": 14835,
+                    "ratings": 14835,
                     "published_in": 1983,
-                    "editions_count": 81
+                    "editions": 81
                 },
                 {
                     "title": "Roverandom",
                     "id": "23617.Roverandom",
                     "avg_rating": 3.88,
-                    "ratings_count": 14374,
+                    "ratings": 14374,
                     "published_in": 1998,
-                    "editions_count": 99
+                    "editions": 99
                 },
                 {
                     "title": "The Fall of Gondolin",
                     "id": "39798828-the-fall-of-gondolin",
                     "avg_rating": 4.07,
-                    "ratings_count": 12219,
+                    "ratings": 12219,
                     "published_in": 2018,
-                    "editions_count": 18
+                    "editions": 18
                 },
                 {
                     "title": "Farmer Giles of Ham",
                     "id": "2333.Farmer_Giles_of_Ham",
                     "avg_rating": 3.88,
-                    "ratings_count": 10368,
+                    "ratings": 10369,
                     "published_in": 1949,
-                    "editions_count": 124
+                    "editions": 124
                 },
                 {
                     "title": "Smith of Wootton Major & Farmer Giles of Ham",
                     "id": "66797.Smith_of_Wootton_Major_Farmer_Giles_of_Ham",
                     "avg_rating": 3.94,
-                    "ratings_count": 8805,
+                    "ratings": 8805,
                     "published_in": 1949,
-                    "editions_count": 44
+                    "editions": 44
                 },
                 {
                     "title": "The Adventures of Tom Bombadil",
                     "id": "35736.The_Adventures_of_Tom_Bombadil",
                     "avg_rating": 3.79,
-                    "ratings_count": 8966,
+                    "ratings": 8966,
                     "published_in": 1962,
-                    "editions_count": 92
+                    "editions": 92
                 },
                 {
                     "title": "The Book of Lost Tales, Part Two",
                     "id": "7346.The_Book_of_Lost_Tales_Part_Two",
                     "avg_rating": 3.89,
-                    "ratings_count": 8232,
+                    "ratings": 8232,
                     "published_in": 1984,
-                    "editions_count": 89
+                    "editions": 89
                 },
                 {
                     "title": "The Legend of Sigurd & Gudrún",
                     "id": "6352248-the-legend-of-sigurd-gudr-n",
                     "avg_rating": 3.87,
-                    "ratings_count": 7425,
+                    "ratings": 7425,
                     "published_in": 2009,
-                    "editions_count": 79
+                    "editions": 79
                 },
                 {
                     "title": "Leaf by Niggle",
                     "id": "6784686-leaf-by-niggle",
                     "avg_rating": 4.25,
-                    "ratings_count": 6336,
+                    "ratings": 6336,
                     "published_in": 1945,
-                    "editions_count": 18
+                    "editions": 18
                 },
                 {
                     "title": "Tolkien's World: Paintings of Middle-Earth",
                     "id": "23597.Tolkien_s_World",
                     "avg_rating": 4.28,
-                    "ratings_count": 6255,
+                    "ratings": 6255,
                     "published_in": 1992,
-                    "editions_count": 15
+                    "editions": 15
                 },
                 {
                     "title": "The Letters of J.R.R. Tolkien",
                     "id": "2327.The_Letters_of_J_R_R_Tolkien",
                     "avg_rating": 4.2,
-                    "ratings_count": 6327,
+                    "ratings": 6327,
                     "published_in": 1981,
-                    "editions_count": 56
+                    "editions": 56
                 },
                 {
                     "title": "The Fall of Arthur",
                     "id": "16075147-the-fall-of-arthur",
                     "avg_rating": 3.8,
-                    "ratings_count": 6864,
+                    "ratings": 6864,
                     "published_in": 2013,
-                    "editions_count": 55
+                    "editions": 55
                 },
                 {
                     "title": "Bilbo's Last Song:",
                     "id": "67939.Bilbo_s_Last_Song",
                     "avg_rating": 4.17,
-                    "ratings_count": 4936,
+                    "ratings": 4936,
                     "published_in": 1974,
-                    "editions_count": 27
+                    "editions": 27
                 },
                 {
                     "title": "Smith of Wootton Major",
                     "id": "16907.Smith_of_Wootton_Major",
                     "avg_rating": 3.91,
-                    "ratings_count": 5148,
+                    "ratings": 5148,
                     "published_in": 1967,
-                    "editions_count": 84
+                    "editions": 84
                 },
                 {
                     "title": "The Tolkien Reader",
                     "id": "7337.The_Tolkien_Reader",
                     "avg_rating": 4.0,
-                    "ratings_count": 4966,
+                    "ratings": 4966,
                     "published_in": 1966,
-                    "editions_count": 34
+                    "editions": 34
                 },
                 {
                     "title": "Tales from the Perilous Realm",
                     "id": "3772535-tales-from-the-perilous-realm",
                     "avg_rating": 4.12,
-                    "ratings_count": 4785,
+                    "ratings": 4785,
                     "published_in": 2008,
-                    "editions_count": 84
+                    "editions": 84
                 },
                 {
                     "title": "The Peoples of Middle-earth",
                     "id": "67996.The_Peoples_of_Middle_earth",
                     "avg_rating": 4.18,
-                    "ratings_count": 4657,
+                    "ratings": 4657,
                     "published_in": 1996,
-                    "editions_count": 16
+                    "editions": 16
                 }
             ]
         }
