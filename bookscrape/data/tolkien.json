@@ -1,5 +1,5 @@
 {
-    "timestamp": "2023-10-18 23:33:21",
+    "timestamp": "2023-10-19 00:46:43",
     "provider": "goodreads.com",
     "authors": [
         {
@@ -7,19 +7,19 @@
             "id": "656983.J_R_R_Tolkien",
             "stats": {
                 "avg_rating": 4.36,
-                "ratings": 10674789,
-                "reviews": 194945,
+                "ratings": 10674859,
+                "reviews": 194947,
                 "shelvings": 16643155,
                 "r2r": "1.83 %",
                 "renown": "SUPERSTAR"
             },
-            "total_editions": 6372,
+            "total_editions": 5838,
             "books": [
                 {
                     "title": "The Hobbit",
                     "id": "5907.The_Hobbit",
                     "avg_rating": 4.28,
-                    "ratings": 3779330,
+                    "ratings": 3779353,
                     "published_in": 1937,
                     "editions": 492
                 },
@@ -27,7 +27,7 @@
                     "title": "The Fellowship of the Ring",
                     "id": "61215351-the-fellowship-of-the-ring",
                     "avg_rating": 4.39,
-                    "ratings": 2736941,
+                    "ratings": 2736955,
                     "published_in": 1954,
                     "editions": 1043
                 },
@@ -35,7 +35,7 @@
                     "title": "The Two Towers",
                     "id": "61215372-the-two-towers",
                     "avg_rating": 4.48,
-                    "ratings": 923075,
+                    "ratings": 923086,
                     "published_in": 1954,
                     "editions": 854
                 },
@@ -43,15 +43,15 @@
                     "title": "The Return of the King",
                     "id": "61215384-the-return-of-the-king",
                     "avg_rating": 4.56,
-                    "ratings": 858707,
+                    "ratings": 858718,
                     "published_in": 1955,
-                    "editions": 868
+                    "editions": 334
                 },
                 {
                     "title": "The Lord of the Rings",
                     "id": "33.The_Lord_of_the_Rings",
                     "avg_rating": 4.52,
-                    "ratings": 657650,
+                    "ratings": 657656,
                     "published_in": 1955,
                     "editions": 878
                 },
@@ -59,7 +59,7 @@
                     "title": "The Hobbit, Part One",
                     "id": "17157681-the-hobbit-part-one",
                     "avg_rating": 4.31,
-                    "ratings": 376914,
+                    "ratings": 376912,
                     "published_in": 1937,
                     "editions": 6
                 },
@@ -67,7 +67,7 @@
                     "title": "The Silmarillion",
                     "id": "7332.The_Silmarillion",
                     "avg_rating": 4.0,
-                    "ratings": 279367,
+                    "ratings": 279371,
                     "published_in": 1977,
                     "editions": 602
                 },
@@ -75,7 +75,7 @@
                     "title": "J.R.R. Tolkien 4-Book Boxed Set: The Hobbit and The Lord of the Rings",
                     "id": "30.J_R_R_Tolkien_4_Book_Boxed_Set",
                     "avg_rating": 4.61,
-                    "ratings": 130075,
+                    "ratings": 130077,
                     "published_in": 1954,
                     "editions": 87
                 },
@@ -107,7 +107,7 @@
                     "title": "Letters from Father Christmas",
                     "id": "7331.Letters_from_Father_Christmas",
                     "avg_rating": 4.28,
-                    "ratings": 19853,
+                    "ratings": 19854,
                     "published_in": 1976,
                     "editions": 26
                 },
@@ -115,7 +115,7 @@
                     "title": "Beren and Lúthien",
                     "id": "41015249-beren-and-l-thien",
                     "avg_rating": 4.03,
-                    "ratings": 16831,
+                    "ratings": 16832,
                     "published_in": 2017,
                     "editions": 69
                 },
@@ -139,7 +139,7 @@
                     "title": "The Fall of Gondolin",
                     "id": "39798828-the-fall-of-gondolin",
                     "avg_rating": 4.07,
-                    "ratings": 12219,
+                    "ratings": 12220,
                     "published_in": 2018,
                     "editions": 18
                 },

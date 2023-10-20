@@ -7,9 +7,9 @@
     @author: z33k
 
 """
-from typing import Callable, Iterable, Iterator, List, Optional
+from functools import wraps
+from typing import Callable, Iterable, Optional
 
-import gspread
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -18,6 +18,22 @@ from contexttimer import Timer
 from bookscrape.constants import REQUEST_TIMOUT, T
 
 
+def timed(func: Callable) -> Callable:
+    """Add time measurement to the decorated operation.
+
+    Returns:
+        the decorated function
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        with Timer() as t:
+            result = func(*args, **kwargs)
+        print(f"Completed in {t.elapsed:.3f} seconds")
+        return result
+    return wrapper
+
+
+@timed
 def getsoup(url: str) -> BeautifulSoup:
     """Return BeautifulSoup object based on ``url``.
 
@@ -25,13 +41,10 @@ def getsoup(url: str) -> BeautifulSoup:
         url: URL string
 
     Returns:
-
         a BeautifulSoup object
     """
     print(f"Requesting: {url!r}")
-    with Timer() as t:
-        markup = requests.get(url, timeout=REQUEST_TIMOUT).text
-    print(f"Request completed in {t.elapsed:3f} seconds.")
+    markup = requests.get(url, timeout=REQUEST_TIMOUT).text
     return BeautifulSoup(markup, "lxml")
 
 
@@ -39,20 +52,6 @@ def first_df_row_as_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Make first row of ``df`` its columns.
     """
     return df.rename(columns=df.iloc[0]).drop(df.index[0]).reset_index(drop=True)
-
-
-def retrieve_gsheets_col(spreadsheet: str, worksheet: str,
-                            col=1, start_row=1, ignore_none=True) -> List[str]:
-    if col < 1 or start_row < 1:
-        raise ValueError("Column and start row must be positive integers")
-    creds_file = "scraping_service_account.json"
-    client = gspread.service_account(filename=creds_file)
-    spreadsheet = client.open(spreadsheet)
-    worksheet = spreadsheet.worksheet(worksheet)
-    values = worksheet.col_values(col, value_render_option="UNFORMATTED_VALUE")[start_row-1:]
-    if ignore_none:
-        return [value for value in values if value is not None]
-    return values
 
 
 def extract_float(text: str) -> float:
@@ -69,3 +68,5 @@ def from_iterable(iterable: Iterable[T], predicate: Callable[[T], bool]) -> Opti
     """Return item from ``iterable`` based on ``predicate`` or ``None``, if it cannot be found.
     """
     return next((item for item in iterable if predicate(item)), None)
+
+
