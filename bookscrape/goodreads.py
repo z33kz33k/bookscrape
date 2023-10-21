@@ -96,7 +96,6 @@ class AuthorStats:
             "reviews": self.reviews,
             "shelvings": self.shelvings,
             "r2r": self.r2r_percent,
-            "renown": self.renown.name
         }
 
     @classmethod
@@ -116,29 +115,6 @@ class AuthorStats:
     def r2r_percent(self) -> str:
         r2r = self.r2r * 100
         return f"{r2r:.2f} %"
-
-    @property
-    def renown(self) -> Renown:
-        if self.ratings >= Renown.SUPERSTAR.value:
-            return Renown.SUPERSTAR
-        elif self.ratings in Renown.STAR.value:
-            return Renown.STAR
-        elif self.ratings in Renown.FAMOUS.value:
-            return Renown.FAMOUS
-        elif self.ratings in Renown.POPULAR.value:
-            return Renown.POPULAR
-        elif self.ratings in Renown.WELL_KNOWN.value:
-            return Renown.WELL_KNOWN
-        elif self.ratings in Renown.KNOWN.value:
-            return Renown.KNOWN
-        elif self.ratings in Renown.SOMEWHAT_KNOWN.value:
-            return Renown.SOMEWHAT_KNOWN
-        elif self.ratings in Renown.LITTLE_KNOWN.value:
-            return Renown.LITTLE_KNOWN
-        elif self.ratings in Renown.OBSCURE.value:
-            return Renown.OBSCURE
-        else:
-            raise ValueError(f"Invalid ratings count: {self.ratings:,}")
 
 
 @dataclass
@@ -194,7 +170,8 @@ class Author:
             "id": self.id,
             "stats": self.stats.as_dict,
             "total_editions": self.total_editions,
-            "books": [b.as_dict for b in self.books]
+            "renown": self.renown.name,
+            "books": [b.as_dict for b in self.books],
         }
 
     @classmethod
@@ -209,6 +186,29 @@ class Author:
     @property
     def total_editions(self) -> int:
         return sum(book.editions for book in self.books if book.editions)
+
+    @property
+    def renown(self) -> Renown:
+        if self.stats.ratings >= Renown.SUPERSTAR.value:
+            return Renown.SUPERSTAR
+        elif self.stats.ratings in Renown.STAR.value:
+            return Renown.STAR
+        elif self.stats.ratings in Renown.FAMOUS.value:
+            return Renown.FAMOUS
+        elif self.stats.ratings in Renown.POPULAR.value:
+            return Renown.POPULAR
+        elif self.stats.ratings in Renown.WELL_KNOWN.value:
+            return Renown.WELL_KNOWN
+        elif self.stats.ratings in Renown.KNOWN.value:
+            return Renown.KNOWN
+        elif self.stats.ratings in Renown.SOMEWHAT_KNOWN.value:
+            return Renown.SOMEWHAT_KNOWN
+        elif self.stats.ratings in Renown.LITTLE_KNOWN.value:
+            return Renown.LITTLE_KNOWN
+        elif self.stats.ratings in Renown.OBSCURE.value:
+            return Renown.OBSCURE
+        else:
+            raise ValueError(f"Invalid ratings count: {self.stats.ratings:,}")
 
 
 class ParsingError(ValueError):
