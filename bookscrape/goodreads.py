@@ -9,6 +9,7 @@
 """
 import json
 import time
+from collections import namedtuple
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -460,7 +461,7 @@ class RatingStats:
         return sum([
             self.one_star_ratings, self.two_stars_ratings * 2, self.three_stars_ratings * 3,
             self.four_stars_ratings * 4, self.five_stars_ratings * 5
-        ]) / 5
+        ]) / self.ratings
 
     @property
     def one_star_percent(self) -> str:
@@ -487,6 +488,15 @@ class RatingStats:
         percent = self.five_stars_ratings * 100 / self.ratings
         return f"{percent:.2f} %"
 
+    @property
+    def r2r(self) -> float:
+        return self.reviews / self.ratings if self.ratings else 0
+
+    @property
+    def r2r_percent(self) -> str:
+        r2r = self.r2r * 100
+        return f"{r2r:.2f} %"
+
 
 @dataclass
 class OtherStats:
@@ -499,6 +509,7 @@ class OtherStats:
 class DetailedBook:
     title: str
     authors: List[str]  # TODO: ignore non-authors marked by parentheses, e.g. '(Translator)'
+    translators: List[str]
     series: str
     series_work: float
     first_published: str  # e.g. "August 16, 2011"
@@ -509,6 +520,7 @@ class DetailedBook:
 
 
 AuthorsData = Dict[str, datetime | str | List[Author]]
+_SpecificRating = namedtuple("_SpecificRating", "label rating")
 
 
 # TODO: continue
@@ -529,7 +541,7 @@ class BookParser:
             raise ValueError("Unable to derive Goodreads book ID from provided input")
         self._url = self.URL_TEMPLATE.format(self.id)
         self._soup = getsoup(self._url)
-        self._ratings_div = self._soup.find("div", class_="ReviewsSectionStatistics")
+        self._ratings_div: Tag | None = self._soup.find("div", class_="ReviewsSectionStatistics")
         if self._ratings_div is None:
             raise ParsingError(f"This book ID: {self.id!r} doesn't produce a parseable markup")
         self._stats_url = f"https://www.goodreads.com/book/stats?id={extract_int(self.id)}"
@@ -597,27 +609,39 @@ class BookParser:
             id_ = cls.fetch_id(title, author)
         return id_
 
-    def _parse_ratings_data(self) -> Dict[str, int]:
+    @staticmethod
+    def _parse_specifics_row(row: Tag) -> _SpecificRating:
+        label = row.attrs.get("aria-label")
+        ratings_div = row.find("div", class_="RatingsHistogram__labelTotal")
+        text, _ = ratings_div.text.split("(")
+        ratings = extract_int(text)
+        return _SpecificRating(label, ratings)
+
+    def _parse_ratings_stats(self) -> RatingStats:
+        general_div = self._ratings_div.find("div", class_="RatingStatistics__meta")
+        text = general_div.attrs.get("aria-label")
+        ratings_text, reviews_text = text.split("ratings")
+        ratings, reviews = extract_int(ratings_text), extract_int(reviews_text)
+        specifics_rows = self._ratings_div.find_all("div", class_="RatingsHistogram__bar")
+        specific_ratings = [self._parse_specifics_row(row) for row in specifics_rows]
+        specific_ratings = {label: ratings for label, ratings in specific_ratings}
+        return RatingStats(
+            ratings,
+            specific_ratings["1 star"],
+            specific_ratings["2 stars"],
+            specific_ratings["3 stars"],
+            specific_ratings["4 stars"],
+            specific_ratings["5 stars"],
+            reviews
+        )
+
+    def _parse_other_stats(self) -> OtherStats:
         pass
 
-    def _parse_stats(self) -> Dict[str, int]:
+    def fetch_data(self) -> DetailedBook:
+        ratings_stats = self._parse_ratings_stats()
+        other_stats = self._parse_other_stats()
         pass
-
-    # def fetch_data(self) -> DetailedBook:
-    #     ratings_data = self._parse_ratings_data()
-    #     stats = self._parse_stats()
-    #     return DetailedBook(
-    #         ratings_data["ratings"],
-    #         ratings_data["one_star_ratings"],
-    #         ratings_data["two_stars_ratings"],
-    #         ratings_data["three_stars_ratings"],
-    #         ratings_data["four_stars_ratings"],
-    #         ratings_data["five_stars_ratings"],
-    #         ratings_data["reviews"],
-    #         stats["want_to_read"],
-    #         stats["shelvings"],
-    #         stats["editions"]
-    #     )
 
 
 def load_authors(authors_json: PathLike) -> AuthorsData:
