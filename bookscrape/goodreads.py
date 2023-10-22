@@ -22,7 +22,7 @@ from requests import Timeout
 from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
 from bookscrape.utils import getdir, getfile, getsoup, extract_int, extract_float, from_iterable
-from bookscrape.data import Renown
+from bookscrape.data import ParsingError, Renown
 
 PROVIDER = "goodreads.com"
 
@@ -91,7 +91,7 @@ class AuthorStats:
 def numeric_id(text_id: str) -> int:
     """Extract numeric part of Goodreads ID and return it.
 
-    Examples of possible formats:
+    Example of possible formats:
         '625094.The_Leopard'
         '9969571-ready-player-one'
     """
@@ -189,11 +189,6 @@ class Author:
         return numeric_id(self.id)
 
 
-class ParsingError(ValueError):
-    """Raised whenever parser's assumptions are not met.
-    """
-
-
 class AuthorParser:
     """Goodreads author page parser.
     """
@@ -256,11 +251,11 @@ class AuthorParser:
         soup = getsoup(url)
         spans = soup.find_all("span", itemprop="author")
         if not spans:
-            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}")
+            raise ParsingError(f"No 'span' tags with queried authors data")
 
         a = parse_spans(spans)
         if not a:
-            raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}")
+            raise ParsingError(f"No 'a' tag with author URL")
 
         url = a.attrs.get("href")
         # URL now ought to look like this:
@@ -322,7 +317,7 @@ class AuthorParser:
             'shelved 428,790 times']
         """
         if len(parts) != 4:
-            raise ParsingError(f"Invalid parts: {parts}")
+            raise ParsingError(f"Invalid author stats parts: {parts}")
         avg_rating = extract_float(parts[0])
         ratings = extract_int(parts[1])
         reviews = extract_int(parts[2])
@@ -369,13 +364,13 @@ class AuthorParser:
         """
         a = row.find("a")
         if not a:
-            raise ParsingError(f"Invalid row: {row}")
+            raise ParsingError(f"No 'a' tag with title data in a row: {row}")
         title = a.attrs.get("title")
         if not title:
-            raise ParsingError(f"Invalid row: {row}")
+            raise ParsingError(f"No 'title' attribute in 'a' title tag within a row: {row}")
         href = a.attrs.get("href")
         if not href:
-            raise ParsingError(f"Invalid row: {row}")
+            raise ParsingError(f"No 'href' attribute in 'a' title' tag within a row: {row}")
         id_ = href.replace("/book/show/", "")
         ratings_text = row.find("span", class_="minirating").text.strip()
         avg, ratings = ratings_text.split(" — ")
@@ -475,10 +470,8 @@ class OtherStats:
 class DetailedBook:
     title: str
     authors: List[str]  # TODO: ignore non-authors marked by parentheses, e.g. '(Translator)'
-    translators: List[str]
-    series: str
-    series_work: float
-    first_published: str  # e.g. "August 16, 2011"
+    series: List[str]  # list of book ID's
+    first_published: datetime
     ratings_stats: RatingStats
     other_stats: OtherStats
     shelves: Dict[str, int]  # TODO: extract data on genres only
@@ -513,9 +506,11 @@ class BookParser:
         self._ratings_div: Tag | None = self._soup.find("div", class_="ReviewsSectionStatistics")
         if self._ratings_div is None:
             raise ParsingError(f"This book ID: {self.id!r} doesn't produce a parseable markup")
-        self._stats_url = f"https://www.goodreads.com/book/stats?id={numeric_id(self.id)}"
+        self._other_stats_url = f"https://www.goodreads.com/book/stats?id={numeric_id(self.id)}"
+        self._series_url = f"https://www.goodreads.com/series/{self.id}"
         self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.id}"
         self._editions_url = f"https://www.goodreads.com/work/editions/{numeric_id(self.id)}"
+        self._first_published = self._parse_first_published()
 
     @staticmethod
     def id_from_data(title: str, author: str, authors_data: AuthorsData) -> str | None:
@@ -578,20 +573,38 @@ class BookParser:
             id_ = cls.fetch_id(title, author)
         return id_
 
+    def _parse_first_published(self) -> datetime:
+        p_tag = self._soup.find(
+            lambda t: t.name == "p" and t.attrs.get("data-testid") == "publicationInfo")
+        if p_tag is None:
+            raise ParsingError("No tag with first publication data")
+        *_, text = p_tag.text.split("published")
+        return datetime.strptime(text.strip(), "%B %d, %Y")
+
     @staticmethod
     def _parse_specifics_row(row: Tag) -> Tuple[str, int]:
         label = row.attrs.get("aria-label")
+        if not label:
+            raise ParsingError("No label for detailed ratings")
         ratings_div = row.find("div", class_="RatingsHistogram__labelTotal")
+        if ratings_div is None:
+            raise ParsingError("No 'div' tag with detailed ratings data")
         text, _ = ratings_div.text.split("(")
         ratings = extract_int(text)
         return label, ratings
 
     def _parse_ratings_stats(self) -> RatingStats:
         general_div = self._ratings_div.find("div", class_="RatingStatistics__meta")
+        if general_div is None:
+            raise ParsingError("No detailed ratings pane")
         text = general_div.attrs.get("aria-label")
+        if not text:
+            raise ParsingError("No ratings/reviews text")
         ratings_text, reviews_text = text.split("ratings")
         ratings, reviews = extract_int(ratings_text), extract_int(reviews_text)
         specifics_rows = self._ratings_div.find_all("div", class_="RatingsHistogram__bar")
+        if not specifics_rows:
+            raise ParsingError("No rows with detailed ratings")
         specific_ratings = dict(self._parse_specifics_row(row) for row in specifics_rows)
         return RatingStats(
             ratings,

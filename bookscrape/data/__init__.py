@@ -14,6 +14,11 @@ import pandas as pd
 from bookscrape.utils import type_checker, is_increasing
 
 
+class ParsingError(ValueError):
+    """Raised whenever parser's assumptions are not met.
+    """
+
+
 @type_checker(pd.DataFrame)
 def first_df_row_as_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Make first row of ``df`` its columns.
