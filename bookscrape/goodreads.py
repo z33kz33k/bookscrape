@@ -21,7 +21,7 @@ from requests import Timeout
 
 from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
-from bookscrape.utils import getsoup, extract_int, extract_float, from_iterable
+from bookscrape.utils import getdir, getsoup, extract_int, extract_float, from_iterable
 
 
 def _read_tolkien() -> int:
@@ -292,11 +292,11 @@ class AuthorParser:
         if not a:
             raise ParsingError(f"Not a valid Goodreads author name: {self.fullname!r}")
 
-        link = a.attrs.get("href")
-        # link now ought to look like this:
+        url = a.attrs.get("href")
+        # URL now ought to look like this:
         # 'https://www.goodreads.com/author/show/7415.Harlan_Ellison?from_search=true&from_srp=true'
-        link, _ = link.split("?")  # stripping the trash part
-        return link
+        url, _ = url.split("?")  # stripping the trash part
+        return url
 
     @staticmethod
     def extract_id(author_url: str) -> str:
@@ -522,6 +522,9 @@ class BookParser:
         self._shelves_url = f"https://www.goodreads.com/work/shelves/{id_}"
         self._editions_url = f"https://www.goodreads.com/work/editions/{extract_int(id_)}"
 
+    def fetch_id(self, title: str, author: str, ):
+        pass
+
     def _parse_ratings_data(self) -> Dict[str, int]:
         pass
 
@@ -545,7 +548,7 @@ class BookParser:
     #     )
 
 
-def dump(*authors: str, **kwargs: Any) -> None:
+def dump_authors(*authors: str, **kwargs: Any) -> None:
     """Fetch data on ``authors`` and dump it to JSON.
 
     Example authors: [
@@ -596,10 +599,7 @@ def dump(*authors: str, **kwargs: Any) -> None:
         True
     timestamp = f"_{timestamp.strftime(FILNAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
     output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
-    output_dir = Path(output_dir)
-    if not output_dir.exists():
-        print(f"Creating missing output directory at: '{output_dir.resolve()}'")
-        output_dir.mkdir(exist_ok=True, parents=True)
+    output_dir = getdir(output_dir)
     filename = kwargs.get("filename")
     if filename:
         filename = filename
@@ -616,4 +616,4 @@ def dump(*authors: str, **kwargs: Any) -> None:
 
 def update_tolkien() -> None:
     outputdir = Path(__file__).parent / "data"
-    dump("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir, filename="tolkien.json")
+    dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir, filename="tolkien.json")
