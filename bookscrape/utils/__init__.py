@@ -2,14 +2,14 @@
 
     bookscrape.utils.py
     ~~~~~~~~~~~~~~~~~~~
-    Script's utilities
+    Projec's utilities
 
     @author: z33k
 
 """
 from functools import wraps
 from pathlib import Path
-from typing import Callable, Iterable, Optional
+from typing import Callable, Iterable, Optional, Sequence
 
 import pandas as pd
 import requests
@@ -100,3 +100,9 @@ def getfile(path: PathLike, ext="") -> Path:
     if ext and not f.suffix.lower() == ext.lower():
         raise ValueError(f"Not a {ext!r} file")
     return f
+
+
+def is_increasing(seq: Sequence[int | float]) -> bool:
+    if len(seq) < 2:
+        return False
+    return all(seq[i] > seq[i-1] for i, _ in enumerate(seq, start=1) if i < len(seq))

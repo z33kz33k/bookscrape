@@ -8,10 +8,9 @@
 
 """
 import json
+import re
 import time
-from collections import namedtuple
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
@@ -22,13 +21,13 @@ from requests import Timeout
 
 from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
-from bookscrape.utils import getdir, getfile, getsoup, extract_int, extract_float, from_iterable, \
-    type_checker
+from bookscrape.utils import getdir, getfile, getsoup, extract_int, extract_float, from_iterable
+from bookscrape.data import Renown
 
 PROVIDER = "goodreads.com"
 
 
-def _load_tolkien() -> int:
+def _load_tolkien() -> Tuple[int, int]:
     source = Path(__file__).parent / "data" / "tolkien.json"
     if not source.exists():
         raise FileNotFoundError(f"'{source}' not found")
@@ -40,49 +39,17 @@ def _load_tolkien() -> int:
         raise ValueError(f"No data in '{source}'")
 
     try:
-        count = data["authors"][0]["stats"]["ratings"]
+        tolkien_ratings = data["authors"][0]["stats"]["ratings"]
+        fellowship_ratings = data["authors"][0]["books"][1]["ratings"]
     except (KeyError, IndexError):
         raise ValueError(f"Invalid data in '{source}'")
-    return count
+    return tolkien_ratings, fellowship_ratings
 
 
 try:
-    TOLKIEN_RATINGS_COUNT = _load_tolkien()  # 10_674_789 on 18th Oct 2023
+    TOLKIEN_RATINGS, FELLOWSHIP_RATINGS = _load_tolkien()  # 10_674_789, 2_736_955 on 18th Oct 2023
 except ValueError:
-    TOLKIEN_RATINGS_COUNT = 10_674_789
-
-
-class Renown(Enum):
-    SUPERSTAR = int(TOLKIEN_RATINGS_COUNT / 3)
-    STAR = range(int(TOLKIEN_RATINGS_COUNT / 10), int(TOLKIEN_RATINGS_COUNT / 3))
-    FAMOUS = range(int(TOLKIEN_RATINGS_COUNT / 30), int(TOLKIEN_RATINGS_COUNT / 10))
-    POPULAR = range(int(TOLKIEN_RATINGS_COUNT / 60), int(TOLKIEN_RATINGS_COUNT / 30))
-    WELL_KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 100), int(TOLKIEN_RATINGS_COUNT / 60))
-    KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 400), int(TOLKIEN_RATINGS_COUNT / 100))
-    SOMEWHAT_KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 200), int(TOLKIEN_RATINGS_COUNT / 400))
-    LITTLE_KNOWN = range(int(TOLKIEN_RATINGS_COUNT / 1000), int(TOLKIEN_RATINGS_COUNT / 200))
-    OBSCURE = range(int(TOLKIEN_RATINGS_COUNT / 1000))
-
-    @property
-    def priority(self) -> int:
-        if self is Renown.SUPERSTAR:
-            return 8
-        elif self is Renown.STAR:
-            return 7
-        elif self is Renown.FAMOUS:
-            return 6
-        elif self is Renown.POPULAR:
-            return 5
-        elif self is Renown.WELL_KNOWN:
-            return 4
-        elif self is Renown.KNOWN:
-            return 3
-        elif self is Renown.SOMEWHAT_KNOWN:
-            return 2
-        elif self is Renown.LITTLE_KNOWN:
-            return 1
-        else:
-            return 0
+    TOLKIEN_RATINGS, FELLOWSHIP_RATINGS = 10_674_789, 2_736_955
 
 
 @dataclass
@@ -121,6 +88,19 @@ class AuthorStats:
         return f"{r2r:.2f} %"
 
 
+def numeric_id(text_id: str) -> int:
+    """Extract numeric part of Goodreads ID and return it.
+
+    Examples of possible formats:
+        '625094.The_Leopard'
+        '9969571-ready-player-one'
+    """
+    match = re.search(r"\d+", text_id)
+    if not match:
+        raise ValueError(f"Unable to extract numeric part of Goodread ID: {text_id!r}")
+    return int(match.group())
+
+
 @dataclass
 class Book:
     title: str
@@ -146,6 +126,7 @@ class Book:
             data.update({
                 "editions": self.editions,
             })
+        data.update({"renown": self.renown.name})
         return data
 
     @classmethod
@@ -160,8 +141,12 @@ class Book:
         )
 
     @property
-    def int_id(self) -> int:
-        return extract_int(self.id)
+    def renown(self) -> Renown:
+        return Renown.calculate(self.ratings, FELLOWSHIP_RATINGS)
+
+    @property
+    def numeric_id(self) -> int:
+        return numeric_id(self.id)
 
 
 @dataclass
@@ -197,30 +182,11 @@ class Author:
 
     @property
     def renown(self) -> Renown:
-        if self.stats.ratings >= Renown.SUPERSTAR.value:
-            return Renown.SUPERSTAR
-        elif self.stats.ratings in Renown.STAR.value:
-            return Renown.STAR
-        elif self.stats.ratings in Renown.FAMOUS.value:
-            return Renown.FAMOUS
-        elif self.stats.ratings in Renown.POPULAR.value:
-            return Renown.POPULAR
-        elif self.stats.ratings in Renown.WELL_KNOWN.value:
-            return Renown.WELL_KNOWN
-        elif self.stats.ratings in Renown.KNOWN.value:
-            return Renown.KNOWN
-        elif self.stats.ratings in Renown.SOMEWHAT_KNOWN.value:
-            return Renown.SOMEWHAT_KNOWN
-        elif self.stats.ratings in Renown.LITTLE_KNOWN.value:
-            return Renown.LITTLE_KNOWN
-        elif self.stats.ratings in Renown.OBSCURE.value:
-            return Renown.OBSCURE
-        else:
-            raise ValueError(f"Invalid ratings count: {self.stats.ratings:,}")
+        return Renown.calculate(self.stats.ratings, TOLKIEN_RATINGS)
 
     @property
-    def int_id(self) -> int:
-        return extract_int(self.id)
+    def numeric_id(self) -> int:
+        return numeric_id(self.id)
 
 
 class ParsingError(ValueError):
@@ -518,11 +484,15 @@ class DetailedBook:
     shelves: Dict[str, int]  # TODO: extract data on genres only
     titles: Dict[str, str]  # TODO: scraped from editions page
 
+    @property
+    def renown(self) -> Renown:
+        return Renown.calculate(self.ratings_stats.ratings, FELLOWSHIP_RATINGS)
+
 
 AuthorsData = Dict[str, datetime | str | List[Author]]
 
 
-# TODO: continue
+# TODO: add parsing errors, scrape more data
 class BookParser:
     """Goodreads book page parser.
     """
@@ -543,9 +513,9 @@ class BookParser:
         self._ratings_div: Tag | None = self._soup.find("div", class_="ReviewsSectionStatistics")
         if self._ratings_div is None:
             raise ParsingError(f"This book ID: {self.id!r} doesn't produce a parseable markup")
-        self._stats_url = f"https://www.goodreads.com/book/stats?id={extract_int(self.id)}"
+        self._stats_url = f"https://www.goodreads.com/book/stats?id={numeric_id(self.id)}"
         self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.id}"
-        self._editions_url = f"https://www.goodreads.com/work/editions/{extract_int(self.id)}"
+        self._editions_url = f"https://www.goodreads.com/work/editions/{numeric_id(self.id)}"
 
     @staticmethod
     def id_from_data(title: str, author: str, authors_data: AuthorsData) -> str | None:
@@ -723,4 +693,5 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
 
 def update_tolkien() -> None:
     outputdir = Path(__file__).parent / "data"
-    dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir, filename="tolkien.json")
+    dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir,
+                 filename="tolkien.json")
