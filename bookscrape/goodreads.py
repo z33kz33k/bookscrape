@@ -520,7 +520,6 @@ class DetailedBook:
 
 
 AuthorsData = Dict[str, datetime | str | List[Author]]
-_SpecificRating = namedtuple("_SpecificRating", "label rating")
 
 
 # TODO: continue
@@ -610,12 +609,12 @@ class BookParser:
         return id_
 
     @staticmethod
-    def _parse_specifics_row(row: Tag) -> _SpecificRating:
+    def _parse_specifics_row(row: Tag) -> Tuple[str, int]:
         label = row.attrs.get("aria-label")
         ratings_div = row.find("div", class_="RatingsHistogram__labelTotal")
         text, _ = ratings_div.text.split("(")
         ratings = extract_int(text)
-        return _SpecificRating(label, ratings)
+        return label, ratings
 
     def _parse_ratings_stats(self) -> RatingStats:
         general_div = self._ratings_div.find("div", class_="RatingStatistics__meta")
@@ -623,8 +622,7 @@ class BookParser:
         ratings_text, reviews_text = text.split("ratings")
         ratings, reviews = extract_int(ratings_text), extract_int(reviews_text)
         specifics_rows = self._ratings_div.find_all("div", class_="RatingsHistogram__bar")
-        specific_ratings = [self._parse_specifics_row(row) for row in specifics_rows]
-        specific_ratings = {label: ratings for label, ratings in specific_ratings}
+        specific_ratings = dict(self._parse_specifics_row(row) for row in specifics_rows)
         return RatingStats(
             ratings,
             specific_ratings["1 star"],
