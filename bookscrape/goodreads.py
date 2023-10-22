@@ -19,12 +19,15 @@ import backoff
 from bs4.element import Tag
 from requests import Timeout
 
-from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, READABLE_TIMESTAMP_FORMAT,
+from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
-from bookscrape.utils import getdir, getsoup, extract_int, extract_float, from_iterable
+from bookscrape.utils import getdir, getfile, getsoup, extract_int, extract_float, from_iterable, \
+    type_checker
+
+PROVIDER = "goodreads.com"
 
 
-def _read_tolkien() -> int:
+def _load_tolkien() -> int:
     source = Path(__file__).parent / "data" / "tolkien.json"
     if not source.exists():
         raise FileNotFoundError(f"'{source}' not found")
@@ -43,7 +46,7 @@ def _read_tolkien() -> int:
 
 
 try:
-    TOLKIEN_RATINGS_COUNT = _read_tolkien()  # 10_674_789 on 18th Oct 2023
+    TOLKIEN_RATINGS_COUNT = _load_tolkien()  # 10_674_789 on 18th Oct 2023
 except ValueError:
     TOLKIEN_RATINGS_COUNT = 10_674_789
 
@@ -505,6 +508,9 @@ class DetailedBook:
     titles: Dict[str, str]  # TODO: scraped from editions page
 
 
+AuthorsData = Dict[str, datetime | str | List[Author]]
+
+
 # TODO: continue
 class BookParser:
     """Goodreads book page parser.
@@ -512,18 +518,84 @@ class BookParser:
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
     DATE_FORMAT = "%B %d, %Y"  # datetime.strptime("August 16, 2011", "%B %d, %Y")
 
-    def __init__(self, id_: str) -> None:
-        self._url = self.URL_TEMPLATE.format(id_)
+    @property
+    def id(self) -> str:
+        return self._id
+
+    def __init__(self, title: str, author: str,
+                 authors_data: AuthorsData | None = None) -> None:
+        self._id = self.find_id(title, author, authors_data)
+        if not self._id:
+            raise ValueError("Unable to derive Goodreads book ID from provided input")
+        self._url = self.URL_TEMPLATE.format(self.id)
         self._soup = getsoup(self._url)
         self._ratings_div = self._soup.find("div", class_="ReviewsSectionStatistics")
         if self._ratings_div is None:
-            raise ParsingError(f"Not a valid Goodreads book ID: {id_!r}")
-        self._stats_url = f"https://www.goodreads.com/book/stats?id={extract_int(id_)}"
-        self._shelves_url = f"https://www.goodreads.com/work/shelves/{id_}"
-        self._editions_url = f"https://www.goodreads.com/work/editions/{extract_int(id_)}"
+            raise ParsingError(f"This book ID: {self.id!r} doesn't produce a parseable markup")
+        self._stats_url = f"https://www.goodreads.com/book/stats?id={extract_int(self.id)}"
+        self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.id}"
+        self._editions_url = f"https://www.goodreads.com/work/editions/{extract_int(self.id)}"
 
-    def fetch_id(self, title: str, author: str, ):
-        pass
+    @staticmethod
+    def id_from_data(title: str, author: str, authors_data: AuthorsData) -> str | None:
+        """Derive Goodreads book ID from provided authors data.
+
+        Args:
+            title: book's title
+            author: book's author
+            authors_data: data as read from JSON saved by dump_authors()
+
+        Returns:
+            derived ID or None
+        """
+        authors: List[Author] = authors_data["authors"]
+        author = from_iterable(authors, lambda a: a.name == author)
+        if not author:
+            return None
+        book = from_iterable(author.books, lambda b: b.title == title)
+        if not book:
+            return None
+        return book.id
+
+    @staticmethod
+    def fetch_id(title: str, author: str) -> str | None:
+        """Scrape author data and extract Goodreads book ID from it according to arguments passed.
+
+        Args:
+            title: book's title
+            author: book's author
+
+        Returns:
+            fetched ID or None
+        """
+        author = AuthorParser(author).fetch_data()
+        book = from_iterable(author.books, lambda b: b.title == title)
+        if not book:
+            return None
+        return book.id
+
+    @classmethod
+    def find_id(cls, title: str, author: str,
+                authors_data: AuthorsData | None = None) -> str | None:
+        """Find Goodreads book ID based on provided arguments.
+
+        Performs the look-up on ``authors_data`` if provided. Otherwise, scrapes Goodreads author
+        page for the ID.
+
+        Args:
+            title: book's title
+            author: book's author
+            authors_data: data as read from JSON saved by dump_authors() (if not provided, Goodreads author page is scraped)
+
+        Returns:
+            book ID found or None
+        """
+        id_ = None
+        if authors_data:
+            id_ = cls.id_from_data(title, author, authors_data)
+        if not id_:
+            id_ = cls.fetch_id(title, author)
+        return id_
 
     def _parse_ratings_data(self) -> Dict[str, int]:
         pass
@@ -546,6 +618,19 @@ class BookParser:
     #         stats["shelvings"],
     #         stats["editions"]
     #     )
+
+
+def load_authors(authors_json: PathLike) -> AuthorsData:
+    """Load ``authors_json`` into a dictionary containg a list of Author objects and return it.
+
+    Args:
+        authors_json: path to a JSON file saved earlier by dump_authors()
+    """
+    authors_json = getfile(authors_json, ext=".json")
+    data = json.loads(authors_json.read_text(encoding="utf8"))
+    data["timestamp"] = datetime.strptime(data["timestamp"], READABLE_TIMESTAMP_FORMAT)
+    data["authors"] = [Author.from_dict(item) for item in data["authors"]]
+    return data
 
 
 def dump_authors(*authors: str, **kwargs: Any) -> None:
@@ -573,7 +658,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
     timestamp = datetime.now()
     data = {
         "timestamp": timestamp.strftime(READABLE_TIMESTAMP_FORMAT),
-        "provider": "goodreads.com",
+        "provider": PROVIDER,
         "authors": [],
     }
     delay = kwargs.get("delay") or DELAY

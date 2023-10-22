@@ -88,3 +88,15 @@ def getdir(path: PathLike) -> Path:
         if dir_.is_file():
             raise NotADirectoryError(f"Not a directory: '{dir_.resolve()}'")
     return dir_
+
+
+@type_checker(PathLike)
+def getfile(path: PathLike, ext="") -> Path:
+    """Return a file at ``path``.
+    """
+    f = Path(path)
+    if not f.is_file():
+        raise FileNotFoundError(f"Not a file: '{f.resolve()}'")
+    if ext and not f.suffix.lower() == ext.lower():
+        raise ValueError(f"Not a {ext!r} file")
+    return f
