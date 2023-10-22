@@ -155,6 +155,10 @@ class Book:
             data.get("editions"),
         )
 
+    @property
+    def int_id(self) -> int:
+        return extract_int(self.id)
+
 
 @dataclass
 class Author:
@@ -210,6 +214,10 @@ class Author:
         else:
             raise ValueError(f"Invalid ratings count: {self.stats.ratings:,}")
 
+    @property
+    def int_id(self) -> int:
+        return extract_int(self.id)
+
 
 class ParsingError(ValueError):
     """Raised whenever parser's assumptions are not met.
@@ -258,8 +266,8 @@ class AuthorParser:
     def __init__(self, fullname: str) -> None:
         self._fullname = fullname
 
-    def find_author_link(self) -> str:
-        """Find Goodreads author link.
+    def find_author_url(self) -> str:
+        """Find Goodreads author URL.
 
         Example:
             'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
@@ -291,16 +299,16 @@ class AuthorParser:
         return link
 
     @staticmethod
-    def extract_id(author_link: str) -> str:
-        """Extract Goodreads author ID from ``author_link``.
+    def extract_id(author_url: str) -> str:
+        """Extract Goodreads author ID from ``author_url``.
 
         Args:
-            author_link: Goodreads author link, e.g.: 'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
+            author_url: Goodreads author URL, e.g.: 'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
 
         Returns:
             an author ID, e.g.: '7415.Harlan_Ellison'
         """
-        *_, id_ = author_link.split("/")
+        *_, id_ = author_url.split("/")
         return id_
 
     def parse_author_page(self, author_id: str) -> Tuple[AuthorStats, List[Book]]:
@@ -410,8 +418,8 @@ class AuthorParser:
 
     def fetch_data(self) -> Author:
         try:
-            link = self.find_author_link()
-            author_id = self.extract_id(link)
+            url = self.find_author_url()
+            author_id = self.extract_id(url)
             stats, books = self.parse_author_page(author_id)
         except Timeout:
             print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
@@ -421,21 +429,124 @@ class AuthorParser:
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def fetch_data_with_backoff(self) -> Author:
-        link = self.find_author_link()
+        link = self.find_author_url()
         author_id = self.extract_id(link)
         stats, books = self.parse_author_page(author_id)
         return Author(self.fullname, author_id, stats, books)
 
 
-# TODO: parse the individual Book page for detailed ratings data
+@dataclass
+class RatingStats:
+    ratings: int
+    one_star_ratings: int
+    two_stars_ratings: int
+    three_stars_ratings: int
+    four_stars_ratings: int
+    five_stars_ratings: int
+    reviews: int
+
+    def __post_init__(self) -> None:
+        total = sum([self.one_star_ratings, self.two_stars_ratings, self.three_stars_ratings,
+                     self.four_stars_ratings, self.five_stars_ratings])
+        if total != self.ratings:
+            print("WARNING: Total ratings counted from partial ones different than the parsed "
+                  "total")
+
+    @property
+    def avg_rating(self) -> float:
+        return sum([
+            self.one_star_ratings, self.two_stars_ratings * 2, self.three_stars_ratings * 3,
+            self.four_stars_ratings * 4, self.five_stars_ratings * 5
+        ]) / 5
+
+    @property
+    def one_star_percent(self) -> str:
+        percent = self.one_star_ratings * 100 / self.ratings
+        return f"{percent:.2f} %"
+
+    @property
+    def two_stars_percent(self) -> str:
+        percent = self.two_stars_ratings * 100 / self.ratings
+        return f"{percent:.2f} %"
+
+    @property
+    def three_stars_percent(self) -> str:
+        percent = self.three_stars_ratings * 100 / self.ratings
+        return f"{percent:.2f} %"
+
+    @property
+    def four_stars_percent(self) -> str:
+        percent = self.four_stars_ratings * 100 / self.ratings
+        return f"{percent:.2f} %"
+
+    @property
+    def five_stars_percent(self) -> str:
+        percent = self.five_stars_ratings * 100 / self.ratings
+        return f"{percent:.2f} %"
+
+
+@dataclass
+class OtherStats:
+    want_to_read: int
+    shelvings: int
+    editions: int
+
+
+@dataclass
+class DetailedBook:
+    title: str
+    authors: List[str]  # TODO: ignore non-authors marked by parentheses, e.g. '(Translator)'
+    series: str
+    series_work: float
+    first_published: str  # e.g. "August 16, 2011"
+    ratings_stats: RatingStats
+    other_stats: OtherStats
+    shelves: Dict[str, int]  # TODO: extract data on genres only
+    titles: Dict[str, str]  # TODO: scraped from editions page
+
+
+# TODO: continue
 class BookParser:
     """Goodreads book page parser.
     """
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
+    DATE_FORMAT = "%B %d, %Y"  # datetime.strptime("August 16, 2011", "%B %d, %Y")
+
+    def __init__(self, id_: str) -> None:
+        self._url = self.URL_TEMPLATE.format(id_)
+        self._soup = getsoup(self._url)
+        self._ratings_div = self._soup.find("div", class_="ReviewsSectionStatistics")
+        if self._ratings_div is None:
+            raise ParsingError(f"Not a valid Goodreads book ID: {id_!r}")
+        self._stats_url = f"https://www.goodreads.com/book/stats?id={extract_int(id_)}"
+        self._shelves_url = f"https://www.goodreads.com/work/shelves/{id_}"
+        self._editions_url = f"https://www.goodreads.com/work/editions/{extract_int(id_)}"
+
+    def _parse_ratings_data(self) -> Dict[str, int]:
+        pass
+
+    def _parse_stats(self) -> Dict[str, int]:
+        pass
+
+    # def fetch_data(self) -> DetailedBook:
+    #     ratings_data = self._parse_ratings_data()
+    #     stats = self._parse_stats()
+    #     return DetailedBook(
+    #         ratings_data["ratings"],
+    #         ratings_data["one_star_ratings"],
+    #         ratings_data["two_stars_ratings"],
+    #         ratings_data["three_stars_ratings"],
+    #         ratings_data["four_stars_ratings"],
+    #         ratings_data["five_stars_ratings"],
+    #         ratings_data["reviews"],
+    #         stats["want_to_read"],
+    #         stats["shelvings"],
+    #         stats["editions"]
+    #     )
 
 
 def dump(*authors: str, **kwargs: Any) -> None:
-    """Dump ``authors`` to JSON.
+    """Fetch data on ``authors`` and dump it to JSON.
 
     Example authors: [
         "Isaac Asimov",
@@ -454,7 +565,7 @@ def dump(*authors: str, **kwargs: Any) -> None:
 
     Args:
         authors: variable number of author full names
-        kwargs: optional arguments (e.g. a prefix for a dumpfile's name, an output directory)
+        kwargs: optional arguments (e.g. a prefix for a dumpfile's name, an output directory, etc.)
     """
     timestamp = datetime.now()
     data = {
@@ -483,7 +594,7 @@ def dump(*authors: str, **kwargs: Any) -> None:
     prefix = f"{prefix}_" if prefix else ""
     use_timestamp = kwargs.get("use_timestamp") if kwargs.get("use_timestamp") is not None else \
         True
-    timestamp = timestamp.strftime(FILNAME_TIMESTAMP_FORMAT) if use_timestamp else ""
+    timestamp = f"_{timestamp.strftime(FILNAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
     output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
     output_dir = Path(output_dir)
     if not output_dir.exists():
@@ -491,9 +602,9 @@ def dump(*authors: str, **kwargs: Any) -> None:
         output_dir.mkdir(exist_ok=True, parents=True)
     filename = kwargs.get("filename")
     if filename:
-        filename = f"{prefix}{filename}"
+        filename = filename
     else:
-        filename = f"{prefix}dump_{timestamp}.json"
+        filename = f"{prefix}dump{timestamp}.json"
 
     dest = output_dir / filename
     with dest.open("w", encoding="utf8") as f:
