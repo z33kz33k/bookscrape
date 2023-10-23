@@ -264,11 +264,11 @@ class AuthorParser:
         soup = getsoup(url)
         spans = soup.find_all("span", itemprop="author")
         if not spans:
-            raise ParsingError(f"No 'span' tags with queried authors data")
+            raise ParsingError(f"No 'span' tags with queried author's data")
 
         a = parse_spans(spans)
         if not a:
-            raise ParsingError(f"No 'a' tag with author URL")
+            raise ParsingError(f"No 'a' tag containing the queried author's URL")
 
         url = a.attrs.get("href")
         # URL now ought to look like this:
@@ -461,20 +461,12 @@ class RatingStats:
 
 
 @dataclass
-class OtherStats:
-    want_to_read: int
-    shelvings: int
-    editions: int
-
-
-@dataclass
 class DetailedBook:
     title: str
     authors: List[str]  # list of author ID's
     series: List[str]  # list of book ID's
     first_published: datetime
     ratings_stats: RatingStats
-    other_stats: OtherStats
     shelves: Dict[str, int]  # TODO: extract data on genres only
     titles: Dict[str, str]  # TODO: scraped from editions page
 
@@ -527,7 +519,11 @@ class BookParser:
             return None
         book = from_iterable(author.books, lambda b: b.title == title)
         if not book:
-            return None
+            # Goodreads gets fancy with their apostrophes...
+            book = from_iterable(author.books,
+                                 lambda b: b.title == title.replace("'", "’"))
+            if not book:
+                return None
         return book.id
 
     @staticmethod
@@ -638,15 +634,21 @@ class BookParser:
             reviews
         )
 
-    def _parse_other_stats(self) -> OtherStats:
-        pass
+    # TODO: decide what is needed
+    @staticmethod
+    def _parse_meta_script_tags(soup: BeautifulSoup) -> Tuple[dict, dict]:
+        t1 = soup.find(lambda t: t.name == "script" and '"awards":' in t.text)
+        d1 = json.loads(t1.text)
+        t2 = soup.find("script", id="__NEXT_DATA__")
+        d2 = json.loads(t2.text)
+        return d1, d2
 
     def fetch_data(self) -> DetailedBook:
         soup = getsoup(self._url)
         first_published = self._parse_first_published(soup)
         authors = self._parse_authors_line(soup)
         ratings_stats = self._parse_ratings_stats(soup)
-        other_stats = self._parse_other_stats()
+        d1, d2 = self._parse_meta_script_tags(soup)
         pass
 
 
@@ -705,6 +707,8 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         if i != len(authors):
             throttle(delay)
             print()
+
+    data["authors"] = sorted(data["authors"], key=lambda item: item["name"].casefold())
 
     # kwargs
     prefix = kwargs.get("prefix") or ""
