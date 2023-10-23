@@ -735,8 +735,7 @@ def update_authors(authors_json: PathLike) -> None:
     Args:
         authors_json: path to a JSON file saved earlier by dump_authors()
     """
-    authors_json = getfile(authors_json, ext=".json")
-    data = json.loads(authors_json.read_text(encoding="utf8"))
+    data = load_authors(authors_json)
     authors = data["authors"]
     ids = [author.id for author in authors]
     dump_authors(*ids, prefix="authors")
