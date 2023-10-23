@@ -7,6 +7,7 @@
     @author: z33k
 
 """
+import time
 from functools import wraps
 from pathlib import Path
 from typing import Callable, Iterable, Optional, Sequence
@@ -16,7 +17,7 @@ import requests
 from bs4 import BeautifulSoup
 from contexttimer import Timer
 
-from bookscrape.constants import PathLike, REQUEST_TIMOUT, T
+from bookscrape.constants import DELAY, PathLike, REQUEST_TIMOUT, T
 from bookscrape.utils.check_type import type_checker
 
 
@@ -106,3 +107,8 @@ def is_increasing(seq: Sequence[int | float]) -> bool:
     if len(seq) < 2:
         return False
     return all(seq[i] > seq[i-1] for i, _ in enumerate(seq, start=1) if i < len(seq))
+
+
+def throttle(delay: float = DELAY) -> None:
+    print(f"Throttling for {delay} seconds...")
+    time.sleep(delay)

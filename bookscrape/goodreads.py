@@ -23,7 +23,8 @@ from requests import Timeout
 
 from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
-from bookscrape.utils import getdir, getfile, getsoup, extract_int, extract_float, from_iterable
+from bookscrape.utils import getdir, getfile, getsoup, extract_int, extract_float, from_iterable, \
+    throttle
 from bookscrape.data import ParsingError, Renown
 
 PROVIDER = "goodreads.com"
@@ -704,8 +705,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         data["authors"].append(fetched.as_dict)
 
         if len(authors) > 1:
-            print(f"Throttling for {delay} seconds...")
-            time.sleep(delay)
+            throttle(delay)
             print()
 
     # kwargs
