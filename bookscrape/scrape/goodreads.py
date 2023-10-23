@@ -9,7 +9,6 @@
 """
 import json
 import re
-import time
 from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
@@ -23,18 +22,14 @@ from requests import Timeout
 
 from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
-from bookscrape.utils import getdir, getfile, getsoup, extract_int, extract_float, from_iterable, \
-    throttle
-from bookscrape.data import ParsingError, Renown
+from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable
+from bookscrape.scrape import ParsingError, Renown, getsoup, throttle
 
 PROVIDER = "goodreads.com"
 
 
 def _load_tolkien() -> Tuple[int, int]:
-    source = Path(__file__).parent / "data" / "tolkien.json"
-    if not source.exists():
-        raise FileNotFoundError(f"'{source}' not found")
-
+    source = getfile(Path(__file__).parent.parent / "data" / "tolkien.json")
     with source.open(encoding="utf8") as f:
         data = json.load(f)
 
@@ -43,16 +38,14 @@ def _load_tolkien() -> Tuple[int, int]:
 
     try:
         tolkien_ratings = data["authors"][0]["stats"]["ratings"]
-        fellowship_ratings = data["authors"][0]["books"][1]["ratings"]
+        hobbit_ratings = data["authors"][0]["books"][0]["ratings"]
     except (KeyError, IndexError):
         raise ValueError(f"Invalid data in '{source}'")
-    return tolkien_ratings, fellowship_ratings
+    return tolkien_ratings, hobbit_ratings
 
 
-try:
-    TOLKIEN_RATINGS, FELLOWSHIP_RATINGS = _load_tolkien()  # 10_674_789, 2_736_955 on 18th Oct 2023
-except ValueError:
-    TOLKIEN_RATINGS, FELLOWSHIP_RATINGS = 10_674_789, 2_736_955
+TOLKIEN_RATINGS, HOBBIT_RATINGS = _load_tolkien()
+# TOLKIEN_RATINGS, HOBBIT_RATINGS = 10_674_789, 3_779_353  # on 18th Oct 2023
 
 
 @dataclass
@@ -145,7 +138,7 @@ class Book:
 
     @property
     def renown(self) -> Renown:
-        return Renown.calculate(self.ratings, FELLOWSHIP_RATINGS)
+        return Renown.calculate(self.ratings, HOBBIT_RATINGS)
 
     @property
     def numeric_id(self) -> int:
@@ -198,28 +191,47 @@ class AuthorParser:
     URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
 
     @property
-    def fullname(self) -> str:
+    def fullname(self) -> str | None:
         return self._fullname
 
     @property
-    def normalized_name(self) -> str:
-        # Goodreads logic that formulates author ID:
+    def id(self) -> str | None:
+        return self._id
 
-        # 1) replace any whitespace with underscore
-        # Example: '589.Orson_Scott_Card'
+    def __init__(self, author: str) -> None:
+        """Initialize.
 
-        # 2) replace any non-alphabetic character with underscore
-        # Apostrophe: 'Madeleine L'Engle' ==> '106.Madeleine_L_Engle'
-        # Hyphen: 'Chi Ta-wei' ==> '14640243.Chi_Ta_wei'
-        # Dot: 'George R.R. Martin' ==> '346732.George_R_R_Martin'
+        Args:
+            author: author's full name or Goodreads author ID (one fewer sever request)
+        """
+        self._id, self._fullname = None, None
+        if is_goodreads_id(author):
+            self._id = author
+        else:
+            self._fullname = author
 
-        # 3) replace any non-ASCII character with underscore
-        # Example: 'Stanisław Lem' ==> '10991.Stanis_aw_Lem'
+    @staticmethod
+    def normalize_name(author_name: str) -> str:
+        """Return 'author_name' as rendered in Goodreads author ID.
 
-        # 4) replace any immediately repeated underscore with only one instance
-        # Example: 'Ewa Białołęcka' ==> '554577.Ewa_Bia_o_cka'
+        Goodreads logic that formulates author ID:
+
+        1) replace any whitespace with underscore
+            Example: '589.Orson_Scott_Card'
+
+        2) replace any non-alphabetic character with underscore
+            Apostrophe: 'Madeleine L'Engle' ==> '106.Madeleine_L_Engle'
+            Hyphen: 'Chi Ta-wei' ==> '14640243.Chi_Ta_wei'
+            Dot: 'George R.R. Martin' ==> '346732.George_R_R_Martin'
+
+        3) replace any non-ASCII character with underscore
+            Example: 'Stanisław Lem' ==> '10991.Stanis_aw_Lem'
+
+        4) replace any immediately repeated underscore with only one instance
+            Example: 'Ewa Białołęcka' ==> '554577.Ewa_Bia_o_cka'
+        """
         chars, underscore_appended = [], False
-        for char in self.fullname:
+        for char in author_name:
             if not (char.isalpha() and char.isascii()):
                 if not underscore_appended:
                     chars.append("_")
@@ -231,19 +243,17 @@ class AuthorParser:
                 underscore_appended = False
         return "".join(chars)
 
-    def __init__(self, fullname: str) -> None:
-        self._fullname = fullname
-
-    def find_author_url(self) -> str:
-        """Find Goodreads author URL.
+    def find_author_id(self) -> str:
+        """Find Goodreads author ID.
 
         Example:
-            'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
+            '7415.Harlan_Ellison'
         """
         def parse_spans(spans_: List[Tag]) -> Optional[Tag]:
             for span in spans_:
                 a_ = span.find(
-                    lambda t: t.name == "a" and self.normalized_name in t.attrs.get("href"))
+                    lambda t: t.name == "a" and self.normalize_name(
+                        self.fullname) in t.attrs.get("href"))
                 if a_ is not None:
                     return a_
             return None
@@ -264,36 +274,25 @@ class AuthorParser:
         # URL now ought to look like this:
         # 'https://www.goodreads.com/author/show/7415.Harlan_Ellison?from_search=true&from_srp=true'
         url, _ = url.split("?")  # stripping the trash part
-        return url
-
-    @staticmethod
-    def extract_id(author_url: str) -> str:
-        """Extract Goodreads author ID from ``author_url``.
-
-        Args:
-            author_url: Goodreads author URL, e.g.: 'https://www.goodreads.com/author/show/7415.Harlan_Ellison'
-
-        Returns:
-            an author ID, e.g.: '7415.Harlan_Ellison'
-        """
-        *_, id_ = author_url.split("/")
+        *_, id_ = url.split("/")
         return id_
 
-    def parse_author_page(self, author_id: str) -> Tuple[AuthorStats, List[Book]]:
-        """Parse Goodreads author page.
+    def _parse_author_page(self) -> Author:
+        """Scrape and parse Goodreads author page and return an Author object.
 
         Example URL:
             https://www.goodreads.com/author/list/7415.Harlan_Ellison
 
-        Args:
-            author_id: last part of the URL, e.g.: '7415.Harlan_Ellison'
-
         Returns:
-            an AuthorStats object and a list of Book objects
+            an Author object
         """
-        url = self.URL_TEMPLATE.format(author_id)
+        url = self.URL_TEMPLATE.format(self.id)
         soup = getsoup(url)
         container = soup.find("div", class_="leftContainer")
+        name_tag = container.find("a", class_="authorName")
+        if name_tag is None:
+            raise ParsingError("No author name tag")
+        self._fullname = name_tag.text.strip()
 
         # author stats
         div = container.find("div", class_="")
@@ -307,7 +306,7 @@ class AuthorParser:
         rows = table.find_all("tr")
         books = [self._parse_book_table_row(row) for row in rows]
 
-        return stats, books
+        return Author(self.fullname, self.id, stats, books)
 
     @staticmethod
     def _parse_author_stats(parts: List[str]) -> AuthorStats:
@@ -386,21 +385,20 @@ class AuthorParser:
 
     def fetch_data(self) -> Author:
         try:
-            url = self.find_author_url()
-            author_id = self.extract_id(url)
-            stats, books = self.parse_author_page(author_id)
+            if not self.id:
+                self._id = self.find_author_id()
+            author = self._parse_author_page()
         except Timeout:
             print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
                   "(60 seconds max)...")
             return self.fetch_data_with_backoff()
-        return Author(self.fullname, author_id, stats, books)
+        return author
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def fetch_data_with_backoff(self) -> Author:
-        link = self.find_author_url()
-        author_id = self.extract_id(link)
-        stats, books = self.parse_author_page(author_id)
-        return Author(self.fullname, author_id, stats, books)
+        if not self.id:
+            self._id = self.find_author_id()
+        return self._parse_author_page()
 
 
 @dataclass
@@ -482,7 +480,7 @@ class DetailedBook:
 
     @property
     def renown(self) -> Renown:
-        return Renown.calculate(self.ratings_stats.ratings, FELLOWSHIP_RATINGS)
+        return Renown.calculate(self.ratings_stats.ratings, HOBBIT_RATINGS)
 
 
 AuthorsData = Dict[str, datetime | str | List[Author]]
@@ -684,7 +682,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
     ]
 
     Args:
-        authors: variable number of author full names
+        authors: variable number of author full names or Goodread author IDs (in case of the latter there's one request fewer)
         kwargs: optional arguments (e.g. a prefix for a dumpfile's name, an output directory, etc.)
     """
     timestamp = datetime.now()
@@ -696,7 +694,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
     delay = kwargs.get("delay") or DELAY
     for i, author in enumerate(authors, start=1):
         print(f"Scraping author #{i}: {author!r}...")
-        parser = AuthorParser(fullname=author)
+        parser = AuthorParser(author)
         try:
             fetched = parser.fetch_data_with_backoff()
         except ParsingError as e:
@@ -704,7 +702,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
             continue
         data["authors"].append(fetched.as_dict)
 
-        if len(authors) > 1:
+        if i != len(authors):
             throttle(delay)
             print()
 
@@ -730,7 +728,41 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         print(f"Successfully dumped '{dest}'")
 
 
+def update_authors(authors_json: PathLike) -> None:
+    """Load authors from ``authors_json``, scrape them again and save at the same location (
+    with updated file timestamp).
+
+    Args:
+        authors_json: path to a JSON file saved earlier by dump_authors()
+    """
+    authors_json = getfile(authors_json, ext=".json")
+    data = json.loads(authors_json.read_text(encoding="utf8"))
+    authors = data["authors"]
+    ids = [author.id for author in authors]
+    dump_authors(*ids, prefix="authors")
+
+
 def update_tolkien() -> None:
-    outputdir = Path(__file__).parent / "data"
+    outputdir = Path(__file__).parent.parent / "data"
     dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir,
                  filename="tolkien.json")
+
+
+def is_goodreads_id(text: str) -> bool:
+    if len(text) <= 2:
+        return False
+    if "." in text and "-" in text:
+        return False
+    if "." in text:
+        sep = "."
+    elif "-" in text:
+        sep = "-"
+    else:
+        return False
+    left, *right = text.split(sep)
+    right = "".join(right)
+    if not all(char.isdigit() for char in left):
+        return False
+    if not all((char.isalnum() and char.isascii()) or char in "_-" for char in right):
+        return False
+    return True

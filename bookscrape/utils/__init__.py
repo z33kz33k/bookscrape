@@ -7,17 +7,14 @@
     @author: z33k
 
 """
-import time
 from functools import wraps
 from pathlib import Path
 from typing import Callable, Iterable, Optional, Sequence
 
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
 from contexttimer import Timer
 
-from bookscrape.constants import DELAY, PathLike, REQUEST_TIMOUT, T
+from bookscrape.constants import PathLike, T
 from bookscrape.utils.check_type import type_checker
 
 
@@ -34,22 +31,6 @@ def timed(func: Callable) -> Callable:
         print(f"Completed in {t.elapsed:.3f} seconds")
         return result
     return wrapper
-
-
-@timed
-@type_checker(str)
-def getsoup(url: str) -> BeautifulSoup:
-    """Return BeautifulSoup object based on ``url``.
-
-    Args:
-        url: URL string
-
-    Returns:
-        a BeautifulSoup object
-    """
-    print(f"Requesting: {url!r}")
-    markup = requests.get(url, timeout=REQUEST_TIMOUT).text
-    return BeautifulSoup(markup, "lxml")
 
 
 @type_checker(pd.DataFrame)
@@ -109,6 +90,3 @@ def is_increasing(seq: Sequence[int | float]) -> bool:
     return all(seq[i] > seq[i-1] for i, _ in enumerate(seq, start=1) if i < len(seq))
 
 
-def throttle(delay: float = DELAY) -> None:
-    print(f"Throttling for {delay} seconds...")
-    time.sleep(delay)

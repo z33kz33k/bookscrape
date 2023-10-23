@@ -19,8 +19,8 @@ import numpy as np
 import pandas as pd
 
 from bookscrape.constants import Json
-from bookscrape.utils import first_df_row_as_columns, getsoup
-
+from bookscrape.utils import first_df_row_as_columns
+from bookscrape.scrape import getsoup
 
 URL = "http://www.nicholaswhyte.info/sf/nh2.htm"
 DEFAULT_JSON = Path("scrape") / "hugo_nebula.json"

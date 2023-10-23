@@ -61,3 +61,10 @@ DANGEROUS_VISIONS_AUTHORS = [
     "Roger Zelazny",
     "Samuel R. Delany",
 ]
+
+BORKED = [
+    "Daniel Keyes",
+    "44037.Vernor_Vinge",  # only with ID,
+    "Karin Tidbeck",
+    "Mary Wollstonecraft Shelley",
+]
