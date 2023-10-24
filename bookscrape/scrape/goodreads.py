@@ -20,12 +20,16 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from requests import Timeout
 
-from bookscrape.constants import (DELAY, Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
+from bookscrape.constants import (Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable
-from bookscrape.scrape import ParsingError, Renown, getsoup, throttle
+from bookscrape.scrape import ParsingError, Renown, getsoup, throttled
 
 PROVIDER = "goodreads.com"
+# the unofficially known enforced throttling delay
+# between requests to Goodreads servers is 1 s
+# we're choosing to be safe here
+THROTTLING_DELAY = 1.1  # seconds
 
 
 def _load_tolkien() -> Tuple[int, int]:
@@ -244,6 +248,7 @@ class AuthorParser:
         return "".join(chars)
 
     @classmethod
+    @throttled(THROTTLING_DELAY)
     def find_author_id(cls, author_name: str) -> str:
         """Find Goodreads author ID by quering a Goodreads search with ``author_name``.
 
@@ -357,6 +362,7 @@ class AuthorParser:
 
         return Book(title, id_, avg, ratings, published, editions)
 
+    @throttled(THROTTLING_DELAY)
     def _parse_author_page(self) -> Author:
         """Scrape and parse Goodreads author page and return an Author object.
 
@@ -665,6 +671,7 @@ class BookParser:
         d2 = json.loads(t2.text)
         return d1, d2
 
+    @throttled(THROTTLING_DELAY)
     def fetch_data(self) -> DetailedBook:
         soup = getsoup(self._url)
         first_published = self._parse_first_published(soup)
@@ -715,7 +722,6 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         "provider": PROVIDER,
         "authors": [],
     }
-    delay = kwargs.get("delay") or DELAY
     for i, author in enumerate(authors, start=1):
         print(f"Scraping author #{i}: {author!r}...")
         parser = AuthorParser(author)
@@ -727,7 +733,6 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         data["authors"].append(fetched.as_dict)
 
         if i != len(authors):
-            throttle(delay)
             print()
 
     data["authors"] = sorted(data["authors"], key=lambda item: item["name"].casefold())
@@ -761,10 +766,11 @@ def update_authors(authors_json: PathLike) -> None:
     Args:
         authors_json: path to a JSON file saved earlier by dump_authors()
     """
+    output_dir = Path(authors_json).parent
     data = load_authors(authors_json)
     authors = data["authors"]
     ids = [author.id for author in authors]
-    dump_authors(*ids, prefix="authors")
+    dump_authors(*ids, prefix="authors", output_dir=output_dir)
 
 
 def update_tolkien() -> None:

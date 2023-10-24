@@ -9,11 +9,13 @@
 """
 import time
 from enum import Enum, auto
+from functools import wraps
+from typing import Callable
 
 import requests
 from bs4 import BeautifulSoup
 
-from bookscrape.constants import DELAY, REQUEST_TIMOUT
+from bookscrape.constants import REQUEST_TIMOUT
 from bookscrape.utils import is_increasing, timed, type_checker
 
 
@@ -87,6 +89,25 @@ def getsoup(url: str) -> BeautifulSoup:
     return BeautifulSoup(markup, "lxml")
 
 
-def throttle(delay: float = DELAY) -> None:
+def throttle(delay: float) -> None:
     print(f"Throttling for {delay} seconds...")
     time.sleep(delay)
+
+
+def throttled(delay: float) -> Callable:
+    """Add throttling delay after the decorated operation.
+
+    Args:
+        throttling delay in fraction of seconds
+
+    Returns:
+        the decorated function
+    """
+    def decorate(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            throttle(delay)
+            return result
+        return wrapper
+    return decorate
