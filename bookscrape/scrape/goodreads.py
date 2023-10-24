@@ -191,12 +191,12 @@ class AuthorParser:
     URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
 
     @property
-    def fullname(self) -> str | None:
-        return self._fullname
+    def author_name(self) -> str | None:
+        return self._author_name
 
     @property
-    def id(self) -> str | None:
-        return self._id
+    def author_id(self) -> str | None:
+        return self._author_id
 
     def __init__(self, author: str) -> None:
         """Initialize.
@@ -204,11 +204,11 @@ class AuthorParser:
         Args:
             author: author's full name or Goodreads author ID (one fewer sever request)
         """
-        self._id, self._fullname = None, None
+        self._author_id, self._author_name = None, None
         if is_goodreads_id(author):
-            self._id = author
+            self._author_id = author
         else:
-            self._fullname = author
+            self._author_name = author
 
     @staticmethod
     def normalize_name(author_name: str) -> str:
@@ -243,8 +243,12 @@ class AuthorParser:
                 underscore_appended = False
         return "".join(chars)
 
-    def find_author_id(self) -> str:
-        """Find Goodreads author ID.
+    @classmethod
+    def find_author_id(cls, author_name: str) -> str:
+        """Find Goodreads author ID by quering a Goodreads search with ``author_name``.
+
+        Args:
+            author_name: full author's name
 
         Example:
             '7415.Harlan_Ellison'
@@ -252,13 +256,13 @@ class AuthorParser:
         def parse_spans(spans_: List[Tag]) -> Optional[Tag]:
             for span in spans_:
                 a_ = span.find(
-                    lambda t: t.name == "a" and self.normalize_name(
-                        self.fullname) in t.attrs.get("href"))
+                    lambda t: t.name == "a" and cls.normalize_name(author_name) in t.attrs.get(
+                        "href"))
                 if a_ is not None:
                     return a_
             return None
 
-        query = "+".join(self.fullname.split())
+        query = "+".join(author_name.split())
         url_template = "https://www.goodreads.com/search?q={}"
         url = url_template.format(query)
         soup = getsoup(url)
@@ -276,37 +280,6 @@ class AuthorParser:
         url, _ = url.split("?")  # stripping the trash part
         *_, id_ = url.split("/")
         return id_
-
-    def _parse_author_page(self) -> Author:
-        """Scrape and parse Goodreads author page and return an Author object.
-
-        Example URL:
-            https://www.goodreads.com/author/list/7415.Harlan_Ellison
-
-        Returns:
-            an Author object
-        """
-        url = self.URL_TEMPLATE.format(self.id)
-        soup = getsoup(url)
-        container = soup.find("div", class_="leftContainer")
-        name_tag = container.find("a", class_="authorName")
-        if name_tag is None:
-            raise ParsingError("No author name tag")
-        self._fullname = name_tag.text.strip()
-
-        # author stats
-        div = container.find("div", class_="")
-        text = div.text.strip()
-        parts = [part.strip() for part in text.split("\n")[1:]]
-        parts = [part.strip(" ·") for part in parts]
-        stats = self._parse_author_stats(parts)
-
-        # books
-        table = container.find("table", class_="tableList")
-        rows = table.find_all("tr")
-        books = [self._parse_book_table_row(row) for row in rows]
-
-        return Author(self.fullname, self.id, stats, books)
 
     @staticmethod
     def _parse_author_stats(parts: List[str]) -> AuthorStats:
@@ -355,7 +328,8 @@ class AuthorParser:
         except ValueError:
             return None
 
-    def _parse_book_table_row(self, row: Tag) -> Book:
+    @classmethod
+    def _parse_book_table_row(cls, row: Tag) -> Book:
         """Parse a book table row of the author page's book list.
 
         Args:
@@ -378,15 +352,46 @@ class AuthorParser:
         avg, ratings = ratings_text.split(" — ")
         avg = extract_float(avg)
         ratings = extract_int(ratings)
-        published = self._parse_published(row)
-        editions = self._parse_editions(row)
+        published = cls._parse_published(row)
+        editions = cls._parse_editions(row)
 
         return Book(title, id_, avg, ratings, published, editions)
 
+    def _parse_author_page(self) -> Author:
+        """Scrape and parse Goodreads author page and return an Author object.
+
+        Example URL:
+            https://www.goodreads.com/author/list/7415.Harlan_Ellison
+
+        Returns:
+            an Author object
+        """
+        url = self.URL_TEMPLATE.format(self.author_id)
+        soup = getsoup(url)
+        container = soup.find("div", class_="leftContainer")
+        name_tag = container.find("a", class_="authorName")
+        if name_tag is None:
+            raise ParsingError("No author name tag")
+        self._author_name = name_tag.text.strip()
+
+        # author stats
+        div = container.find("div", class_="")
+        text = div.text.strip()
+        parts = [part.strip() for part in text.split("\n")[1:]]
+        parts = [part.strip(" ·") for part in parts]
+        stats = self._parse_author_stats(parts)
+
+        # books
+        table = container.find("table", class_="tableList")
+        rows = table.find_all("tr")
+        books = [self._parse_book_table_row(row) for row in rows]
+
+        return Author(self.author_name, self.author_id, stats, books)
+
     def fetch_data(self) -> Author:
         try:
-            if not self.id:
-                self._id = self.find_author_id()
+            if not self.author_id:
+                self._author_id = self.find_author_id(self.author_name)
             author = self._parse_author_page()
         except Timeout:
             print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
@@ -396,11 +401,12 @@ class AuthorParser:
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def fetch_data_with_backoff(self) -> Author:
-        if not self.id:
-            self._id = self.find_author_id()
+        if not self.author_id:
+            self._author_id = self.find_author_id(self.author_name)
         return self._parse_author_page()
 
 
+# TODO: Generic RatingsDistribution class
 @dataclass
 class RatingStats:
     ratings: int
@@ -475,7 +481,7 @@ class DetailedBook:
         return Renown.calculate(self.ratings_stats.ratings, HOBBIT_RATINGS)
 
 
-AuthorsData = Dict[str, datetime | str | List[Author]]
+_AuthorsData = Dict[str, datetime | str | List[Author]]
 _Contributor = namedtuple("_Contributor", "author_id has_role")
 
 
@@ -487,34 +493,49 @@ class BookParser:
     DATE_FORMAT = "%B %d, %Y"  # datetime.strptime("August 16, 2011", "%B %d, %Y")
 
     @property
-    def id(self) -> str:
-        return self._id
+    def book_id(self) -> str:
+        return self._book_id
 
-    def __init__(self, title: str, author: str,
-                 authors_data: AuthorsData | None = None) -> None:
-        self._id = self.find_id(title, author, authors_data)
-        if not self._id:
+    def __init__(self, book: str, author: str | None,
+                 authors_data: _AuthorsData | None = None) -> None:
+        """Initialize.
+
+        Args:
+            book: book's title or book ID
+            author: optionally (if book ID was not provided), book author's full name or Goodreads author ID
+            authors_data: optionally, data as read from JSON saved by dump_authors()
+        """
+        if is_goodreads_id(book):
+            self._book_id = book
+        else:
+            if not author:
+                raise ValueError("Author must be specified when Book ID not provided")
+            self._book_id = self.find_book_id(book, author, authors_data)
+        if not self._book_id:
             raise ValueError("Unable to derive Goodreads book ID from provided input")
-        self._url = self.URL_TEMPLATE.format(self.id)
-        self._other_stats_url = f"https://www.goodreads.com/book/stats?id={numeric_id(self.id)}"
-        self._series_url = f"https://www.goodreads.com/series/{self.id}"
-        self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.id}"
-        self._editions_url = f"https://www.goodreads.com/work/editions/{numeric_id(self.id)}"
+        self._url = self.URL_TEMPLATE.format(self.book_id)
+        self._other_stats_url = f"https://www.goodreads.com/book/stats?id={numeric_id(self.book_id)}"
+        self._series_url = f"https://www.goodreads.com/series/{self.book_id}"
+        self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.book_id}"
+        self._editions_url = f"https://www.goodreads.com/work/editions/{numeric_id(self.book_id)}"
 
     @staticmethod
-    def id_from_data(title: str, author: str, authors_data: AuthorsData) -> str | None:
+    def book_id_from_data(title: str, author: str, authors_data: _AuthorsData) -> str | None:
         """Derive Goodreads book ID from provided authors data.
 
         Args:
             title: book's title
-            author: book's author
+            author: book author's full name or Goodreads author ID
             authors_data: data as read from JSON saved by dump_authors()
 
         Returns:
-            derived ID or None
+            derived book ID or None
         """
         authors: List[Author] = authors_data["authors"]
-        author = from_iterable(authors, lambda a: a.name == author)
+        if is_goodreads_id(author):
+            author = from_iterable(authors, lambda a: a.book_id == author)
+        else:
+            author = from_iterable(authors, lambda a: a.name == author)
         if not author:
             return None
         book = from_iterable(author.books, lambda b: b.title == title)
@@ -527,15 +548,15 @@ class BookParser:
         return book.id
 
     @staticmethod
-    def fetch_id(title: str, author: str) -> str | None:
+    def fetch_book_id(title: str, author: str) -> str | None:
         """Scrape author data and extract Goodreads book ID from it according to arguments passed.
 
         Args:
             title: book's title
-            author: book's author
+            author: book author's name or author ID
 
         Returns:
-            fetched ID or None
+            fetched book ID or None
         """
         author = AuthorParser(author).fetch_data()
         book = from_iterable(author.books, lambda b: b.title == title)
@@ -544,8 +565,8 @@ class BookParser:
         return book.id
 
     @classmethod
-    def find_id(cls, title: str, author: str,
-                authors_data: AuthorsData | None = None) -> str | None:
+    def find_book_id(cls, title: str, author: str,
+                     authors_data: _AuthorsData | None = None) -> str | None:
         """Find Goodreads book ID based on provided arguments.
 
         Performs the look-up on ``authors_data`` if provided. Otherwise, scrapes Goodreads author
@@ -553,7 +574,7 @@ class BookParser:
 
         Args:
             title: book's title
-            author: book's author
+            author: book's author or author ID
             authors_data: data as read from JSON saved by dump_authors() (if not provided, Goodreads author page is scraped)
 
         Returns:
@@ -561,9 +582,9 @@ class BookParser:
         """
         id_ = None
         if authors_data:
-            id_ = cls.id_from_data(title, author, authors_data)
+            id_ = cls.book_id_from_data(title, author, authors_data)
         if not id_:
-            id_ = cls.fetch_id(title, author)
+            id_ = cls.fetch_book_id(title, author)
         return id_
 
     @staticmethod
@@ -583,14 +604,15 @@ class BookParser:
         *_, id_ = url.split("/")
         return _Contributor(id_, a_tag.find("span", class_="ContributorLink__role") is not None)
 
-    def _parse_authors_line(self, soup: BeautifulSoup) -> List[str]:
+    @classmethod
+    def _parse_authors_line(cls, soup: BeautifulSoup) -> List[str]:
         contributor_div = soup.find("div", class_="ContributorLinksList")
         if contributor_div is None:
             raise ParsingError("No 'div' tag with contributors data")
         contributor_tags = contributor_div.find_all("a")
         if not contributor_tags:
             raise ParsingError("No contributor data 'a' tags")
-        contributors = [self._parse_contributor(tag) for tag in contributor_tags]
+        contributors = [cls._parse_contributor(tag) for tag in contributor_tags]
         authors = [c for c in contributors if not c.has_role]
         if not authors:
             return [contributors[0].author_id]
@@ -611,7 +633,7 @@ class BookParser:
     def _parse_ratings_stats(self, soup: BeautifulSoup) -> RatingStats:
         ratings_div: Tag | None = soup.find("div", class_="ReviewsSectionStatistics")
         if ratings_div is None:
-            raise ParsingError(f"This book ID: {self.id!r} doesn't produce a parseable markup")
+            raise ParsingError(f"This book ID: {self.book_id!r} doesn't produce a parseable markup")
         general_div = ratings_div.find("div", class_="RatingStatistics__meta")
         if general_div is None:
             raise ParsingError("No detailed ratings pane")
@@ -652,7 +674,7 @@ class BookParser:
         pass
 
 
-def load_authors(authors_json: PathLike) -> AuthorsData:
+def load_authors(authors_json: PathLike) -> _AuthorsData:
     """Load ``authors_json`` into a dictionary containg a list of Author objects and return it.
 
     Args:
