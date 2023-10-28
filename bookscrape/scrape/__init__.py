@@ -193,6 +193,9 @@ class RatingsDistribution:
         percent = self.ratings(rank) * 100 / self.total
         return f"{percent:.2f} %"
 
+    def __repr__(self) -> str:
+        return repr(self.scaled_dist).replace("OrderedDict", self.__class__.__name__)
+
 
 class FiveStars(RatingsDistribution):
     """A rating distribution with pre-defined (1, 2, 3, 4, 5) rank scheme and some convenience

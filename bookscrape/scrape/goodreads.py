@@ -109,7 +109,7 @@ class Book:
     id: str
     avg_rating: float
     ratings: int
-    published_in: Optional[int]
+    published_in: Optional[datetime]
     editions: Optional[int]
 
     @property
@@ -122,7 +122,7 @@ class Book:
         }
         if self.published_in is not None:
             data.update({
-                "published_in": self.published_in,
+                "published_in": self.published_in.year,
             })
         if self.editions is not None:
             data.update({
@@ -133,12 +133,13 @@ class Book:
 
     @classmethod
     def from_dict(cls, data: Dict[str, int | float | str]) -> "Book":
+        published_in = data.get("published_in")
         return cls(
             data["title"],
             data["id"],
             data["avg_rating"],
             data["ratings"],
-            data.get("published_in"),
+            datetime(published_in, 1, 1) if published_in is not None else None,
             data.get("editions"),
         )
 
@@ -360,6 +361,7 @@ class AuthorParser:
         avg = extract_float(avg)
         ratings = extract_int(ratings)
         published = cls._parse_published(row)
+        published = datetime(published, 1, 1) if published is not None else None
         editions = cls._parse_editions(row)
 
         return Book(title, id_, avg, ratings, published, editions)
@@ -448,9 +450,60 @@ class DetailedBook:
         return Renown.calculate(self.ratings_stats.ratings, HOBBIT_RATINGS)
 
 
+@dataclass
+class MainEdition:
+    publisher: str
+    publication_time: datetime
+    format: str
+    pages: int
+    language: str
+    isbn: str
+    isbn13: str
+    asin: str
+
+
 class _ScriptTagParser:
     def __init__(self, data: Dict[str, Any]) -> None:
         self._data = data
+        self._book_data = self._item("Book:kca://")
+        self._work_data = self._item("Work:kca://")
+        if self._book_data is None:
+            raise ParsingError("No 'Book:kca://' data on the 'script' tag")
+        if self._work_data is None:
+            raise ParsingError("No 'Work:kca://' data on the 'script' tag")
+        pass
+
+    def _item(self, key_part: str) -> Any | None:
+        key = from_iterable(self._data, lambda k: key_part in k)
+        if not key:
+            return None
+        return self._data[key]
+
+    def parse(self):
+        try:
+            complete_title = self._book_data["titleComplete"]
+            details = self._book_data["details"]
+            timestamp = details["publicationTime"]
+            if len(str(timestamp)) == 13:
+                timestamp /= 1000
+            main_edition = MainEdition(
+                publisher=details["publisher"],
+                publication_time=datetime.utcfromtimestamp(timestamp),
+                format=details["format"],
+                pages=details["numPages"],
+                language=details["language"]["name"],
+                isbn=details["isbn"],
+                isbn13=details["isbn13"],
+                asin=details["asin"],
+            )
+            blurb = self._book_data['description({"stripped":true})']
+            genres = []
+            for item in self._book_data["bookGenres"]:
+                genre = item["genre"]
+                genres.append(genre["name"])
+        except KeyError as ke:
+            raise ParsingError(f"Data unavailable on the 'script' tag: {ke}")
+        pass
 
 
 _AuthorsData = Dict[str, datetime | str | List[Author]]
@@ -621,11 +674,13 @@ class BookParser:
         return RatingStats(dist, reviews)
 
     @staticmethod
-    def _parse_meta_script_tag(soup: BeautifulSoup) -> dict:
+    def _parse_meta_script_tag(soup: BeautifulSoup):
         t = soup.find("script", id="__NEXT_DATA__")
-        d = json.loads(t.text)
-        # TODO: parse contents
-        return d
+        try:
+            parser = _ScriptTagParser(json.loads(t.text)["props"]["pageProps"]["apolloState"])
+        except KeyError:
+            raise ParsingError("No valid meta 'script' tag to parse")
+        parser.parse()
 
     @throttled(THROTTLING_DELAY)
     def fetch_data(self) -> DetailedBook:
