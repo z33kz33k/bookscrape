@@ -170,7 +170,7 @@ class RatingsDistribution:
             rank_scheme = [*distribution]
         self._dist = OrderedDict(sorted([(r, v) for r, v in distribution.items()]))
         self._rank_scheme = tuple(sorted(rank_scheme))
-        if any(rank < 0 for rank, _ in distribution.items()) or len(distribution) < 3:
+        if any(rank < 0 for rank in distribution) or len(distribution) < 3:
             raise ValueError("Ratings distribution must be a mapping of at least three "
                              "non-negative rating ranks to number of votes fot them, got: "
                              f"{distribution}")

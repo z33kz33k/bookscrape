@@ -24,7 +24,7 @@ from bookscrape.constants import (Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP
                                   FILNAME_TIMESTAMP_FORMAT)
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
     type_checker
-from bookscrape.scrape import ParsingError, Renown, getsoup, throttled
+from bookscrape.scrape import ParsingError, Renown, getsoup, throttled, FiveStars
 
 PROVIDER = "goodreads.com"
 # the unofficially known enforced throttling delay
@@ -414,64 +414,23 @@ class AuthorParser:
         return self._parse_author_page()
 
 
-# TODO: Generic RatingsDistribution class
 @dataclass
 class RatingStats:
-    ratings: int
-    one_star_ratings: int
-    two_stars_ratings: int
-    three_stars_ratings: int
-    four_stars_ratings: int
-    five_stars_ratings: int
+    distribution: FiveStars
     reviews: int
-
-    def __post_init__(self) -> None:
-        total = sum([self.one_star_ratings, self.two_stars_ratings, self.three_stars_ratings,
-                     self.four_stars_ratings, self.five_stars_ratings])
-        if total != self.ratings:
-            print("WARNING: Total ratings counted from partial ones different than the parsed "
-                  "total")
-
-    @property
-    def avg_rating(self) -> float:
-        return sum([
-            self.one_star_ratings, self.two_stars_ratings * 2, self.three_stars_ratings * 3,
-            self.four_stars_ratings * 4, self.five_stars_ratings * 5
-        ]) / self.ratings
-
-    @property
-    def one_star_percent(self) -> str:
-        percent = self.one_star_ratings * 100 / self.ratings
-        return f"{percent:.2f} %"
-
-    @property
-    def two_stars_percent(self) -> str:
-        percent = self.two_stars_ratings * 100 / self.ratings
-        return f"{percent:.2f} %"
-
-    @property
-    def three_stars_percent(self) -> str:
-        percent = self.three_stars_ratings * 100 / self.ratings
-        return f"{percent:.2f} %"
-
-    @property
-    def four_stars_percent(self) -> str:
-        percent = self.four_stars_ratings * 100 / self.ratings
-        return f"{percent:.2f} %"
-
-    @property
-    def five_stars_percent(self) -> str:
-        percent = self.five_stars_ratings * 100 / self.ratings
-        return f"{percent:.2f} %"
 
     @property
     def r2r(self) -> float:
-        return self.reviews / self.ratings if self.ratings else 0
+        return self.reviews / self.ratings
 
     @property
     def r2r_percent(self) -> str:
         r2r = self.r2r * 100
         return f"{r2r:.2f} %"
+
+    @property
+    def ratings(self) -> int:
+        return self.distribution.total
 
 
 @dataclass
@@ -487,6 +446,11 @@ class DetailedBook:
     @property
     def renown(self) -> Renown:
         return Renown.calculate(self.ratings_stats.ratings, HOBBIT_RATINGS)
+
+
+class _ScriptTagParser:
+    def __init__(self, data: Dict[str, Any]) -> None:
+        self._data = data
 
 
 _AuthorsData = Dict[str, datetime | str | List[Author]]
@@ -627,7 +591,7 @@ class BookParser:
         return [a.author_id for a in authors]
 
     @staticmethod
-    def _parse_specifics_row(row: Tag) -> Tuple[str, int]:
+    def _parse_specifics_row(row: Tag) -> Tuple[int, int]:
         label = row.attrs.get("aria-label")
         if not label:
             raise ParsingError("No label for detailed ratings")
@@ -636,7 +600,7 @@ class BookParser:
             raise ParsingError("No 'div' tag with detailed ratings data")
         text, _ = ratings_div.text.split("(")
         ratings = extract_int(text)
-        return label, ratings
+        return extract_int(label), ratings
 
     def _parse_ratings_stats(self, soup: BeautifulSoup) -> RatingStats:
         ratings_div: Tag | None = soup.find("div", class_="ReviewsSectionStatistics")
@@ -648,21 +612,13 @@ class BookParser:
         text = general_div.attrs.get("aria-label")
         if not text:
             raise ParsingError("No ratings/reviews text")
-        ratings_text, reviews_text = text.split("ratings")
-        ratings, reviews = extract_int(ratings_text), extract_int(reviews_text)
+        _, reviews_text = text.split("ratings")
+        reviews = extract_int(reviews_text)
         specifics_rows = ratings_div.find_all("div", class_="RatingsHistogram__bar")
         if not specifics_rows:
             raise ParsingError("No rows with detailed ratings")
-        specific_ratings = dict(self._parse_specifics_row(row) for row in specifics_rows)
-        return RatingStats(
-            ratings,
-            specific_ratings["1 star"],
-            specific_ratings["2 stars"],
-            specific_ratings["3 stars"],
-            specific_ratings["4 stars"],
-            specific_ratings["5 stars"],
-            reviews
-        )
+        dist = FiveStars(dict(self._parse_specifics_row(row) for row in specifics_rows))
+        return RatingStats(dist, reviews)
 
     @staticmethod
     def _parse_meta_script_tag(soup: BeautifulSoup) -> dict:
