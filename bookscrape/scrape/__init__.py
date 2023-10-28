@@ -8,9 +8,10 @@
 
 """
 import time
+from collections import OrderedDict
 from enum import Enum, auto
 from functools import wraps
-from typing import Callable
+from typing import Callable, Dict, Iterable, List, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -111,3 +112,131 @@ def throttled(delay: float) -> Callable:
             return result
         return wrapper
     return decorate
+
+
+class RatingsDistribution:
+    """Ratings distribution that rescales itself to any given rank scheme.
+    """
+    @property
+    def dist(self) -> OrderedDict[int | float, int]:
+        return self._dist
+
+    @property
+    def rank_scheme(self) -> Tuple[int | float, ...]:
+        return self._rank_scheme
+
+    @property
+    def total(self) -> int:
+        return sum(votes for _, votes in self.dist.items())
+
+    @property
+    def avg_rating(self) -> float:
+        return sum(rank * votes for rank, votes in self.dist.items()) / self.total
+
+    @property
+    def scaled_dist(self) -> OrderedDict[int | float, int]:
+        if self.rank_scheme == tuple(sorted(self.dist)):
+            return self.dist
+
+        pairs, max_rank = [], max(self.rank_scheme)
+        for i, rank in enumerate(self.rank_scheme):
+            if i == 0:
+                ratings = self._span_ratings(0, round(rank / max_rank, 3))
+                pairs.append((rank, ratings))
+            elif i == len(self.rank_scheme) - 1:
+                previous_rank = self.rank_scheme[i - 1]
+                ratings = self._span_ratings(round(previous_rank / max_rank, 3), 1)
+                pairs.append((rank, ratings))
+            else:
+                previous_rank = self.rank_scheme[i - 1]
+                min_ = round(previous_rank / max_rank, 3)
+                max_ = round(rank / max_rank, 3)
+                pair = rank, self._span_ratings(min_, max_)
+                pairs.append(pair)
+        return OrderedDict(pairs)
+
+    def __init__(self, distribution: Dict[int | float, int],
+                 rank_scheme: Iterable[int | float] = ()) -> None:
+        """Initialize.
+
+        If no rank scheme is supplied the keys of supplied distribution dict are assumed as
+        such and no effective scaling is perfomed.
+
+        Args:
+            distribution: a mapping of (at least three) non-negative rating ranks to number of votes for them
+            rank_scheme: iterable of (at least three) non-negative numbers to rescale supplied distribution to
+        """
+        if not rank_scheme:
+            rank_scheme = [*distribution]
+        self._dist = OrderedDict(sorted([(r, v) for r, v in distribution.items()]))
+        self._rank_scheme = tuple(sorted(rank_scheme))
+        if any(rank < 0 for rank, _ in distribution.items()) or len(distribution) < 3:
+            raise ValueError("Ratings distribution must be a mapping of at least three "
+                             "non-negative rating ranks to number of votes fot them, got: "
+                             f"{distribution}")
+        if any(rank < 0 for rank in self.rank_scheme) or len(self.rank_scheme) < 3:
+            raise ValueError("Rank scheme must be an iterable of at least three non-negative "
+                             f"numbers, got: {rank_scheme}")
+        self._normalized = [(rank / max(self.dist), votes) for rank, votes in self.dist.items()]
+
+    def _span_ratings(self, min_: float, max_: float) -> int:
+        return sum(votes for rank, votes in self._normalized if min_ < rank <= max_)
+
+    def ratings(self, rank: int | float) -> int:
+        if rank not in self.rank_scheme:
+            raise ValueError(f"Rank must be defined in the rank scheme: '{self.rank_scheme}'")
+        return self.scaled_dist[rank]
+
+    def ratings_percent(self, rank: int | float) -> str:
+        if rank not in self.rank_scheme:
+            raise ValueError(f"Rank must be defined in the rank scheme: '{self.rank_scheme}'")
+        percent = self.ratings(rank) * 100 / self.total
+        return f"{percent:.2f} %"
+
+
+class FiveStars(RatingsDistribution):
+    """A rating distribution with pre-defined (1, 2, 3, 4, 5) rank scheme and some convenience
+    properties.
+    """
+    def __init__(self, distribution: Dict[int | float, int]) -> None:
+        super().__init__(distribution=distribution, rank_scheme=(1, 2, 3, 4, 5))
+
+    @property
+    def one_star_ratings(self) -> int:
+        return self.ratings(1)
+
+    @property
+    def one_star_percent(self) -> str:
+        return self.ratings_percent(1)
+
+    @property
+    def two_stars_ratings(self) -> int:
+        return self.ratings(2)
+
+    @property
+    def two_star_percent(self) -> str:
+        return self.ratings_percent(2)
+
+    @property
+    def three_stars_ratings(self) -> int:
+        return self.ratings(3)
+
+    @property
+    def three_star_percent(self) -> str:
+        return self.ratings_percent(3)
+
+    @property
+    def four_stars_ratings(self) -> int:
+        return self.ratings(4)
+
+    @property
+    def four_star_percent(self) -> str:
+        return self.ratings_percent(4)
+
+    @property
+    def five_stars_ratings(self) -> int:
+        return self.ratings(5)
+
+    @property
+    def five_star_percent(self) -> str:
+        return self.ratings_percent(5)

@@ -9,7 +9,7 @@
 """
 from functools import wraps
 from pathlib import Path
-from typing import Callable, Iterable, Optional, Sequence
+from typing import Callable, Iterable, Optional, Protocol, Sequence
 
 import pandas as pd
 from contexttimer import Timer
@@ -84,7 +84,14 @@ def getfile(path: PathLike, ext="") -> Path:
     return f
 
 
-def is_increasing(seq: Sequence[int | float]) -> bool:
+class Comparable(Protocol):
+    """Protocol for annotating comparable types.
+    """
+    def __lt__(self, other) -> bool:
+        ...
+
+
+def is_increasing(seq: Sequence[Comparable]) -> bool:
     if len(seq) < 2:
         return False
     return all(seq[i] > seq[i-1] for i, _ in enumerate(seq, start=1) if i < len(seq))

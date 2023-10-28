@@ -12,7 +12,7 @@ import re
 from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 
 import backoff
@@ -22,7 +22,8 @@ from requests import Timeout
 
 from bookscrape.constants import (Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
-from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable
+from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
+    type_checker
 from bookscrape.scrape import ParsingError, Renown, getsoup, throttled
 
 PROVIDER = "goodreads.com"
@@ -60,7 +61,7 @@ class AuthorStats:
     shelvings: int
 
     @property
-    def as_dict(self) -> Dict[str, Union[float, int]]:
+    def as_dict(self) -> Dict[str, int | float]:
         return {
             "avg_rating": self.avg_rating,
             "ratings": self.ratings,
@@ -70,7 +71,7 @@ class AuthorStats:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[float, int]]) -> "AuthorStats":
+    def from_dict(cls, data: Dict[str, int | float]) -> "AuthorStats":
         return cls(
             data["avg_rating"],
             data["ratings"],
@@ -88,6 +89,7 @@ class AuthorStats:
         return f"{r2r:.2f} %"
 
 
+@type_checker(str)
 def numeric_id(text_id: str) -> int:
     """Extract numeric part of Goodreads ID and return it.
 
@@ -111,7 +113,7 @@ class Book:
     editions: Optional[int]
 
     @property
-    def as_dict(self) -> Dict[str, Union[str, int, float]]:
+    def as_dict(self) -> Dict[str, int | float | str]:
         data = {
             "title": self.title,
             "id": self.id,
@@ -130,7 +132,7 @@ class Book:
         return data
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[str, int, float]]) -> "Book":
+    def from_dict(cls, data: Dict[str, int | float | str]) -> "Book":
         return cls(
             data["title"],
             data["id"],
@@ -662,14 +664,12 @@ class BookParser:
             reviews
         )
 
-    # TODO: decide what is needed
     @staticmethod
-    def _parse_meta_script_tags(soup: BeautifulSoup) -> Tuple[dict, dict]:
-        t1 = soup.find(lambda t: t.name == "script" and '"awards":' in t.text)
-        d1 = json.loads(t1.text)
-        t2 = soup.find("script", id="__NEXT_DATA__")
-        d2 = json.loads(t2.text)
-        return d1, d2
+    def _parse_meta_script_tag(soup: BeautifulSoup) -> dict:
+        t = soup.find("script", id="__NEXT_DATA__")
+        d = json.loads(t.text)
+        # TODO: parse contents
+        return d
 
     @throttled(THROTTLING_DELAY)
     def fetch_data(self) -> DetailedBook:
@@ -677,7 +677,7 @@ class BookParser:
         first_published = self._parse_first_published(soup)
         authors = self._parse_authors_line(soup)
         ratings_stats = self._parse_ratings_stats(soup)
-        d1, d2 = self._parse_meta_script_tags(soup)
+        d2 = self._parse_meta_script_tag(soup)
         pass
 
 
@@ -779,6 +779,7 @@ def update_tolkien() -> None:
                  filename="tolkien.json")
 
 
+@type_checker(str)
 def is_goodreads_id(text: str) -> bool:
     if len(text) <= 2:
         return False
