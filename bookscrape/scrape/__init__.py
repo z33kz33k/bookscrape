@@ -11,13 +11,13 @@ import time
 from collections import OrderedDict
 from enum import Enum, auto
 from functools import wraps
-from typing import Callable, Dict, Iterable, List, Tuple
+from typing import Callable, Dict, Iterable, Tuple
 
 import requests
 from bs4 import BeautifulSoup
 
 from bookscrape.constants import REQUEST_TIMOUT
-from bookscrape.utils import is_increasing, timed, type_checker
+from bookscrape.utils import is_increasing, timed, type_checker, langcode2name, name2langcode
 
 
 class ParsingError(ValueError):
@@ -169,7 +169,7 @@ class RatingsDistribution:
         if not rank_scheme:
             rank_scheme = [*distribution]
         self._dist = OrderedDict(sorted([(r, v) for r, v in distribution.items()]))
-        self._rank_scheme = tuple(sorted(rank_scheme))
+        self._rank_scheme = tuple(sorted(set(rank_scheme)))
         if any(rank < 0 for rank in distribution) or len(distribution) < 3:
             raise ValueError("Ratings distribution must be a mapping of at least three "
                              "non-negative rating ranks to number of votes fot them, got: "
@@ -243,3 +243,55 @@ class FiveStars(RatingsDistribution):
     @property
     def five_star_percent(self) -> str:
         return self.ratings_percent(5)
+
+
+class LangReviewDistribution:
+    @property
+    def dist(self) -> OrderedDict[str, int]:
+        return self._dist
+
+    @property
+    def dist_by_reviews(self) -> OrderedDict[str, int]:
+        return OrderedDict(sorted([(lang, r) for lang, r in self.dist.items()],
+                                  key=lambda pair: pair[1], reverse=True))
+
+    @property
+    def langnames_dist(self) -> OrderedDict[str, int]:
+        return OrderedDict(sorted([(langcode2name(lang), r) for lang, r in self.dist.items()]))
+
+    @property
+    def alpha3_dist(self) -> OrderedDict[str, int]:
+        return OrderedDict(sorted([(name2langcode(langcode2name(lang), alpha3=True), r)
+                                   for lang, r in self.dist.items()]))
+
+    @property
+    def total(self) -> int:
+        return sum(reviews for _, reviews in self.dist.items())
+
+    def __init__(self, distribution: Dict[str, int]) -> None:
+        self._dist = OrderedDict(sorted([(lang, r) for lang, r in distribution.items()]))
+
+    def reviews(self, lang: str) -> int | None:
+        """Return number of reviews for the language specified or `None`.
+
+        Args:
+            lang: either a language code or language name
+        """
+        reviews = self.dist.get(lang)
+        if reviews is None:
+            reviews = self.langnames_dist.get(lang)
+            if reviews is None:
+                reviews = self.alpha3_dist.get(lang)
+                if reviews is None:
+                    return None
+        return reviews
+
+    def reviews_percent(self, lang: str) -> str:
+        reviews = self.reviews(lang)
+        if reviews is None:
+            raise ValueError(f"Unrecognized language: {lang!r}")
+        percent = reviews * 100 / self.total
+        return f"{percent:.2f} %"
+
+    def __repr__(self) -> str:
+        return repr(self.dist).replace("OrderedDict", self.__class__.__name__)

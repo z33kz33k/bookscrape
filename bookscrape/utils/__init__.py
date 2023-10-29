@@ -11,8 +11,10 @@ from functools import wraps
 from pathlib import Path
 from typing import Callable, Iterable, Optional, Protocol, Sequence
 
+import langcodes
 import pandas as pd
 from contexttimer import Timer
+from langcodes import Language, tag_is_valid
 
 from bookscrape.constants import PathLike, T
 from bookscrape.utils.check_type import type_checker
@@ -97,3 +99,23 @@ def is_increasing(seq: Sequence[Comparable]) -> bool:
     return all(seq[i] > seq[i-1] for i, _ in enumerate(seq, start=1) if i < len(seq))
 
 
+def langcode2name(langcode: str) -> str | None:
+    """Convert ``langcode`` to language name or `None` if it cannot be converted.
+    """
+    if not tag_is_valid(langcode):
+        return None
+    lang = Language.get(langcode)
+    return lang.display_name()
+
+
+def name2langcode(langname: str, alpha3=False) -> str | None:
+    """Convert supplied language name to a 2-letter ISO language code or `None` if it cannot be
+    converted. Optionally, convert it to 3-letter ISO code (aka "alpha3").
+    """
+    try:
+        lang = langcodes.find(langname)
+    except LookupError:
+        return None
+    if alpha3:
+        return lang.to_alpha3()
+    return str(lang)
