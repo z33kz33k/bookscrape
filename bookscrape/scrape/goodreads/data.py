@@ -201,3 +201,19 @@ class MainEdition:
     isbn13: str
     asin: str
 
+
+@dataclass
+class BookAward:
+    name: str
+    id: str
+    date: datetime
+    category: Optional[str]
+    designation: str
+
+
+@dataclass
+class BookSetting:
+    name: str
+    id: str
+    country: Optional[str]
+    year: Optional[datetime]

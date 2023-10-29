@@ -24,7 +24,8 @@ from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMA
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable
 from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, LangReviewsDistribution
-from bookscrape.scrape.goodreads.data import Author, AuthorStats, Book, DetailedBook, MainEdition
+from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, DetailedBook,
+                                              MainEdition, BookAward, BookSetting)
 
 PROVIDER = "goodreads.com"
 # the unofficially known enforced throttling delay
@@ -318,9 +319,34 @@ class _ScriptTagParser:
             reviews = []
             for item in self._work_data["stats"]["textReviewsLanguageCounts"]:
                 reviews.append((item["isoLanguageCode"], item["count"]))
-            reviews_dist = LangReviewsDistribution(dict(reviews))
+            reviews = LangReviewsDistribution(dict(reviews))
             # this is always greater than the distribution's total
-            reviews = self._work_data["stats"]["textReviewsCount"]
+            total_reviews = self._work_data["stats"]["textReviewsCount"]
+            awards = []
+            for item in self._work_data["details"]["awardsWon"]:
+                *_, id_ = item["webUrl"].split("/")
+                award = BookAward(
+                    name=item["name"],
+                    id=id_,
+                    date=self._parse_timestamp(item["awardedAt"]),
+                    category=item["category"],
+                    designation=item["designation"],
+                )
+                awards.append(award)
+            places = []
+            for item in self._work_data["details"]["places"]:
+                year = item["year"]
+                year = datetime(int(year), 1, 1) if year else None
+                *_, id_ = item["webUrl"].split("/")
+                place = BookSetting(
+                    name=item["name"],
+                    id=id_,
+                    country=item["countryName"],
+                    year=year
+                )
+                places.append(place)
+            characters = [item["name"] for item in self._work_data["details"]["characters"]]
+
         except KeyError as ke:
             raise ParsingError(f"A key on 'script' tag data is unavailable: {ke}")
         pass
