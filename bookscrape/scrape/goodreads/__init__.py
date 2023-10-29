@@ -8,7 +8,7 @@
 
 """
 import json
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -25,10 +25,11 @@ from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
     name2langcode
 from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, LangReviewsDistribution
-from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, DetailedBook,
+from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, BookSeries,
+                                              DetailedBook,
                                               MainEdition, BookAward, BookSetting, _ScriptTagData)
 
-PROVIDER = "goodreads.com"
+PROVIDER = "www.goodreads.com"
 # the unofficially known enforced throttling delay
 # between requests to Goodreads servers is 1 s
 # we're choosing to be safe here
@@ -581,19 +582,51 @@ class BookParser:
         return id_
 
     @throttled(THROTTLING_DELAY)
-    def fetch_data(self) -> DetailedBook:
+    def _parse_series(self) -> BookSeries:
+        soup = getsoup(self._series_url)
+        title_tag = soup.find("div", class_="responsiveSeriesHeader__title")
+        if title_tag is None:
+            raise ParsingError("No tag with series title data")
+        title = title_tag.find("h1").text
+        if "by" in title:
+            title, *_ = title.split("by")
+            title = title.strip()
+        elif "Series" in title:
+            title, *_ = title.split("Series")
+            title = title.strip()
+        items = soup.find_all("div", class_="listWithDividers__item")
+        items = [item for item in items if item.find("h3")]
+        if not items:
+            raise ValueError("No tags with series books data")
+        series = OrderedDict()
+        for i, item in enumerate(items, start=1):
+            numbering = extract_float(item.find("h3").text)
+            a_tag = item.find("a", href=lambda href: href and "/book/show/" in href)
+            if a_tag is None:
+                raise ParsingError(f"No book ID data on #{i} series item")
+            book_id = a_tag.attrs.get("href").replace("/book/show/", "")
+            series[numbering] = book_id
+        return BookSeries(title, series)
+
+    @throttled(THROTTLING_DELAY)
+    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str]:
         soup = getsoup(self._url)
         script_data = self._parse_meta_script_tag(soup)
         authors = self._parse_authors_line(soup)
+        series_id = self._parse_series_id(soup)
+        return script_data, authors, series_id
+
+    def fetch_data(self) -> DetailedBook:
+        script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
-        self._series_id = self._parse_series_id(soup)
         self._set_secondary_urls()
+        series = self._parse_series()
         return DetailedBook(
             title=script_data.title,
             complete_title=script_data.complete_title,
             book_id=self.book_id,
             work_id=self.work_id,
-            series=None,  # TODO
+            series=series,
             authors=authors,
             first_publication=script_data.first_publication,
             ratings=script_data.ratings,

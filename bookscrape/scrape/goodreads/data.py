@@ -216,12 +216,18 @@ class _ScriptTagData:
 
 
 @dataclass
+class BookSeries:
+    title: str
+    layout: Dict[float, str]  # numberings to book IDs
+
+
+@dataclass
 class DetailedBook:
     title: str
     complete_title: str
     book_id: str
     work_id: str
-    series: List[str]  # list of book ID's
+    series: BookSeries
     authors: List[str]  # list of author ID's
     first_publication: datetime
     ratings: FiveStars
