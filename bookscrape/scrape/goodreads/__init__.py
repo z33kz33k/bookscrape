@@ -22,7 +22,8 @@ from requests import Timeout
 from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id
-from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable
+from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
+    name2langcode
 from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, LangReviewsDistribution
 from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, DetailedBook,
                                               MainEdition, BookAward, BookSetting, _ScriptTagData)
@@ -301,7 +302,7 @@ class _ScriptTagParser:
                 publication=self._parse_timestamp(details["publicationTime"]),
                 format=details["format"],
                 pages=details["numPages"],
-                language=details["language"]["name"],
+                language=name2langcode(details["language"]["name"]),
                 isbn=details["isbn"],
                 isbn13=details["isbn13"],
                 asin=details["asin"],
@@ -311,6 +312,7 @@ class _ScriptTagParser:
             for item in self._book_data["bookGenres"]:
                 genre = item["genre"]
                 genres.append(genre["name"])
+            *_, work_id = self._work_data["details"]["webUrl"].split("/")
             original_title = self._work_data["details"]["originalTitle"]
             first_publication = self._parse_timestamp(
                 self._work_data["details"]["publicationTime"])
@@ -352,6 +354,7 @@ class _ScriptTagParser:
         return _ScriptTagData(
             title=original_title,
             complete_title=complete_title,
+            work_id=work_id,
             ratings=ratings,
             reviews=reviews,
             total_reviews=total_reviews,
@@ -381,6 +384,14 @@ class BookParser:
     def book_id(self) -> str:
         return self._book_id
 
+    @property
+    def work_id(self) -> str | None:
+        return self._work_id
+
+    @property
+    def series_id(self) -> str | None:
+        return self._series_id
+
     def __init__(self, book: str, author: str | None,
                  authors_data: _AuthorsData | None = None) -> None:
         """Initialize.
@@ -398,11 +409,21 @@ class BookParser:
             self._book_id = self.find_book_id(book, author, authors_data)
         if not self._book_id:
             raise ValueError("Unable to derive Goodreads book ID from provided input")
+        self._work_id = None  # this is different than book_id
+        self._series_id = None
         self._url = self.URL_TEMPLATE.format(self.book_id)
-        self._other_stats_url = f"https://www.goodreads.com/book/stats?id={numeric_id(self.book_id)}"
-        self._series_url = f"https://www.goodreads.com/series/{self.book_id}"
-        self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.book_id}"
-        self._editions_url = f"https://www.goodreads.com/work/editions/{numeric_id(self.book_id)}"
+        self._other_stats_url = None
+        self._series_url = None
+        self._shelves_url = None
+        self._editions_url = None
+
+    def _set_secondary_urls(self) -> None:
+        self._other_stats_url = (f"https://www.goodreads.com/book/stats"
+                                 f"?id={numeric_id(self.book_id)}")
+        if self.series_id:
+            self._series_url = f"https://www.goodreads.com/series/{self.series_id}"
+        self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.work_id}"
+        self._editions_url = f"https://www.goodreads.com/work/editions/{numeric_id(self.work_id)}"
 
     @staticmethod
     def book_id_from_data(title: str, author: str, authors_data: _AuthorsData) -> str | None:
@@ -550,15 +571,28 @@ class BookParser:
             raise ParsingError("No valid meta 'script' tag to parse")
         return parser.parse()
 
+    @staticmethod
+    def _parse_series_id(soup: BeautifulSoup) -> str | None:
+        tag = soup.find("div", class_="BookPageTitleSection__title")
+        a = tag.find("a")
+        if a is None:
+            return None
+        *_, id_ = a.attrs.get("href").split("/")
+        return id_
+
     @throttled(THROTTLING_DELAY)
     def fetch_data(self) -> DetailedBook:
         soup = getsoup(self._url)
         script_data = self._parse_meta_script_tag(soup)
         authors = self._parse_authors_line(soup)
+        self._work_id = script_data.work_id
+        self._series_id = self._parse_series_id(soup)
+        self._set_secondary_urls()
         return DetailedBook(
             title=script_data.title,
             complete_title=script_data.complete_title,
-            id=self.book_id,
+            book_id=self.book_id,
+            work_id=self.work_id,
             series=None,  # TODO
             authors=authors,
             first_publication=script_data.first_publication,

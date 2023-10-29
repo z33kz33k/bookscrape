@@ -207,6 +207,7 @@ class BookDetails:
 class _ScriptTagData:
     title: str
     complete_title: str
+    work_id: str
     ratings: FiveStars
     reviews: LangReviewsDistribution
     total_reviews: int
@@ -218,7 +219,8 @@ class _ScriptTagData:
 class DetailedBook:
     title: str
     complete_title: str
-    id: str
+    book_id: str
+    work_id: str
     series: List[str]  # list of book ID's
     authors: List[str]  # list of author ID's
     first_publication: datetime

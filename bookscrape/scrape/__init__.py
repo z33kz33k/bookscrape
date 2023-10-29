@@ -15,6 +15,7 @@ from typing import Callable, Dict, Iterable, Tuple
 
 import requests
 from bs4 import BeautifulSoup
+from langcodes import tag_is_valid
 
 from bookscrape.constants import REQUEST_TIMOUT
 from bookscrape.utils import is_increasing, timed, type_checker, langcode2name, name2langcode
@@ -246,6 +247,8 @@ class FiveStars(RatingsDistribution):
 
 
 class LangReviewsDistribution:
+    """Language based reviews distribution.
+    """
     @property
     def dist(self) -> OrderedDict[str, int]:
         return self._dist
@@ -269,7 +272,13 @@ class LangReviewsDistribution:
         return sum(reviews for _, reviews in self.dist.items())
 
     def __init__(self, distribution: Dict[str, int]) -> None:
-        self._dist = OrderedDict(sorted([(lang, r) for lang, r in distribution.items()]))
+        """Initialize.
+
+        Args:
+            distribution: a mapping of 2-letter ISO language codes to number of reviews written in that language
+        """
+        self._dist = OrderedDict(
+            sorted([(lang, r) for lang, r in distribution.items() if tag_is_valid(lang)]))
 
     def reviews(self, lang: str) -> int | None:
         """Return number of reviews for the language specified or `None`.
