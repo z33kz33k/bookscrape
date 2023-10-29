@@ -245,7 +245,7 @@ class FiveStars(RatingsDistribution):
         return self.ratings_percent(5)
 
 
-class LangReviewDistribution:
+class LangReviewsDistribution:
     @property
     def dist(self) -> OrderedDict[str, int]:
         return self._dist

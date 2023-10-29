@@ -1,7 +1,7 @@
 """
 
-    bookscrape.goodreads.py
-    ~~~~~~~~~~~~~~~~~~~~~~~
+    bookscrape.goodreads.__init__.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Scrape and parse Goodreads data
 
     @author: z33k
@@ -13,7 +13,6 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
-from dataclasses import dataclass
 
 import backoff
 import pytz
@@ -21,11 +20,12 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from requests import Timeout
 
-from bookscrape.constants import (Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
+from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
     type_checker
-from bookscrape.scrape import ParsingError, Renown, getsoup, throttled, FiveStars
+from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars
+from bookscrape.scrape.goodreads.data import Author, AuthorStats, Book, DetailedBook, MainEdition
 
 PROVIDER = "goodreads.com"
 # the unofficially known enforced throttling delay
@@ -54,42 +54,6 @@ TOLKIEN_RATINGS, HOBBIT_RATINGS = _load_tolkien()
 # TOLKIEN_RATINGS, HOBBIT_RATINGS = 10_674_789, 3_779_353  # on 18th Oct 2023
 
 
-@dataclass
-class AuthorStats:
-    avg_rating: float
-    ratings: int
-    reviews: int
-    shelvings: int
-
-    @property
-    def as_dict(self) -> Dict[str, int | float]:
-        return {
-            "avg_rating": self.avg_rating,
-            "ratings": self.ratings,
-            "reviews": self.reviews,
-            "shelvings": self.shelvings,
-            "r2r": self.r2r_percent,
-        }
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, int | float]) -> "AuthorStats":
-        return cls(
-            data["avg_rating"],
-            data["ratings"],
-            data["reviews"],
-            data["shelvings"],
-        )
-
-    @property
-    def r2r(self) -> float:
-        return self.reviews / self.ratings if self.ratings else 0
-
-    @property
-    def r2r_percent(self) -> str:
-        r2r = self.r2r * 100
-        return f"{r2r:.2f} %"
-
-
 @type_checker(str)
 def numeric_id(text_id: str) -> int:
     """Extract numeric part of Goodreads ID and return it.
@@ -104,93 +68,25 @@ def numeric_id(text_id: str) -> int:
     return int(match.group())
 
 
-@dataclass
-class Book:
-    title: str
-    id: str
-    avg_rating: float
-    ratings: int
-    publication_year: Optional[datetime]
-    editions: Optional[int]
-
-    @property
-    def as_dict(self) -> Dict[str, int | float | str]:
-        data = {
-            "title": self.title,
-            "id": self.id,
-            "avg_rating": self.avg_rating,
-            "ratings": self.ratings,
-        }
-        if self.publication_year is not None:
-            data.update({
-                "publication_year": self.publication_year.year,
-            })
-        if self.editions is not None:
-            data.update({
-                "editions": self.editions,
-            })
-        data.update({"renown": self.renown.name})
-        return data
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, int | float | str]) -> "Book":
-        publication_year = data.get("publication_year")
-        return cls(
-            data["title"],
-            data["id"],
-            data["avg_rating"],
-            data["ratings"],
-            datetime(publication_year, 1, 1) if publication_year is not None else None,
-            data.get("editions"),
-        )
-
-    @property
-    def renown(self) -> Renown:
-        return Renown.calculate(self.ratings, HOBBIT_RATINGS)
-
-    @property
-    def numeric_id(self) -> int:
-        return numeric_id(self.id)
-
-
-@dataclass
-class Author:
-    name: str
-    id: str
-    stats: AuthorStats
-    books: List[Book]
-
-    @property
-    def as_dict(self) -> Json:
-        return {
-            "name": self.name,
-            "id": self.id,
-            "stats": self.stats.as_dict,
-            "total_editions": self.total_editions,
-            "renown": self.renown.name,
-            "books": [b.as_dict for b in self.books],
-        }
-
-    @classmethod
-    def from_dict(cls, data: Json) -> "Author":
-        return cls(
-            data["name"],
-            data["id"],
-            AuthorStats.from_dict(data["stats"]),
-            [Book.from_dict(book) for book in data["books"]]
-        )
-
-    @property
-    def total_editions(self) -> int:
-        return sum(book.editions for book in self.books if book.editions)
-
-    @property
-    def renown(self) -> Renown:
-        return Renown.calculate(self.stats.ratings, TOLKIEN_RATINGS)
-
-    @property
-    def numeric_id(self) -> int:
-        return numeric_id(self.id)
+@type_checker(str)
+def is_goodreads_id(text: str) -> bool:
+    if len(text) <= 2:
+        return False
+    if "." in text and "-" in text:
+        return False
+    if "." in text:
+        sep = "."
+    elif "-" in text:
+        sep = "-"
+    else:
+        return False
+    left, *right = text.split(sep)
+    right = "".join(right)
+    if not all(char.isdigit() for char in left):
+        return False
+    if not all((char.isalnum() and char.isascii()) or char in "_-" for char in right):
+        return False
+    return True
 
 
 class AuthorParser:
@@ -417,53 +313,10 @@ class AuthorParser:
         return self._parse_author_page()
 
 
-@dataclass
-class RatingStats:
-    distribution: FiveStars
-    reviews: int
-
-    @property
-    def r2r(self) -> float:
-        return self.reviews / self.ratings
-
-    @property
-    def r2r_percent(self) -> str:
-        r2r = self.r2r * 100
-        return f"{r2r:.2f} %"
-
-    @property
-    def ratings(self) -> int:
-        return self.distribution.total
-
-
-@dataclass
-class DetailedBook:
-    title: str
-    authors: List[str]  # list of author ID's
-    series: List[str]  # list of book ID's
-    first_publication: datetime
-    ratings_stats: RatingStats
-    shelves: Dict[str, int]  # TODO: extract data on genres only
-    titles: Dict[str, str]  # TODO: scraped from editions page
-
-    @property
-    def renown(self) -> Renown:
-        return Renown.calculate(self.ratings_stats.ratings, HOBBIT_RATINGS)
-
-
-@dataclass
-class MainEdition:
-    publisher: str
-    publication: datetime
-    format: str
-    pages: int
-    language: str
-    isbn: str
-    isbn13: str
-    asin: str
-
-
 class _ScriptTagParser:
+    """Sub-parser of Goodreads book page's meta 'script' page obtained by `soup.find("script",
+    id="__NEXT_DATA__")`.
+    """
     def __init__(self, data: Dict[str, Any]) -> None:
         self._data = data
         self._book_data = self._item("Book:kca://")
@@ -480,11 +333,6 @@ class _ScriptTagParser:
             return None
         return self._data[key]
 
-    # @staticmethod
-    # def _parse_timestamp(timestamp: int) -> datetime:
-    #     t = datetime.fromtimestamp(timestamp / 1000)  # from milliseconds to seconds
-    #     return t + timedelta(hours=-9)  # account for the wrong locale
-    #
     @staticmethod
     def _parse_timestamp(timestamp: int) -> datetime:  # GPT3
         # assuming the timestamp is in PST
@@ -635,6 +483,14 @@ class BookParser:
         return id_
 
     @staticmethod
+    def _parse_title(soup: BeautifulSoup) -> str:
+        tag = soup.find(
+            lambda t: t.name == "h1" and t.attrs.get("data-testid") == "bookTitle")
+        if tag is None:
+            raise ParsingError("No tag with title data")
+        return tag.text
+
+    @staticmethod
     def _parse_first_publication(soup: BeautifulSoup) -> datetime:
         p_tag = soup.find(
             lambda t: t.name == "p" and t.attrs.get("data-testid") == "publicationInfo")
@@ -677,7 +533,7 @@ class BookParser:
         ratings = extract_int(text)
         return extract_int(label), ratings
 
-    def _parse_ratings_stats(self, soup: BeautifulSoup) -> RatingStats:
+    def _parse_ratings_stats(self, soup: BeautifulSoup) -> Tuple[FiveStars, int]:
         ratings_div: Tag | None = soup.find("div", class_="ReviewsSectionStatistics")
         if ratings_div is None:
             raise ParsingError(f"This book ID: {self.book_id!r} doesn't produce a parseable markup")
@@ -693,7 +549,7 @@ class BookParser:
         if not specifics_rows:
             raise ParsingError("No rows with detailed ratings")
         dist = FiveStars(dict(self._parse_specifics_row(row) for row in specifics_rows))
-        return RatingStats(dist, reviews)
+        return dist, reviews
 
     @staticmethod
     def _parse_meta_script_tag(soup: BeautifulSoup):
@@ -707,6 +563,7 @@ class BookParser:
     @throttled(THROTTLING_DELAY)
     def fetch_data(self) -> DetailedBook:
         soup = getsoup(self._url)
+        title = self._parse_title(soup)
         first_publication = self._parse_first_publication(soup)
         authors = self._parse_authors_line(soup)
         ratings_stats = self._parse_ratings_stats(soup)
@@ -797,22 +654,3 @@ def update_tolkien() -> None:
                  filename="tolkien.json")
 
 
-@type_checker(str)
-def is_goodreads_id(text: str) -> bool:
-    if len(text) <= 2:
-        return False
-    if "." in text and "-" in text:
-        return False
-    if "." in text:
-        sep = "."
-    elif "-" in text:
-        sep = "-"
-    else:
-        return False
-    left, *right = text.split(sep)
-    right = "".join(right)
-    if not all(char.isdigit() for char in left):
-        return False
-    if not all((char.isalnum() and char.isascii()) or char in "_-" for char in right):
-        return False
-    return True
