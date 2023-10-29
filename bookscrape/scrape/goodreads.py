@@ -10,12 +10,13 @@
 import json
 import re
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 
 import backoff
+import pytz
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from requests import Timeout
@@ -109,7 +110,7 @@ class Book:
     id: str
     avg_rating: float
     ratings: int
-    published_in: Optional[datetime]
+    publication_year: Optional[datetime]
     editions: Optional[int]
 
     @property
@@ -120,9 +121,9 @@ class Book:
             "avg_rating": self.avg_rating,
             "ratings": self.ratings,
         }
-        if self.published_in is not None:
+        if self.publication_year is not None:
             data.update({
-                "published_in": self.published_in.year,
+                "publication_year": self.publication_year.year,
             })
         if self.editions is not None:
             data.update({
@@ -133,13 +134,13 @@ class Book:
 
     @classmethod
     def from_dict(cls, data: Dict[str, int | float | str]) -> "Book":
-        published_in = data.get("published_in")
+        publication_year = data.get("publication_year")
         return cls(
             data["title"],
             data["id"],
             data["avg_rating"],
             data["ratings"],
-            datetime(published_in, 1, 1) if published_in is not None else None,
+            datetime(publication_year, 1, 1) if publication_year is not None else None,
             data.get("editions"),
         )
 
@@ -440,7 +441,7 @@ class DetailedBook:
     title: str
     authors: List[str]  # list of author ID's
     series: List[str]  # list of book ID's
-    first_published: datetime
+    first_publication: datetime
     ratings_stats: RatingStats
     shelves: Dict[str, int]  # TODO: extract data on genres only
     titles: Dict[str, str]  # TODO: scraped from editions page
@@ -453,7 +454,7 @@ class DetailedBook:
 @dataclass
 class MainEdition:
     publisher: str
-    publication_time: datetime
+    publication: datetime
     format: str
     pages: int
     language: str
@@ -479,16 +480,33 @@ class _ScriptTagParser:
             return None
         return self._data[key]
 
+    # @staticmethod
+    # def _parse_timestamp(timestamp: int) -> datetime:
+    #     t = datetime.fromtimestamp(timestamp / 1000)  # from milliseconds to seconds
+    #     return t + timedelta(hours=-9)  # account for the wrong locale
+    #
+    @staticmethod
+    def _parse_timestamp(timestamp: int) -> datetime:  # GPT3
+        # assuming the timestamp is in PST
+        # parse the timestamp into a datetime object in the local time zone (CET)
+        dt = datetime.fromtimestamp(timestamp / 1000)   # from milliseconds to seconds
+        # convert the datetime object to UTC
+        cet_tz = pytz.timezone('CET')
+        dt_utc = cet_tz.localize(dt).astimezone(pytz.UTC)
+        # apply the -8 hour offset
+        offset = timedelta(hours=-8)
+        dt_offset = dt_utc + offset
+        # convert the datetime object back to the CET time zone
+        dt_cet = dt_offset.astimezone(cet_tz)
+        return dt_cet
+
     def parse(self):
         try:
             complete_title = self._book_data["titleComplete"]
             details = self._book_data["details"]
-            timestamp = details["publicationTime"]
-            if len(str(timestamp)) == 13:
-                timestamp /= 1000
             main_edition = MainEdition(
                 publisher=details["publisher"],
-                publication_time=datetime.utcfromtimestamp(timestamp),
+                publication=self._parse_timestamp(details["publicationTime"]),
                 format=details["format"],
                 pages=details["numPages"],
                 language=details["language"]["name"],
@@ -501,6 +519,10 @@ class _ScriptTagParser:
             for item in self._book_data["bookGenres"]:
                 genre = item["genre"]
                 genres.append(genre["name"])
+            original_title = self._work_data["details"]["originalTitle"]
+            first_publication_time = self._parse_timestamp(
+                self._work_data["details"]["publicationTime"])
+
         except KeyError as ke:
             raise ParsingError(f"Data unavailable on the 'script' tag: {ke}")
         pass
@@ -613,7 +635,7 @@ class BookParser:
         return id_
 
     @staticmethod
-    def _parse_first_published(soup: BeautifulSoup) -> datetime:
+    def _parse_first_publication(soup: BeautifulSoup) -> datetime:
         p_tag = soup.find(
             lambda t: t.name == "p" and t.attrs.get("data-testid") == "publicationInfo")
         if p_tag is None:
@@ -685,7 +707,7 @@ class BookParser:
     @throttled(THROTTLING_DELAY)
     def fetch_data(self) -> DetailedBook:
         soup = getsoup(self._url)
-        first_published = self._parse_first_published(soup)
+        first_publication = self._parse_first_publication(soup)
         authors = self._parse_authors_line(soup)
         ratings_stats = self._parse_ratings_stats(soup)
         d2 = self._parse_meta_script_tag(soup)
@@ -707,21 +729,6 @@ def load_authors(authors_json: PathLike) -> _AuthorsData:
 
 def dump_authors(*authors: str, **kwargs: Any) -> None:
     """Fetch data on ``authors`` and dump it to JSON.
-
-    Example authors: [
-        "Isaac Asimov",
-        "Frank Herbert",
-        "Jacek Dukaj",
-        "Andrzej Sapkowski",
-        "J.R.R. Tolkien",
-        "C.S. Lewis",
-        "Cordwainer Smith",
-        "Michael Moorcock",
-        "Clifford D. Simak",
-        "George R.R. Martin",
-        "Joe Abercrombie",
-        "Ursula K. Le Guin",
-    ]
 
     Args:
         authors: variable number of author full names or Goodread author IDs (in case of the latter there's one request fewer)
