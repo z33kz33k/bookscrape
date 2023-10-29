@@ -582,6 +582,14 @@ class BookParser:
         return id_
 
     @throttled(THROTTLING_DELAY)
+    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str]:
+        soup = getsoup(self._url)
+        script_data = self._parse_meta_script_tag(soup)
+        authors = self._parse_authors_line(soup)
+        series_id = self._parse_series_id(soup)
+        return script_data, authors, series_id
+
+    @throttled(THROTTLING_DELAY)
     def _parse_series(self) -> BookSeries:
         soup = getsoup(self._series_url)
         # title
@@ -611,18 +619,23 @@ class BookParser:
         return BookSeries(title, series)
 
     @throttled(THROTTLING_DELAY)
-    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str]:
-        soup = getsoup(self._url)
-        script_data = self._parse_meta_script_tag(soup)
-        authors = self._parse_authors_line(soup)
-        series_id = self._parse_series_id(soup)
-        return script_data, authors, series_id
+    def _parse_shelves(self) -> Dict[int, str]:
+        soup = getsoup(self._shelves_url)
+        shelf_tags = soup.find_all("div", class_="shelfStat")
+        shelves = OrderedDict()
+        for tag in shelf_tags:
+            name = tag.find("a").text
+            shelvings_tag = tag.find(lambda t: t.name == "div" and "people" in t.text)
+            shelvings = extract_int(shelvings_tag.text)
+            shelves[shelvings] = name
+        return shelves
 
     def fetch_data(self) -> DetailedBook:
         script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
         self._set_secondary_urls()
         series = self._parse_series() if self.series_id else None
+        shelves = self._parse_shelves()
         return DetailedBook(
             title=script_data.title,
             complete_title=script_data.complete_title,
@@ -635,7 +648,7 @@ class BookParser:
             reviews=script_data.reviews,
             total_reviews=script_data.total_reviews,
             details=script_data.details,
-            shelves=None,  # TODO
+            shelves=shelves,
             titles=None,  # TODO
         )
 
