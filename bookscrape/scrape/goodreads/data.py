@@ -165,32 +165,6 @@ class Author:
 
 
 @dataclass
-class DetailedBook:
-    title: str
-    id: str
-    authors: List[str]  # list of author ID's
-    series: List[str]  # list of book ID's
-    first_publication: datetime
-    ratings: FiveStars
-    reviews: int | LangReviewsDistribution
-    shelves: Dict[str, int]  # TODO: extract data on genres only
-    titles: Dict[str, str]  # TODO: scraped from editions page
-
-    @property
-    def renown(self) -> Renown:
-        return Renown.calculate(self.ratings.total, HOBBIT_RATINGS)
-
-    @property
-    def r2r(self) -> float:
-        return self.reviews / self.ratings.total
-
-    @property
-    def r2r_percent(self) -> str:
-        r2r = self.r2r * 100
-        return f"{r2r:.2f} %"
-
-
-@dataclass
 class MainEdition:
     publisher: str
     publication: datetime
@@ -217,3 +191,55 @@ class BookSetting:
     id: str
     country: Optional[str]
     year: Optional[datetime]
+
+
+@dataclass
+class BookDetails:
+    description: str
+    main_edition: MainEdition
+    genres: List[str]
+    awards: List[BookAward]
+    places: List[BookSetting]
+    characters: List[str]
+
+
+@dataclass
+class _ScriptTagData:
+    title: str
+    complete_title: str
+    ratings: FiveStars
+    reviews: LangReviewsDistribution
+    total_reviews: int
+    first_publication: datetime
+    details: BookDetails
+
+
+@dataclass
+class DetailedBook:
+    title: str
+    complete_title: str
+    id: str
+    series: List[str]  # list of book ID's
+    authors: List[str]  # list of author ID's
+    first_publication: datetime
+    ratings: FiveStars
+    reviews: LangReviewsDistribution
+    total_reviews: int
+    details: BookDetails
+    shelves: Dict[str, int]  # TODO: extract data on genres only
+    titles: Dict[str, str]  # TODO: scraped from editions page
+
+    @property
+    def renown(self) -> Renown:
+        return Renown.calculate(self.ratings.total, HOBBIT_RATINGS)
+
+    @property
+    def r2r(self) -> float:
+        return self.total_reviews / self.ratings.total
+
+    @property
+    def r2r_percent(self) -> str:
+        r2r = self.r2r * 100
+        return f"{r2r:.2f} %"
+
+

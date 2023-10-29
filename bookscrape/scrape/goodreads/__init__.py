@@ -24,8 +24,8 @@ from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMA
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable
 from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, LangReviewsDistribution
-from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, DetailedBook,
-                                              MainEdition, BookAward, BookSetting)
+from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, DetailedBook,
+                                              MainEdition, BookAward, BookSetting, _ScriptTagData)
 
 PROVIDER = "goodreads.com"
 # the unofficially known enforced throttling delay
@@ -292,7 +292,7 @@ class _ScriptTagParser:
         dt_cet = dt_offset.astimezone(cet_tz)
         return dt_cet
 
-    def parse(self):
+    def parse(self) -> _ScriptTagData:
         try:
             complete_title = self._book_data["titleComplete"]
             details = self._book_data["details"]
@@ -312,7 +312,7 @@ class _ScriptTagParser:
                 genre = item["genre"]
                 genres.append(genre["name"])
             original_title = self._work_data["details"]["originalTitle"]
-            first_publication_time = self._parse_timestamp(
+            first_publication = self._parse_timestamp(
                 self._work_data["details"]["publicationTime"])
             ratings = self._work_data["stats"]["ratingsCountDist"]
             ratings = FiveStars({i: votes for i, votes in enumerate(ratings, start=1)})
@@ -349,14 +349,28 @@ class _ScriptTagParser:
 
         except KeyError as ke:
             raise ParsingError(f"A key on 'script' tag data is unavailable: {ke}")
-        pass
+        return _ScriptTagData(
+            title=original_title,
+            complete_title=complete_title,
+            ratings=ratings,
+            reviews=reviews,
+            total_reviews=total_reviews,
+            first_publication=first_publication,
+            details=BookDetails(
+                description=blurb,
+                main_edition=main_edition,
+                genres=genres,
+                awards=awards,
+                places=places,
+                characters=characters,
+            )
+        )
 
 
 _AuthorsData = Dict[str, datetime | str | List[Author]]
 _Contributor = namedtuple("_Contributor", "author_id has_role")
 
 
-# TODO: scrape more data
 class BookParser:
     """Goodreads book page parser.
     """
@@ -459,7 +473,7 @@ class BookParser:
         return id_
 
     @staticmethod
-    def _parse_title(soup: BeautifulSoup) -> str:
+    def _parse_title(soup: BeautifulSoup) -> str:  # not used
         tag = soup.find(
             lambda t: t.name == "h1" and t.attrs.get("data-testid") == "bookTitle")
         if tag is None:
@@ -467,7 +481,7 @@ class BookParser:
         return tag.text
 
     @staticmethod
-    def _parse_first_publication(soup: BeautifulSoup) -> datetime:
+    def _parse_first_publication(soup: BeautifulSoup) -> datetime:  # not used
         p_tag = soup.find(
             lambda t: t.name == "p" and t.attrs.get("data-testid") == "publicationInfo")
         if p_tag is None:
@@ -498,7 +512,7 @@ class BookParser:
         return [a.author_id for a in authors]
 
     @staticmethod
-    def _parse_specifics_row(row: Tag) -> Tuple[int, int]:
+    def _parse_specifics_row(row: Tag) -> Tuple[int, int]:  # not used
         label = row.attrs.get("aria-label")
         if not label:
             raise ParsingError("No label for detailed ratings")
@@ -509,7 +523,7 @@ class BookParser:
         ratings = extract_int(text)
         return extract_int(label), ratings
 
-    def _parse_ratings_stats(self, soup: BeautifulSoup) -> Tuple[FiveStars, int]:
+    def _parse_ratings_stats(self, soup: BeautifulSoup) -> Tuple[FiveStars, int]:  # not used
         ratings_div: Tag | None = soup.find("div", class_="ReviewsSectionStatistics")
         if ratings_div is None:
             raise ParsingError(f"This book ID: {self.book_id!r} doesn't produce a parseable markup")
@@ -528,23 +542,33 @@ class BookParser:
         return dist, reviews
 
     @staticmethod
-    def _parse_meta_script_tag(soup: BeautifulSoup):
+    def _parse_meta_script_tag(soup: BeautifulSoup) -> _ScriptTagData:
         t = soup.find("script", id="__NEXT_DATA__")
         try:
             parser = _ScriptTagParser(json.loads(t.text)["props"]["pageProps"]["apolloState"])
         except KeyError:
             raise ParsingError("No valid meta 'script' tag to parse")
-        parser.parse()
+        return parser.parse()
 
     @throttled(THROTTLING_DELAY)
     def fetch_data(self) -> DetailedBook:
         soup = getsoup(self._url)
-        title = self._parse_title(soup)
-        first_publication = self._parse_first_publication(soup)
+        script_data = self._parse_meta_script_tag(soup)
         authors = self._parse_authors_line(soup)
-        ratings, reviews = self._parse_ratings_stats(soup)
-        d2 = self._parse_meta_script_tag(soup)
-        pass
+        return DetailedBook(
+            title=script_data.title,
+            complete_title=script_data.complete_title,
+            id=self.book_id,
+            series=None,  # TODO
+            authors=authors,
+            first_publication=script_data.first_publication,
+            ratings=script_data.ratings,
+            reviews=script_data.reviews,
+            total_reviews=script_data.total_reviews,
+            details=script_data.details,
+            shelves=None,  # TODO
+            titles=None,  # TODO
+        )
 
 
 def load_authors(authors_json: PathLike) -> _AuthorsData:
