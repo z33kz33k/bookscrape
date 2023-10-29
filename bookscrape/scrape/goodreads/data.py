@@ -7,13 +7,36 @@
     @author: z33k
 
 """
+import json
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 from bookscrape.constants import Json
 from bookscrape.scrape import FiveStars, LangReviewsDistribution, Renown
-from bookscrape.scrape.goodreads import HOBBIT_RATINGS, TOLKIEN_RATINGS, numeric_id
+from bookscrape.scrape.goodreads.utils import numeric_id
+from bookscrape.utils import getfile
+
+
+def _load_tolkien() -> Tuple[int, int]:
+    source = getfile(Path(__file__).parent.parent.parent / "data" / "tolkien.json")
+    with source.open(encoding="utf8") as f:
+        data = json.load(f)
+
+    if not data:
+        raise ValueError(f"No data in '{source}'")
+
+    try:
+        tolkien_ratings = data["authors"][0]["stats"]["ratings"]
+        hobbit_ratings = data["authors"][0]["books"][0]["ratings"]
+    except (KeyError, IndexError):
+        raise ValueError(f"Invalid data in '{source}'")
+    return tolkien_ratings, hobbit_ratings
+
+
+TOLKIEN_RATINGS, HOBBIT_RATINGS = _load_tolkien()
+# TOLKIEN_RATINGS, HOBBIT_RATINGS = 10_674_789, 3_779_353  # on 18th Oct 2023
 
 
 @dataclass

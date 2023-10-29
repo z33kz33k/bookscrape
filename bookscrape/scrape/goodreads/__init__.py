@@ -8,7 +8,6 @@
 
 """
 import json
-import re
 from collections import namedtuple
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -22,9 +21,9 @@ from requests import Timeout
 
 from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILNAME_TIMESTAMP_FORMAT)
-from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
-    type_checker
-from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars
+from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id
+from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable
+from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, LangReviewsDistribution
 from bookscrape.scrape.goodreads.data import Author, AuthorStats, Book, DetailedBook, MainEdition
 
 PROVIDER = "goodreads.com"
@@ -32,61 +31,6 @@ PROVIDER = "goodreads.com"
 # between requests to Goodreads servers is 1 s
 # we're choosing to be safe here
 THROTTLING_DELAY = 1.1  # seconds
-
-
-def _load_tolkien() -> Tuple[int, int]:
-    source = getfile(Path(__file__).parent.parent / "data" / "tolkien.json")
-    with source.open(encoding="utf8") as f:
-        data = json.load(f)
-
-    if not data:
-        raise ValueError(f"No data in '{source}'")
-
-    try:
-        tolkien_ratings = data["authors"][0]["stats"]["ratings"]
-        hobbit_ratings = data["authors"][0]["books"][0]["ratings"]
-    except (KeyError, IndexError):
-        raise ValueError(f"Invalid data in '{source}'")
-    return tolkien_ratings, hobbit_ratings
-
-
-TOLKIEN_RATINGS, HOBBIT_RATINGS = _load_tolkien()
-# TOLKIEN_RATINGS, HOBBIT_RATINGS = 10_674_789, 3_779_353  # on 18th Oct 2023
-
-
-@type_checker(str)
-def numeric_id(text_id: str) -> int:
-    """Extract numeric part of Goodreads ID and return it.
-
-    Example of possible formats:
-        '625094.The_Leopard'
-        '9969571-ready-player-one'
-    """
-    match = re.search(r"\d+", text_id)
-    if not match:
-        raise ValueError(f"Unable to extract numeric part of Goodread ID: {text_id!r}")
-    return int(match.group())
-
-
-@type_checker(str)
-def is_goodreads_id(text: str) -> bool:
-    if len(text) <= 2:
-        return False
-    if "." in text and "-" in text:
-        return False
-    if "." in text:
-        sep = "."
-    elif "-" in text:
-        sep = "-"
-    else:
-        return False
-    left, *right = text.split(sep)
-    right = "".join(right)
-    if not all(char.isdigit() for char in left):
-        return False
-    if not all((char.isalnum() and char.isascii()) or char in "_-" for char in right):
-        return False
-    return True
 
 
 class AuthorParser:
@@ -325,7 +269,6 @@ class _ScriptTagParser:
             raise ParsingError("No 'Book:kca://' data on the 'script' tag")
         if self._work_data is None:
             raise ParsingError("No 'Work:kca://' data on the 'script' tag")
-        pass
 
     def _item(self, key_part: str) -> Any | None:
         key = from_iterable(self._data, lambda k: key_part in k)
@@ -370,9 +313,16 @@ class _ScriptTagParser:
             original_title = self._work_data["details"]["originalTitle"]
             first_publication_time = self._parse_timestamp(
                 self._work_data["details"]["publicationTime"])
-
+            ratings = self._work_data["stats"]["ratingsCountDist"]
+            ratings = FiveStars({i: votes for i, votes in enumerate(ratings, start=1)})
+            reviews = []
+            for item in self._work_data["stats"]["textReviewsLanguageCounts"]:
+                reviews.append((item["isoLanguageCode"], item["count"]))
+            reviews_dist = LangReviewsDistribution(dict(reviews))
+            # this is always greater than the distribution's total
+            reviews = self._work_data["stats"]["textReviewsCount"]
         except KeyError as ke:
-            raise ParsingError(f"Data unavailable on the 'script' tag: {ke}")
+            raise ParsingError(f"A key on 'script' tag data is unavailable: {ke}")
         pass
 
 
@@ -566,7 +516,7 @@ class BookParser:
         title = self._parse_title(soup)
         first_publication = self._parse_first_publication(soup)
         authors = self._parse_authors_line(soup)
-        ratings_stats = self._parse_ratings_stats(soup)
+        ratings, reviews = self._parse_ratings_stats(soup)
         d2 = self._parse_meta_script_tag(soup)
         pass
 
@@ -649,7 +599,7 @@ def update_authors(authors_json: PathLike) -> None:
 
 
 def update_tolkien() -> None:
-    outputdir = Path(__file__).parent.parent / "data"
+    outputdir = Path(__file__).parent.parent.parent / "data"
     dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir,
                  filename="tolkien.json")
 
