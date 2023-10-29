@@ -584,6 +584,7 @@ class BookParser:
     @throttled(THROTTLING_DELAY)
     def _parse_series(self) -> BookSeries:
         soup = getsoup(self._series_url)
+        # title
         title_tag = soup.find("div", class_="responsiveSeriesHeader__title")
         if title_tag is None:
             raise ParsingError("No tag with series title data")
@@ -594,6 +595,7 @@ class BookParser:
         elif "Series" in title:
             title, *_ = title.split("Series")
             title = title.strip()
+        # layout
         items = soup.find_all("div", class_="listWithDividers__item")
         items = [item for item in items if item.find("h3")]
         if not items:
@@ -620,7 +622,7 @@ class BookParser:
         script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
         self._set_secondary_urls()
-        series = self._parse_series()
+        series = self._parse_series() if self.series_id else None
         return DetailedBook(
             title=script_data.title,
             complete_title=script_data.complete_title,

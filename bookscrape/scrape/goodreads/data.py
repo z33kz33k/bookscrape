@@ -227,7 +227,7 @@ class DetailedBook:
     complete_title: str
     book_id: str
     work_id: str
-    series: BookSeries
+    series: Optional[BookSeries]
     authors: List[str]  # list of author ID's
     first_publication: datetime
     ratings: FiveStars
