@@ -380,7 +380,7 @@ class BookParser:
     """Goodreads book page parser.
     """
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
-    EDITIONS_URL_TEMPLATE = "https://www.goodreads.com/work/editions/{}?page={}per_page=100"
+    EDITIONS_URL_TEMPLATE = "https://www.goodreads.com/work/editions/{}?page={}&per_page=100"
     DATE_FORMAT = "%B %d, %Y"  # datetime.strptime("August 16, 2011", "%B %d, %Y")
 
     @property
@@ -593,7 +593,7 @@ class BookParser:
         return script_data, authors, series_id
 
     @throttled(THROTTLING_DELAY)
-    def _parse_series_page(self) -> BookSeries:
+    def _parse_series_page(self) -> BookSeries | None:
         soup = getsoup(self._series_url)
         # title
         title_tag = soup.find("div", class_="responsiveSeriesHeader__title")
@@ -610,7 +610,7 @@ class BookParser:
         items = soup.find_all("div", class_="listWithDividers__item")
         items = [item for item in items if item.find("h3")]
         if not items:
-            raise ValueError("No tags with series books data")
+            return None  # 'Dangerous Visions' by Harlan Ellison case
         series = OrderedDict()
         for i, item in enumerate(items, start=1):
             numbering = extract_float(item.find("h3").text)
@@ -619,7 +619,7 @@ class BookParser:
                 raise ParsingError(f"No book ID data on #{i} series item")
             book_id = a_tag.attrs.get("href").replace("/book/show/", "")
             series[numbering] = book_id
-        return BookSeries(title, series)
+        return BookSeries(title, self.series_id, series)
 
     @throttled(THROTTLING_DELAY)
     def _parse_shelves_page(self) -> OrderedDict[int, str]:
@@ -637,7 +637,7 @@ class BookParser:
     def _parse_editions_page(
             self, page: int,
             editions: DefaultDict[str, Set[str]] | None = None
-    ) -> Tuple[DefaultDict[str, Set[str]], bool]:
+    ) -> Tuple[DefaultDict[str, Set[str]], int, bool]:
         next_page = True
         soup = getsoup(self._editions_url(page))
         footer = soup.find("div", {"style": "text-align: right; width: 100%"})
@@ -648,7 +648,9 @@ class BookParser:
 
         items = soup.find_all("div", class_="elementList clearFix")
         editions = editions or defaultdict(set)
-        for i, item in enumerate(items, start=1):
+        count = 0
+        for item in items:
+            count += 1
             title = item.find("a", class_="bookTitle").text
             if "(" in title:
                 title, *_ = title.split("(")
@@ -663,18 +665,19 @@ class BookParser:
             lang = data_row.find("div", class_="dataValue").text.strip()
             editions[lang].add(title)
 
-        return editions, next_page
+        return editions, count, next_page
 
-    def _scrape_editions(self) -> OrderedDict[str, List[str]]:
+    def _scrape_editions(self) -> Tuple[OrderedDict[str, List[str]], int]:
         counter = itertools.count(1)
-        editions, next_page = None, True
+        editions, total, next_page = None, 0,  True
         for i in counter:
-            editions, next_page = self._parse_editions_page(i, editions)
-            if not next_page or i > 15:
+            editions, editions_count, next_page = self._parse_editions_page(i, editions)
+            total += editions_count
+            if not next_page or i > 10:
                 break
         ordered = OrderedDict(sorted([(name2langcode(lang), sorted(titles))
                               for lang, titles in editions.items()]))
-        return ordered
+        return ordered, total
 
     def fetch_data(self) -> DetailedBook:
         script_data, authors, self._series_id = self._parse_book_page()
@@ -682,7 +685,7 @@ class BookParser:
         self._set_secondary_urls()
         series = self._parse_series_page() if self.series_id else None
         shelves = self._parse_shelves_page()
-        editions = self._scrape_editions()
+        editions, total_editions = self._scrape_editions()
         return DetailedBook(
             title=script_data.title,
             complete_title=script_data.complete_title,
@@ -697,6 +700,7 @@ class BookParser:
             details=script_data.details,
             shelves=shelves,
             editions=editions,
+            total_editions=total_editions,
         )
 
 

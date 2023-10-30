@@ -218,6 +218,7 @@ class _ScriptTagData:
 @dataclass
 class BookSeries:
     title: str
+    id: str
     layout: Dict[float, str]  # numberings to book IDs
 
 
@@ -232,10 +233,11 @@ class DetailedBook:
     first_publication: datetime
     ratings: FiveStars
     reviews: LangReviewsDistribution
-    total_reviews: int
+    total_reviews: int  # this is different from total calculated from 'reviews' dict
     details: BookDetails
-    shelves: OrderedDict[int, str]
-    editions: OrderedDict[str, Set[str]]
+    shelves: OrderedDict[int, str]  # number of shelvings to shelves, only the first page is scraped
+    editions: OrderedDict[str, List[str]]
+    total_editions: int
 
     @property
     def renown(self) -> Renown:
@@ -250,4 +252,6 @@ class DetailedBook:
         r2r = self.r2r * 100
         return f"{r2r:.2f} %"
 
-
+    @property
+    def shelvings(self) -> int:
+        return sum(s for s in self.shelves)
