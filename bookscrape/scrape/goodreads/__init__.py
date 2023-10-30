@@ -7,11 +7,12 @@
     @author: z33k
 
 """
+import itertools
 import json
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict, defaultdict, namedtuple
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 
 import backoff
 import pytz
@@ -379,6 +380,7 @@ class BookParser:
     """Goodreads book page parser.
     """
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
+    EDITIONS_URL_TEMPLATE = "https://www.goodreads.com/work/editions/{}?page={}per_page=100"
     DATE_FORMAT = "%B %d, %Y"  # datetime.strptime("August 16, 2011", "%B %d, %Y")
 
     @property
@@ -416,7 +418,6 @@ class BookParser:
         self._other_stats_url = None
         self._series_url = None
         self._shelves_url = None
-        self._editions_url = None
 
     def _set_secondary_urls(self) -> None:
         self._other_stats_url = (f"https://www.goodreads.com/book/stats"
@@ -424,7 +425,9 @@ class BookParser:
         if self.series_id:
             self._series_url = f"https://www.goodreads.com/series/{self.series_id}"
         self._shelves_url = f"https://www.goodreads.com/work/shelves/{self.work_id}"
-        self._editions_url = f"https://www.goodreads.com/work/editions/{numeric_id(self.work_id)}"
+
+    def _editions_url(self, page: int) -> str:
+        return self.EDITIONS_URL_TEMPLATE.format(numeric_id(self.work_id), page)
 
     @staticmethod
     def book_id_from_data(title: str, author: str, authors_data: _AuthorsData) -> str | None:
@@ -590,7 +593,7 @@ class BookParser:
         return script_data, authors, series_id
 
     @throttled(THROTTLING_DELAY)
-    def _parse_series(self) -> BookSeries:
+    def _parse_series_page(self) -> BookSeries:
         soup = getsoup(self._series_url)
         # title
         title_tag = soup.find("div", class_="responsiveSeriesHeader__title")
@@ -619,7 +622,7 @@ class BookParser:
         return BookSeries(title, series)
 
     @throttled(THROTTLING_DELAY)
-    def _parse_shelves(self) -> Dict[int, str]:
+    def _parse_shelves_page(self) -> OrderedDict[int, str]:
         soup = getsoup(self._shelves_url)
         shelf_tags = soup.find_all("div", class_="shelfStat")
         shelves = OrderedDict()
@@ -630,12 +633,56 @@ class BookParser:
             shelves[shelvings] = name
         return shelves
 
+    @throttled(THROTTLING_DELAY)
+    def _parse_editions_page(
+            self, page: int,
+            editions: DefaultDict[str, Set[str]] | None = None
+    ) -> Tuple[DefaultDict[str, Set[str]], bool]:
+        next_page = True
+        soup = getsoup(self._editions_url(page))
+        footer = soup.find("div", {"style": "text-align: right; width: 100%"})
+        if footer is None:
+            raise ParsingError("No footer tag to read next page status")
+        if footer.find("span", class_="next_page disabled") is not None:
+            next_page = False
+
+        items = soup.find_all("div", class_="elementList clearFix")
+        editions = editions or defaultdict(set)
+        for i, item in enumerate(items, start=1):
+            title = item.find("a", class_="bookTitle").text
+            if "(" in title:
+                title, *_ = title.split("(")
+                title = title.strip()
+            hidden_tag = item.find("div", class_="moreDetails hideDetails")
+            data_rows = hidden_tag.find_all("div", class_="dataRow")
+            data_row = from_iterable(
+                data_rows, lambda dr: dr.find(
+                    lambda t: t.name == "div" and "Edition language:" in t.text) is not None)
+            if data_row is None:
+                continue
+            lang = data_row.find("div", class_="dataValue").text.strip()
+            editions[lang].add(title)
+
+        return editions, next_page
+
+    def _scrape_editions(self) -> OrderedDict[str, List[str]]:
+        counter = itertools.count(1)
+        editions, next_page = None, True
+        for i in counter:
+            editions, next_page = self._parse_editions_page(i, editions)
+            if not next_page or i > 15:
+                break
+        ordered = OrderedDict(sorted([(name2langcode(lang), sorted(titles))
+                              for lang, titles in editions.items()]))
+        return ordered
+
     def fetch_data(self) -> DetailedBook:
         script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
         self._set_secondary_urls()
-        series = self._parse_series() if self.series_id else None
-        shelves = self._parse_shelves()
+        series = self._parse_series_page() if self.series_id else None
+        shelves = self._parse_shelves_page()
+        editions = self._scrape_editions()
         return DetailedBook(
             title=script_data.title,
             complete_title=script_data.complete_title,
@@ -649,7 +696,7 @@ class BookParser:
             total_reviews=script_data.total_reviews,
             details=script_data.details,
             shelves=shelves,
-            titles=None,  # TODO
+            editions=editions,
         )
 
 

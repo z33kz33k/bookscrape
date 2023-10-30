@@ -8,10 +8,10 @@
 
 """
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, OrderedDict, Set, Tuple
 
 from bookscrape.constants import Json
 from bookscrape.scrape import FiveStars, LangReviewsDistribution, Renown
@@ -234,8 +234,8 @@ class DetailedBook:
     reviews: LangReviewsDistribution
     total_reviews: int
     details: BookDetails
-    shelves: Dict[str, int]  # TODO: extract data on genres only
-    titles: Dict[str, str]  # TODO: scraped from editions page
+    shelves: OrderedDict[int, str]
+    editions: OrderedDict[str, Set[str]]
 
     @property
     def renown(self) -> Renown:
