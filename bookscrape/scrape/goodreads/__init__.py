@@ -121,7 +121,8 @@ class AuthorParser:
         soup = getsoup(url)
         spans = soup.find_all("span", itemprop="author")
         if not spans:
-            raise ParsingError(f"No 'span' tags with queried author's data")
+            raise ParsingError(f"No 'span' tags with author's data according to query: "
+                               f"{query!r}")
 
         a = parse_spans(spans)
         if not a:
@@ -430,7 +431,16 @@ class BookParser:
         return self.EDITIONS_URL_TEMPLATE.format(numeric_id(self.work_id), page)
 
     @staticmethod
-    def book_id_from_data(title: str, author: str, authors_data: _AuthorsData) -> str | None:
+    def _match_book_in_author_books(author: Author, title: str) -> Book | None:
+        book = from_iterable(author.books, lambda b: b.title.casefold() == title.casefold())
+        if not book:
+            # Goodreads gets fancy with their apostrophes...
+            book = from_iterable(author.books,
+                                 lambda b: b.title.casefold() == title.replace("'", "’").casefold())
+        return book
+
+    @classmethod
+    def book_id_from_data(cls, title: str, author: str, authors_data: _AuthorsData) -> str | None:
         """Derive Goodreads book ID from provided authors data.
 
         Args:
@@ -443,22 +453,18 @@ class BookParser:
         """
         authors: List[Author] = authors_data["authors"]
         if is_goodreads_id(author):
-            author = from_iterable(authors, lambda a: a.book_id == author)
+            author = from_iterable(authors, lambda a: a.id == author)
         else:
-            author = from_iterable(authors, lambda a: a.name == author)
+            author = from_iterable(authors, lambda a: a.name.casefold() == author.casefold())
         if not author:
             return None
-        book = from_iterable(author.books, lambda b: b.title == title)
+        book = cls._match_book_in_author_books(author, title)
         if not book:
-            # Goodreads gets fancy with their apostrophes...
-            book = from_iterable(author.books,
-                                 lambda b: b.title == title.replace("'", "’"))
-            if not book:
-                return None
+            return None
         return book.id
 
-    @staticmethod
-    def fetch_book_id(title: str, author: str) -> str | None:
+    @classmethod
+    def fetch_book_id(cls, title: str, author: str) -> str | None:
         """Scrape author data and extract Goodreads book ID from it according to arguments passed.
 
         Args:
@@ -469,7 +475,7 @@ class BookParser:
             fetched book ID or None
         """
         author = AuthorParser(author).fetch_data()
-        book = from_iterable(author.books, lambda b: b.title == title)
+        book = cls._match_book_in_author_books(author, title)
         if not book:
             return None
         return book.id
@@ -592,6 +598,17 @@ class BookParser:
         series_id = self._parse_series_id(soup)
         return script_data, authors, series_id
 
+    @staticmethod
+    def _validate_series_div(div: Tag) -> bool:
+        h3 = div.find("h3")
+        if h3 is None:
+            return False
+        if any(char in h3.text for char in ",-"):
+            return False
+        if "BOOK" not in h3.text.upper():
+            return False
+        return True
+
     @throttled(THROTTLING_DELAY)
     def _parse_series_page(self) -> BookSeries | None:
         soup = getsoup(self._series_url)
@@ -608,7 +625,7 @@ class BookParser:
             title = title.strip()
         # layout
         items = soup.find_all("div", class_="listWithDividers__item")
-        items = [item for item in items if item.find("h3")]
+        items = [item for item in items if self._validate_series_div(item)]
         if not items:
             return None  # 'Dangerous Visions' by Harlan Ellison case
         series = OrderedDict()
@@ -637,15 +654,8 @@ class BookParser:
     def _parse_editions_page(
             self, page: int,
             editions: DefaultDict[str, Set[str]] | None = None
-    ) -> Tuple[DefaultDict[str, Set[str]], int, bool]:
-        next_page = True
+    ) -> Tuple[DefaultDict[str, Set[str]], int]:
         soup = getsoup(self._editions_url(page))
-        footer = soup.find("div", {"style": "text-align: right; width: 100%"})
-        if footer is None:
-            raise ParsingError("No footer tag to read next page status")
-        if footer.find("span", class_="next_page disabled") is not None:
-            next_page = False
-
         items = soup.find_all("div", class_="elementList clearFix")
         editions = editions or defaultdict(set)
         count = 0
@@ -665,21 +675,21 @@ class BookParser:
             lang = data_row.find("div", class_="dataValue").text.strip()
             editions[lang].add(title)
 
-        return editions, count, next_page
+        return editions, count
 
     def _scrape_editions(self) -> Tuple[OrderedDict[str, List[str]], int]:
         counter = itertools.count(1)
         editions, total, next_page = None, 0,  True
         for i in counter:
-            editions, editions_count, next_page = self._parse_editions_page(i, editions)
+            editions, editions_count = self._parse_editions_page(i, editions)
             total += editions_count
-            if not next_page or i > 10:
+            if editions_count < 100 or i > 10:
                 break
         ordered = OrderedDict(sorted([(name2langcode(lang), sorted(titles))
                               for lang, titles in editions.items()]))
         return ordered, total
 
-    def fetch_data(self) -> DetailedBook:
+    def _scrape_book(self) -> DetailedBook:
         script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
         self._set_secondary_urls()
@@ -702,6 +712,19 @@ class BookParser:
             editions=editions,
             total_editions=total_editions,
         )
+
+    def fetch_data(self) -> DetailedBook:
+        try:
+            book = self._scrape_book()
+        except Timeout:
+            print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
+                  "(60 seconds max)...")
+            return self.fetch_data_with_backoff()
+        return book
+
+    @backoff.on_exception(backoff.expo, Timeout, max_time=60)
+    def fetch_data_with_backoff(self) -> DetailedBook:
+        return self._scrape_book()
 
 
 def load_authors(authors_json: PathLike) -> _AuthorsData:

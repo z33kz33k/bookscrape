@@ -17,7 +17,7 @@ PathLike = str | Path
 Method = Callable[[Any, Tuple[Any, ...]], Any]  # method with signature def methodname(self, *args)
 Function = Callable[[Tuple[Any, ...]], Any]  # function with signature def funcname(*args)
 
-REQUEST_TIMOUT = 5  # seconds
+REQUEST_TIMOUT = 15  # seconds
 FILNAME_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"
 READABLE_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
