@@ -19,11 +19,11 @@ import numpy as np
 import pandas as pd
 
 from bookscrape.constants import Json
-from bookscrape.utils import first_df_row_as_columns
+from bookscrape.utils import first_df_row_as_columns, getfile
 from bookscrape.scrape import getsoup
 
 URL = "http://www.nicholaswhyte.info/sf/nh2.htm"
-DEFAULT_JSON = Path("scrape") / "hugo_nebula.json"
+DEFAULT_JSON = getfile(Path(__file__).parent.parent / "data" / "hugo_nebula.json")
 
 
 def scrape(dump_json=False, dest: Optional[Path] = None) -> pd.DataFrame:

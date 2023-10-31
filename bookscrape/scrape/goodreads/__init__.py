@@ -761,9 +761,15 @@ def load_authors(authors_json: PathLike) -> _AuthorsData:
 def dump_authors(*authors: str, **kwargs: Any) -> None:
     """Fetch data on ``authors`` and dump it to JSON.
 
+    Recognized kwargs:
+        prefix: a prefix for a dumpfile's name
+        use_timestamp: whether to append a timestamp to the dumpfile's name
+        filename: a complete filename for the dumpfile (renders moot the previous arguments)
+        output_dir: an output directory
+
     Args:
         authors: variable number of author full names or Goodread author IDs (in case of the latter there's one request fewer)
-        kwargs: optional arguments (e.g. a prefix for a dumpfile's name, an output directory, etc.)
+        kwargs: optional arguments
     """
     timestamp = datetime.now()
     data = {
@@ -775,7 +781,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         print(f"Scraping author #{i}: {author!r}...")
         parser = AuthorParser(author)
         try:
-            fetched = parser.fetch_data_with_backoff()
+            fetched = parser.fetch_data()
         except ParsingError as e:
             print(f"{e}. Skipping...")
             continue
