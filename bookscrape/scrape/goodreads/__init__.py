@@ -27,7 +27,7 @@ from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_i
     name2langcode
 from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, LangReviewsDistribution
 from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, BookSeries,
-                                              DetailedBook,
+                                              BookStats, DetailedBook,
                                               MainEdition, BookAward, BookSetting, _ScriptTagData)
 
 PROVIDER = "www.goodreads.com"
@@ -263,8 +263,8 @@ class AuthorParser:
 
 
 class _ScriptTagParser:
-    """Sub-parser of Goodreads book page's meta 'script' page obtained by `soup.find("script",
-    id="__NEXT_DATA__")`.
+    """Sub-parser of data contained in Goodreads book page's meta 'script' tag obtained by
+    `soup.find("script", id="__NEXT_DATA__")`.
     """
     def __init__(self, data: Dict[str, Any]) -> None:
         self._data = data
@@ -310,7 +310,7 @@ class _ScriptTagParser:
                 isbn13=details["isbn13"],
                 asin=details["asin"],
             )
-            blurb = self._book_data['description({"stripped":true})']
+            blurb = self._book_data['description({"stripped":true})'].strip()
             genres = []
             for item in self._book_data["bookGenres"]:
                 genre = item["genre"]
@@ -352,9 +352,9 @@ class _ScriptTagParser:
                 )
                 places.append(place)
             characters = [item["name"] for item in self._work_data["details"]["characters"]]
-
         except KeyError as ke:
             raise ParsingError(f"A key on 'script' tag data is unavailable: {ke}")
+
         return _ScriptTagData(
             title=original_title,
             complete_title=complete_title,
@@ -432,7 +432,7 @@ class BookParser:
         return self.EDITIONS_URL_TEMPLATE.format(numeric_id(self.work_id), page)
 
     @staticmethod
-    def _match_book_in_author_books(author: Author, title: str) -> Book | None:
+    def _find_book_in_author_books(author: Author, title: str) -> Book | None:
         book = from_iterable(author.books, lambda b: b.title.casefold() == title.casefold())
         if not book:
             # Goodreads gets fancy with their apostrophes...
@@ -466,7 +466,7 @@ class BookParser:
             author = from_iterable(authors, lambda a: a.name.casefold() == author.casefold())
         if not author:
             return None
-        book = cls._match_book_in_author_books(author, title)
+        book = cls._find_book_in_author_books(author, title)
         if not book:
             return None
         return book.id
@@ -483,7 +483,7 @@ class BookParser:
             fetched book ID or None
         """
         author = AuthorParser(author).fetch_data()
-        book = cls._match_book_in_author_books(author, title)
+        book = cls._find_book_in_author_books(author, title)
         if not book:
             return None
         return book.id
@@ -586,7 +586,7 @@ class BookParser:
         t = soup.find("script", id="__NEXT_DATA__")
         try:
             parser = _ScriptTagParser(json.loads(t.text)["props"]["pageProps"]["apolloState"])
-        except KeyError:
+        except (KeyError, AttributeError):
             raise ParsingError("No valid meta 'script' tag to parse")
         return parser.parse()
 
@@ -711,21 +711,24 @@ class BookParser:
         series = self._parse_series_page() if self.series_id else None
         shelves = self._parse_shelves_page()
         editions, total_editions = self._scrape_editions()
+        stats = BookStats(
+            ratings=script_data.ratings,
+            reviews=script_data.reviews,
+            total_reviews=script_data.total_reviews,
+            shelves=shelves,
+            editions=editions,
+            total_editions=total_editions,
+        )
         return DetailedBook(
             title=script_data.title,
             complete_title=script_data.complete_title,
             book_id=self.book_id,
             work_id=self.work_id,
-            series=series,
             authors=authors,
             first_publication=script_data.first_publication,
-            ratings=script_data.ratings,
-            reviews=script_data.reviews,
-            total_reviews=script_data.total_reviews,
+            series=series,
             details=script_data.details,
-            shelves=shelves,
-            editions=editions,
-            total_editions=total_editions,
+            stats=stats,
         )
 
     def fetch_data(self) -> DetailedBook:

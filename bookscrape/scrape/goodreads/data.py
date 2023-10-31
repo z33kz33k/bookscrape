@@ -15,7 +15,6 @@ from typing import Any, Dict, List, Optional, OrderedDict, Tuple
 
 from bookscrape.constants import Json, READABLE_TIMESTAMP_FORMAT
 from bookscrape.scrape import FiveStars, LangReviewsDistribution, Renown
-from bookscrape.scrape.goodreads.utils import numeric_id
 from bookscrape.utils import getfile
 
 
@@ -53,7 +52,7 @@ class AuthorStats:
             "ratings": self.ratings,
             "reviews": self.reviews,
             "shelvings": self.shelvings,
-            "r2r": self.r2r_percent,
+            "reviews_to_ratings": self.r2r_percent,
         }
 
     @classmethod
@@ -73,6 +72,15 @@ class AuthorStats:
     def r2r_percent(self) -> str:
         r2r = self.r2r * 100
         return f"{r2r:.2f} %"
+
+    @property
+    def sh2r(self) -> float:
+        return self.shelvings / self.ratings if self.ratings else 0
+
+    @property
+    def sh2r_percent(self) -> str:
+        sh2r = self.sh2r * 100
+        return f"{sh2r:.2f} %"
 
 
 @dataclass
@@ -119,10 +127,6 @@ class Book:
     def renown(self) -> Renown:
         return Renown.calculate(self.ratings, HOBBIT_RATINGS)
 
-    @property
-    def numeric_id(self) -> int:
-        return numeric_id(self.id)
-
 
 @dataclass
 class Author:
@@ -158,10 +162,6 @@ class Author:
     @property
     def renown(self) -> Renown:
         return Renown.calculate(self.stats.ratings, TOLKIEN_RATINGS)
-
-    @property
-    def numeric_id(self) -> int:
-        return numeric_id(self.id)
 
 
 @dataclass
@@ -283,21 +283,21 @@ class BookSeries:
 
 
 @dataclass
-class DetailedBook:
-    title: str
-    complete_title: str
-    book_id: str
-    work_id: str
-    series: Optional[BookSeries]
-    authors: List[str]  # list of author ID's
-    first_publication: datetime
+class BookStats:
     ratings: FiveStars
     reviews: LangReviewsDistribution
     total_reviews: int  # this is different from total calculated from 'reviews' dict
-    details: BookDetails
     shelves: OrderedDict[int, str]  # number of shelvings to shelves, only the first page is scraped
-    editions: OrderedDict[str, List[str]]
+    editions: OrderedDict[str, List[str]]  # iso lang codes to editions' titles
     total_editions: int
+
+    @property
+    def avg_rating(self) -> float:
+        return self.ratings.avg_rating
+
+    @property
+    def total_ratings(self) -> int:
+        return self.ratings.total
 
     @property
     def renown(self) -> Renown:
@@ -305,7 +305,7 @@ class DetailedBook:
 
     @property
     def r2r(self) -> float:
-        return self.total_reviews / self.ratings.total
+        return self.total_reviews / self.total_ratings if self.total_ratings else 0
 
     @property
     def r2r_percent(self) -> str:
@@ -313,8 +313,57 @@ class DetailedBook:
         return f"{r2r:.2f} %"
 
     @property
-    def shelvings(self) -> int:
+    def total_shelvings(self) -> int:
         return sum(s for s in self.shelves)
+
+    @property
+    def sh2r(self) -> float:
+        return self.total_shelvings / self.total_ratings if self.total_ratings else 0
+
+    @property
+    def sh2r_percent(self) -> str:
+        sh2r = self.sh2r * 100
+        return f"{sh2r:.2f} %"
+
+    @property
+    def e2r(self) -> float:
+        return self.total_editions / self.total_ratings if self.total_ratings else 0
+
+    @property
+    def e2r_percent(self) -> str:
+        e2r = self.e2r * 100
+        return f"{e2r:.3f} %"
+
+    @property
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "ratings": self.ratings.as_dict,
+            "avg_rating": round(self.avg_rating, 4),
+            "total_ratings": self.total_ratings,
+            "renown": self.renown.name,
+            "reviews": self.reviews.as_dict,
+            "total_reviews": self.total_reviews,
+            "reviews_to_ratings": self.r2r_percent,
+            "shelves": self.shelves,
+            "total_shelvings": self.total_shelvings,
+            "shelvings_to_ratings": self.sh2r_percent,
+            "editions": self.editions,
+            "total_editions": self.total_editions,
+            "editions_to_ratings": self.e2r_percent,
+        }
+
+
+@dataclass
+class DetailedBook:
+    title: str
+    complete_title: str
+    book_id: str
+    work_id: str
+    authors: List[str]  # list of author ID's
+    first_publication: datetime
+    series: Optional[BookSeries]
+    details: BookDetails
+    stats: BookStats
 
     @property
     def as_dict(self) -> Dict[str, Any]:
@@ -325,13 +374,8 @@ class DetailedBook:
             "work_id": self.work_id,
             "authors": self.authors,
             "first_publication": self.first_publication.strftime(READABLE_TIMESTAMP_FORMAT),
-            "ratings": self.ratings.as_dict,
-            "reviews": self.reviews.as_dict,
-            "total_reviews": self.total_reviews,
             "details": self.details.as_dict,
-            "shelves": self.shelves,
-            "editions": self.editions,
-            "total_editions": self.total_editions,
+            "stats": self.stats.as_dict,
         }
         if self.series:
             data["series"] = self.series.as_dict
