@@ -11,9 +11,9 @@ import json
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, OrderedDict, Set, Tuple
+from typing import Any, Dict, List, Optional, OrderedDict, Tuple
 
-from bookscrape.constants import Json
+from bookscrape.constants import Json, READABLE_TIMESTAMP_FORMAT
 from bookscrape.scrape import FiveStars, LangReviewsDistribution, Renown
 from bookscrape.scrape.goodreads.utils import numeric_id
 from bookscrape.utils import getfile
@@ -175,6 +175,19 @@ class MainEdition:
     isbn13: str
     asin: str
 
+    @property
+    def as_dict(self) -> Dict[str, str | int]:
+        return {
+            "publisher": self.publisher,
+            "publication": self.publication.strftime(READABLE_TIMESTAMP_FORMAT),
+            "format": self.format,
+            "pages": self.pages,
+            "language": self.language,
+            "isbn": self.isbn,
+            "isbn13": self.isbn13,
+            "asin": self.asin,
+        }
+
 
 @dataclass
 class BookAward:
@@ -184,6 +197,19 @@ class BookAward:
     category: Optional[str]
     designation: str
 
+    @property
+    def as_dict(self) -> Dict[str, str]:
+        data = {
+            "name": self.name,
+            "id": self.id,
+            "date": self.date.strftime(READABLE_TIMESTAMP_FORMAT),
+            "designation": self.designation,
+        }
+        if self.category:
+            data["category"] = self.category
+
+        return data
+
 
 @dataclass
 class BookSetting:
@@ -191,6 +217,19 @@ class BookSetting:
     id: str
     country: Optional[str]
     year: Optional[datetime]
+
+    @property
+    def as_dict(self) -> Dict[str, str]:
+        data = {
+            "name": self.name,
+            "id": self.id,
+        }
+        if self.country:
+            data["country"] = self.country
+        if self.year is not None:
+            data["year"] = self.year.strftime(READABLE_TIMESTAMP_FORMAT)
+
+        return data
 
 
 @dataclass
@@ -202,16 +241,33 @@ class BookDetails:
     places: List[BookSetting]
     characters: List[str]
 
+    @property
+    def as_dict(self) -> Dict[str, Any]:
+        data = {
+            "description": self.description,
+            "main_edition": self.main_edition.as_dict,
+            "genres": self.genres,
+            "characters": self.characters
+        }
+        if self.awards:
+            data["awards"] = [award.as_dict for award in self.awards]
+        if self.places:
+            data["places"] = [place.as_dict for place in self.places]
+        if self.characters:
+            data["characters"] = self.characters
+
+        return data
+
 
 @dataclass
 class _ScriptTagData:
-    title: str
+    title: Optional[str]
     complete_title: str
     work_id: str
     ratings: FiveStars
     reviews: LangReviewsDistribution
     total_reviews: int
-    first_publication: datetime
+    first_publication: Optional[datetime]
     details: BookDetails
 
 
@@ -220,6 +276,10 @@ class BookSeries:
     title: str
     id: str
     layout: Dict[float, str]  # numberings to book IDs
+
+    @property
+    def as_dict(self) -> Dict[str, str | Dict[float, str]]:
+        return asdict(self)
 
 
 @dataclass
@@ -255,3 +315,24 @@ class DetailedBook:
     @property
     def shelvings(self) -> int:
         return sum(s for s in self.shelves)
+
+    @property
+    def as_dict(self) -> Dict[str, Any]:
+        data = {
+            "title": self.title,
+            "complete_title": self.complete_title,
+            "book_id": self.book_id,
+            "work_id": self.work_id,
+            "authors": self.authors,
+            "first_publication": self.first_publication.strftime(READABLE_TIMESTAMP_FORMAT),
+            "ratings": self.ratings.as_dict,
+            "reviews": self.reviews.as_dict,
+            "total_reviews": self.total_reviews,
+            "details": self.details.as_dict,
+            "shelves": self.shelves,
+            "editions": self.editions,
+            "total_editions": self.total_editions,
+        }
+        if self.series:
+            data["series"] = self.series.as_dict
+        return data

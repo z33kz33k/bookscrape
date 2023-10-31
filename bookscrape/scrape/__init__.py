@@ -197,6 +197,12 @@ class RatingsDistribution:
     def __repr__(self) -> str:
         return repr(self.scaled_dist).replace("OrderedDict", self.__class__.__name__)
 
+    def as_dict(self) -> Dict[str, OrderedDict[int | float, int] | Tuple[int | float, ...]]:
+        return {
+            "dist": self.dist,
+            "rank_scheme": self.rank_scheme,
+        }
+
 
 class FiveStars(RatingsDistribution):
     """A rating distribution with pre-defined (1, 2, 3, 4, 5) rank scheme and some convenience
@@ -244,6 +250,10 @@ class FiveStars(RatingsDistribution):
     @property
     def five_star_percent(self) -> str:
         return self.ratings_percent(5)
+
+    @property
+    def as_dict(self) -> OrderedDict[int | float, int]:
+        return self.scaled_dist
 
 
 class LangReviewsDistribution:
@@ -304,3 +314,7 @@ class LangReviewsDistribution:
 
     def __repr__(self) -> str:
         return repr(self.dist).replace("OrderedDict", self.__class__.__name__)
+
+    @property
+    def as_dict(self) -> OrderedDict[str, int]:
+        return self.dist

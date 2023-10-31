@@ -34,7 +34,7 @@ PROVIDER = "www.goodreads.com"
 # the unofficially known enforced throttling delay
 # between requests to Goodreads servers is 1 s
 # we're choosing to be safe here
-THROTTLING_DELAY = 1.1  # seconds
+THROTTLING_DELAY = 1.2  # seconds
 
 
 class AuthorParser:
@@ -317,8 +317,9 @@ class _ScriptTagParser:
                 genres.append(genre["name"])
             *_, work_id = self._work_data["details"]["webUrl"].split("/")
             original_title = self._work_data["details"]["originalTitle"]
+            first_publication = self._work_data["details"]["publicationTime"]
             first_publication = self._parse_timestamp(
-                self._work_data["details"]["publicationTime"])
+                first_publication) if first_publication is not None else None
             ratings = self._work_data["stats"]["ratingsCountDist"]
             ratings = FiveStars({i: votes for i, votes in enumerate(ratings, start=1)})
             reviews = []
@@ -435,8 +436,15 @@ class BookParser:
         book = from_iterable(author.books, lambda b: b.title.casefold() == title.casefold())
         if not book:
             # Goodreads gets fancy with their apostrophes...
-            book = from_iterable(author.books,
-                                 lambda b: b.title.casefold() == title.replace("'", "’").casefold())
+            book = from_iterable(
+                author.books, lambda b: b.title.casefold() == title.replace("'", "’").casefold())
+            # let's be even less strict...
+            if not book:
+                book = from_iterable(author.books, lambda b: title.casefold() in b.title.casefold())
+                if not book:
+                    book = from_iterable(
+                        author.books, lambda b: title.replace(
+                            "'", "’").casefold() in b.title.casefold())
         return book
 
     @classmethod
@@ -517,7 +525,8 @@ class BookParser:
             lambda t: t.name == "p" and t.attrs.get("data-testid") == "publicationInfo")
         if p_tag is None:
             raise ParsingError("No tag with first publication data")
-        *_, text = p_tag.text.split("published")
+        # p_tag.text can be either 'First published October 1, 1967' or 'Published October 1, 1967'
+        *_, text = p_tag.text.split("ublished")
         return datetime.strptime(text.strip(), "%B %d, %Y")
 
     @staticmethod
@@ -591,12 +600,12 @@ class BookParser:
         return id_
 
     @throttled(THROTTLING_DELAY)
-    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str]:
+    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str, BeautifulSoup]:
         soup = getsoup(self._url)
         script_data = self._parse_meta_script_tag(soup)
         authors = self._parse_authors_line(soup)
         series_id = self._parse_series_id(soup)
-        return script_data, authors, series_id
+        return script_data, authors, series_id, soup
 
     @staticmethod
     def _validate_series_div(div: Tag) -> bool:
@@ -646,6 +655,8 @@ class BookParser:
         for tag in shelf_tags:
             name = tag.find("a").text
             shelvings_tag = tag.find(lambda t: t.name == "div" and "people" in t.text)
+            if shelvings_tag is None:
+                continue
             shelvings = extract_int(shelvings_tag.text)
             shelves[shelvings] = name
         return shelves
@@ -690,7 +701,11 @@ class BookParser:
         return ordered, total
 
     def _scrape_book(self) -> DetailedBook:
-        script_data, authors, self._series_id = self._parse_book_page()
+        script_data, authors, self._series_id, soup = self._parse_book_page()
+        if not script_data.title:
+            script_data.title = self._parse_title(soup)
+        if script_data.first_publication is None:
+            script_data.first_publication = self._parse_first_publication(soup)
         self._work_id = script_data.work_id
         self._set_secondary_urls()
         series = self._parse_series_page() if self.series_id else None
