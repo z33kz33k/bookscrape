@@ -146,7 +146,3 @@ def init_log() -> None:
     stream_handler.setFormatter(formatter)
     stream_handler.setLevel(log_level)
     root_logger.addHandler(stream_handler)
-
-
-def test_dir() -> Path:
-    return Path(__file__).parent.parent.parent / "temp" / "logs"

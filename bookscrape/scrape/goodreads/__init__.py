@@ -474,7 +474,7 @@ class BookParser:
         return book.id
 
     @classmethod
-    def scrape_book_id(cls, title: str, author: str) -> str | None:
+    def fetch_book_id(cls, title: str, author: str) -> str | None:
         """Scrape author data and extract Goodreads book ID from it according to arguments passed.
 
         Args:
@@ -510,7 +510,7 @@ class BookParser:
         if authors_data:
             id_ = cls.book_id_from_data(title, author, authors_data)
         if not id_:
-            id_ = cls.scrape_book_id(title, author)
+            id_ = cls.fetch_book_id(title, author)
         return id_
 
     @staticmethod
@@ -602,12 +602,16 @@ class BookParser:
         return id_
 
     @throttled(THROTTLING_DELAY)
-    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str, BeautifulSoup]:
+    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str]:
         soup = getsoup(self._url)
         script_data = self._parse_meta_script_tag(soup)
         authors = self._parse_authors_line(soup)
         series_id = self._parse_series_id(soup)
-        return script_data, authors, series_id, soup
+        if not script_data.title:
+            script_data.title = self._parse_title(soup)
+        if script_data.first_publication is None:
+            script_data.first_publication = self._parse_first_publication(soup)
+        return script_data, authors, series_id
 
     @staticmethod
     def _validate_series_div(div: Tag) -> bool:
@@ -703,11 +707,7 @@ class BookParser:
         return ordered, total
 
     def _scrape_book(self) -> DetailedBook:
-        script_data, authors, self._series_id, soup = self._parse_book_page()
-        if not script_data.title:
-            script_data.title = self._parse_title(soup)
-        if script_data.first_publication is None:
-            script_data.first_publication = self._parse_first_publication(soup)
+        script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
         self._set_secondary_urls()
         series = self._parse_series_page() if self.series_id else None
