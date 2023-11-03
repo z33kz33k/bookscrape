@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, OrderedDict, Tuple
 
 from bookscrape.constants import Json, READABLE_TIMESTAMP_FORMAT
-from bookscrape.scrape import FiveStars, LangReviewsDistribution, Renown
+from bookscrape.scrape import FiveStars, ReviewsDistribution, Renown
 from bookscrape.utils import getfile
 
 
@@ -265,7 +265,7 @@ class _ScriptTagData:
     complete_title: str
     work_id: str
     ratings: FiveStars
-    reviews: LangReviewsDistribution
+    reviews: ReviewsDistribution
     total_reviews: int
     first_publication: Optional[datetime]
     details: BookDetails
@@ -285,7 +285,7 @@ class BookSeries:
 @dataclass
 class BookStats:
     ratings: FiveStars
-    reviews: LangReviewsDistribution
+    reviews: ReviewsDistribution
     total_reviews: int  # this is different from total calculated from 'reviews' dict
     shelves: OrderedDict[int, str]  # number of shelvings to shelves, only the first page is scraped
     editions: OrderedDict[str, List[str]]  # iso lang codes to editions' titles

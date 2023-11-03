@@ -7,7 +7,10 @@
     @author: z33k
 
 """
+import logging
+from datetime import datetime
 from functools import wraps
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Callable, Iterable, Optional, Protocol, Sequence
 
@@ -16,8 +19,11 @@ import pandas as pd
 from contexttimer import Timer
 from langcodes import Language, tag_is_valid
 
-from bookscrape.constants import PathLike, T
+from bookscrape.constants import PathLike, T, FILENAME_TIMESTAMP_FORMAT
 from bookscrape.utils.check_type import type_checker
+
+
+_log = logging.getLogger(__name__)
 
 
 def timed(func: Callable) -> Callable:
@@ -30,7 +36,7 @@ def timed(func: Callable) -> Callable:
     def wrapper(*args, **kwargs):
         with Timer() as t:
             result = func(*args, **kwargs)
-        print(f"Completed in {t.elapsed:.3f} seconds")
+        _log.info(f"Completed in {t.elapsed:.3f} seconds")
         return result
     return wrapper
 
@@ -66,7 +72,7 @@ def getdir(path: PathLike) -> Path:
     """
     dir_ = Path(path)
     if not dir_.exists():
-        print(f"Creating missing directory at: '{dir_.resolve()}'...")
+        _log.warning(f"Creating missing directory at: '{dir_.resolve()}'...")
         dir_.mkdir(parents=True, exist_ok=True)
     else:
         if dir_.is_file():
@@ -76,7 +82,7 @@ def getdir(path: PathLike) -> Path:
 
 @type_checker(PathLike)
 def getfile(path: PathLike, ext="") -> Path:
-    """Return a file at ``path``.
+    """Return an existing file at ``path``.
     """
     f = Path(path)
     if not f.is_file():
@@ -119,3 +125,28 @@ def name2langcode(langname: str, alpha3=False) -> str | None:
     if alpha3:
         return lang.to_alpha3()
     return str(lang)
+
+
+def init_log() -> None:
+    """Initialize logging.
+    """
+    logfile = getdir(Path(__file__).parent.parent.parent / "temp" / "logs") / "bookscrape.log"
+    log_format = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
+    log_level = logging.INFO
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level)
+    formatter = logging.Formatter(log_format)
+    handler = RotatingFileHandler(logfile, maxBytes=1024*1024*10, backupCount=10)
+    handler.setFormatter(formatter)
+    handler.setLevel(log_level)
+    root_logger.addHandler(handler)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    stream_handler.setLevel(log_level)
+    root_logger.addHandler(stream_handler)
+
+
+def test_dir() -> Path:
+    return Path(__file__).parent.parent.parent / "temp" / "logs"

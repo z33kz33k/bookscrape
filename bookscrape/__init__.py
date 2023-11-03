@@ -7,3 +7,6 @@
     @author: z33k
 
 """
+from bookscrape.utils import init_log
+
+init_log()

@@ -7,6 +7,7 @@
     @author: z33k
 
 """
+import logging
 import time
 from collections import OrderedDict
 from enum import Enum, auto
@@ -19,6 +20,9 @@ from langcodes import tag_is_valid
 
 from bookscrape.constants import REQUEST_TIMOUT
 from bookscrape.utils import is_increasing, timed, type_checker, langcode2name, name2langcode
+
+
+_log = logging.getLogger(__name__)
 
 
 class ParsingError(ValueError):
@@ -86,13 +90,13 @@ def getsoup(url: str) -> BeautifulSoup:
     Returns:
         a BeautifulSoup object
     """
-    print(f"Requesting: {url!r}")
+    _log.info(f"Requesting: {url!r}")
     markup = requests.get(url, timeout=REQUEST_TIMOUT).text
     return BeautifulSoup(markup, "lxml")
 
 
 def throttle(delay: float) -> None:
-    print(f"Throttling for {delay} seconds...")
+    _log.info(f"Throttling for {delay} seconds...")
     time.sleep(delay)
 
 
@@ -256,7 +260,7 @@ class FiveStars(RatingsDistribution):
         return self.scaled_dist
 
 
-class LangReviewsDistribution:
+class ReviewsDistribution:
     """Language based reviews distribution.
     """
     @property

@@ -8,6 +8,7 @@
 
 """
 import json
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -22,6 +23,7 @@ from bookscrape.constants import Json
 from bookscrape.utils import first_df_row_as_columns, getfile
 from bookscrape.scrape import getsoup
 
+_log = logging.getLogger(__name__)
 URL = "http://www.nicholaswhyte.info/sf/nh2.htm"
 DEFAULT_JSON = getfile(Path(__file__).parent.parent / "data" / "hugo_nebula.json")
 
@@ -275,8 +277,8 @@ class Parser:
             lifespan = Lifespan(birth, death)
             author = Author(name.strip(), hugos, nebulas, lifespan)
             if len(author.double_wins) != dw_count:
-                print(f"WARNING!: Inconsistent double wins data: {len(author.double_wins)}"
-                      f"!={dw_count}")
+                _log.warning(f"Inconsistent double wins data: {len(author.double_wins)}"
+                             f"!={dw_count}")
             authors.append(author)
 
         return sorted(authors, key=lambda a: (a.rank, len(a.double_wins), len(a.nebulas),

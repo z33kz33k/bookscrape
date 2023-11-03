@@ -7,11 +7,15 @@
     @author: z33k
 
 """
+import logging
 from typing import List
 
 import gspread
 
 from bookscrape.utils import timed
+
+
+_log = logging.getLogger(__name__)
 
 
 def retrieve_gsheets_col(spreadsheet: str, worksheet: str,
@@ -32,7 +36,7 @@ def retrieve_gsheets_col(spreadsheet: str, worksheet: str,
 def retrieve_sf_books_authors() -> List[str]:
     """Retrieve a list of author names from 'sf_books' private Google sheet.
     """
-    print("Retrieving data from gsheets...")
+    _log.info("Retrieving data from gsheets...")
     items = retrieve_gsheets_col("sf_books", "books", 3, 4)
     authors = set()
     for item in items:

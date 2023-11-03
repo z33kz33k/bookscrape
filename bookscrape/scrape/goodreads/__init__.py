@@ -9,6 +9,7 @@
 """
 import itertools
 import json
+import logging
 from collections import OrderedDict, defaultdict, namedtuple
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -21,11 +22,11 @@ from bs4.element import Tag
 from requests import Timeout
 
 from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
-                                  FILNAME_TIMESTAMP_FORMAT)
+                                  FILENAME_TIMESTAMP_FORMAT)
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
     name2langcode
-from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, LangReviewsDistribution
+from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, ReviewsDistribution
 from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, BookSeries,
                                               BookStats, DetailedBook,
                                               MainEdition, BookAward, BookSetting, _ScriptTagData)
@@ -35,6 +36,7 @@ PROVIDER = "www.goodreads.com"
 # between requests to Goodreads servers is 1 s
 # we're choosing to be safe here
 THROTTLING_DELAY = 1.2  # seconds
+_log = logging.getLogger(__name__)
 
 
 class AuthorParser:
@@ -244,19 +246,19 @@ class AuthorParser:
 
         return Author(self.author_name, self.author_id, stats, books)
 
-    def fetch_data(self) -> Author:
+    def scrape(self) -> Author:
         try:
             if not self.author_id:
                 self._author_id = self.find_author_id(self.author_name)
             author = self._parse_author_page()
         except Timeout:
-            print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
-                  "(60 seconds max)...")
-            return self.fetch_data_with_backoff()
+            _log.warning("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
+                         "(60 seconds max)...")
+            return self.scrape_with_backoff()
         return author
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
-    def fetch_data_with_backoff(self) -> Author:
+    def scrape_with_backoff(self) -> Author:
         if not self.author_id:
             self._author_id = self.find_author_id(self.author_name)
         return self._parse_author_page()
@@ -325,7 +327,7 @@ class _ScriptTagParser:
             reviews = []
             for item in self._work_data["stats"]["textReviewsLanguageCounts"]:
                 reviews.append((item["isoLanguageCode"], item["count"]))
-            reviews = LangReviewsDistribution(dict(reviews))
+            reviews = ReviewsDistribution(dict(reviews))
             # this is always greater than the distribution's total
             total_reviews = self._work_data["stats"]["textReviewsCount"]
             awards = []
@@ -472,7 +474,7 @@ class BookParser:
         return book.id
 
     @classmethod
-    def fetch_book_id(cls, title: str, author: str) -> str | None:
+    def scrape_book_id(cls, title: str, author: str) -> str | None:
         """Scrape author data and extract Goodreads book ID from it according to arguments passed.
 
         Args:
@@ -482,7 +484,7 @@ class BookParser:
         Returns:
             fetched book ID or None
         """
-        author = AuthorParser(author).fetch_data()
+        author = AuthorParser(author).scrape()
         book = cls._find_book_in_author_books(author, title)
         if not book:
             return None
@@ -508,7 +510,7 @@ class BookParser:
         if authors_data:
             id_ = cls.book_id_from_data(title, author, authors_data)
         if not id_:
-            id_ = cls.fetch_book_id(title, author)
+            id_ = cls.scrape_book_id(title, author)
         return id_
 
     @staticmethod
@@ -731,17 +733,17 @@ class BookParser:
             stats=stats,
         )
 
-    def fetch_data(self) -> DetailedBook:
+    def scrape(self) -> DetailedBook:
         try:
             book = self._scrape_book()
         except Timeout:
-            print("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
-                  "(60 seconds max)...")
-            return self.fetch_data_with_backoff()
+            _log.warning("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
+                         "(60 seconds max)...")
+            return self.scrape_with_backoff()
         return book
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
-    def fetch_data_with_backoff(self) -> DetailedBook:
+    def scrape_with_backoff(self) -> DetailedBook:
         return self._scrape_book()
 
 
@@ -778,12 +780,12 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         "authors": [],
     }
     for i, author in enumerate(authors, start=1):
-        print(f"Scraping author #{i}: {author!r}...")
+        _log.info(f"Scraping author #{i}: {author!r}...")
         parser = AuthorParser(author)
         try:
-            fetched = parser.fetch_data()
+            fetched = parser.scrape()
         except ParsingError as e:
-            print(f"{e}. Skipping...")
+            _log.error(f"{e}. Skipping...")
             continue
         data["authors"].append(fetched.as_dict)
 
@@ -797,7 +799,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
     prefix = f"{prefix}_" if prefix else ""
     use_timestamp = kwargs.get("use_timestamp") if kwargs.get("use_timestamp") is not None else \
         True
-    timestamp = f"_{timestamp.strftime(FILNAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
+    timestamp = f"_{timestamp.strftime(FILENAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
     output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
     output_dir = getdir(output_dir)
     filename = kwargs.get("filename")
@@ -811,7 +813,7 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
     if dest.exists():
-        print(f"Successfully dumped '{dest}'")
+        _log.info(f"Successfully dumped '{dest}'")
 
 
 def update_authors(authors_json: PathLike) -> None:
@@ -832,5 +834,3 @@ def update_tolkien() -> None:
     outputdir = Path(__file__).parent.parent.parent / "data"
     dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir,
                  filename="tolkien.json")
-
-
