@@ -13,7 +13,7 @@ import logging
 from collections import OrderedDict, defaultdict, namedtuple
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
+from typing import Any, DefaultDict, Dict, Generator, List, Optional, Set, Tuple, Type
 
 import backoff
 import pytz
@@ -39,8 +39,11 @@ THROTTLING_DELAY = 1.2  # seconds
 _log = logging.getLogger(__name__)
 
 
-class AuthorParser:
-    """Goodreads author page parser.
+class AuthorScraper:
+    """Scraper of Goodreads author data.
+
+    Scrapes Goodreads 'Books by author' page that displays the author's stats and a list of their 30
+    most popular books.
     """
     URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
 
@@ -53,10 +56,13 @@ class AuthorParser:
         return self._author_id
 
     def __init__(self, author: str) -> None:
-        """Initialize.
+        """Provide author's full name (or Goodreads author ID) to scrape their data.
+
+        When Goodreads author ID is provided, there's one less server request (no need to derive
+        an ID from the provided name).
 
         Args:
-            author: author's full name or Goodreads author ID (one fewer sever request)
+            author: author's full name or Goodreads author ID
         """
         self._author_id, self._author_name = None, None
         if is_goodreads_id(author):
@@ -216,7 +222,7 @@ class AuthorParser:
 
     @throttled(THROTTLING_DELAY)
     def _parse_author_page(self) -> Author:
-        """Scrape and parse Goodreads author page and return an Author object.
+        """Parse Goodreads 'Books by author' page and return an Author object.
 
         Example URL:
             https://www.goodreads.com/author/list/7415.Harlan_Ellison
@@ -380,8 +386,11 @@ _AuthorsData = Dict[str, datetime | str | List[Author]]
 _Contributor = namedtuple("_Contributor", "author_id has_role")
 
 
-class BookParser:
-    """Goodreads book page parser.
+class BookScraper:
+    """Scraper of Goodreads book data.
+
+    Scrapes detailed data on a book contained within a Goodreads book page and several connected
+    pages that detail the book's series, shelves and editions.
     """
     URL_TEMPLATE = "https://www.goodreads.com/book/show/{}"
     EDITIONS_URL_TEMPLATE = "https://www.goodreads.com/work/editions/{}?page={}&per_page=100"
@@ -399,13 +408,19 @@ class BookParser:
     def series_id(self) -> str | None:
         return self._series_id
 
-    def __init__(self, book: str, author: str | None,
+    def __init__(self, book: str, author: str | None = None,
                  authors_data: _AuthorsData | None = None) -> None:
-        """Initialize.
+        """Provide either a Goodreads book ID or book's title and author (either their full
+        name or their Goodreads ID) to scrape detailed data on it.
+
+        Information on the book's author is only needed to determine the book's Goodreads ID.
+        The fastest route is to provide both the author's Goodreads ID and authors' JSON data
+        (saved earlier by dump_authors()) that contains info on this author's books. Otherwise,
+        the missing pieces are scraped, with additional requests, from Goodreads.
 
         Args:
-            book: book's title or book ID
-            author: optionally (if book ID was not provided), book author's full name or Goodreads author ID
+            book: Goodreads book ID or, optionally, its title and...
+            author: optionally, book author's full name or Goodreads author ID
             authors_data: optionally, data as read from JSON saved by dump_authors()
         """
         if is_goodreads_id(book):
@@ -479,12 +494,12 @@ class BookParser:
 
         Args:
             title: book's title
-            author: book author's name or author ID
+            author: book author's full name or Goodreads author ID
 
         Returns:
             fetched book ID or None
         """
-        author = AuthorParser(author).scrape()
+        author = AuthorScraper(author).scrape()
         book = cls._find_book_in_author_books(author, title)
         if not book:
             return None
@@ -760,40 +775,66 @@ def load_authors(authors_json: PathLike) -> _AuthorsData:
     return data
 
 
-def dump_authors(*authors: str, **kwargs: Any) -> None:
-    """Fetch data on ``authors`` and dump it to JSON.
+def scrape_data(*cues: str | Tuple[str, str],
+                scraper_type: Type[AuthorScraper | BookScraper] = AuthorScraper,
+                **kwargs: Any) -> Generator[Author | DetailedBook, None, None]:
+    """Scrape data according to the parameters provided.
 
-    Recognized kwargs:
-        prefix: a prefix for a dumpfile's name
-        use_timestamp: whether to append a timestamp to the dumpfile's name
-        filename: a complete filename for the dumpfile (renders moot the previous arguments)
-        output_dir: an output directory
+    See dump_authors() and dump_books() for more details.
+
+    Recognized optional arguments:
+        authors_data: authors' data as read from JSON saved by dump_authors()
 
     Args:
-        authors: variable number of author full names or Goodread author IDs (in case of the latter there's one request fewer)
+        cues: variable number of input arguments for the scraper specified
+        scraper_type: a type of scraper to be used
         kwargs: optional arguments
     """
+    for i, cue in enumerate(cues, start=1):
+        _log.info(f"Scraping item #{i}: '{cue}'...")
+        if scraper_type is AuthorScraper:
+            parser = scraper_type(cue)
+        elif scraper_type is BookScraper:
+            if isinstance(cue, str):
+                parser = scraper_type(cue)
+            else:
+                parser = scraper_type(*cue, authors_data=kwargs.get("authors_data"))
+        else:
+            break
+
+        try:
+            yield parser.scrape()
+        except ParsingError as e:
+            _log.error(f"{e}. Skipping...")
+            continue
+
+        if i != len(cues):
+            print()
+
+
+def _dump_data(*cues: str | Tuple[str, str],
+               scraper_type: Type[AuthorScraper | BookScraper] = AuthorScraper,
+               **kwargs: Any) -> None:
+    """Scrape data and dump it to JSON.
+    """
+    if scraper_type is AuthorScraper:
+        scraped = [s.as_dict for s in scrape_data(*cues, scraper_type=scraper_type)]
+        scraped = sorted(scraped, key=lambda item: item["name"].casefold())
+        dataname = "authors"
+    elif scraper_type is BookScraper:
+        scraped = [s.as_dict for s in scrape_data(
+            *cues, scraper_type=scraper_type, authors_data=kwargs.get("authors_data"))]
+        scraped = sorted(scraped, key=lambda item: item["title"].casefold())
+        dataname = "books"
+    else:
+        return
+
     timestamp = datetime.now()
     data = {
         "timestamp": timestamp.strftime(READABLE_TIMESTAMP_FORMAT),
         "provider": PROVIDER,
-        "authors": [],
+        dataname: scraped,
     }
-    for i, author in enumerate(authors, start=1):
-        _log.info(f"Scraping author #{i}: {author!r}...")
-        parser = AuthorParser(author)
-        try:
-            fetched = parser.scrape()
-        except ParsingError as e:
-            _log.error(f"{e}. Skipping...")
-            continue
-        data["authors"].append(fetched.as_dict)
-
-        if i != len(authors):
-            print()
-
-    data["authors"] = sorted(data["authors"], key=lambda item: item["name"].casefold())
-
     # kwargs
     prefix = kwargs.get("prefix") or ""
     prefix = f"{prefix}_" if prefix else ""
@@ -816,6 +857,51 @@ def dump_authors(*authors: str, **kwargs: Any) -> None:
         _log.info(f"Successfully dumped '{dest}'")
 
 
+def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
+    """Scrape data on ``authors`` and dump it to JSON.
+
+    Providing Goodreads authors IDs as 'authors' cuts the needed number of requests by half.
+
+    Recognized optional arguments:
+        use_timestamp: whether to append a timestamp to the dumpfile's name (default: True)
+        filename: a complete filename for the dumpfile (renders moot other filename-concerned arguments)
+        output_dir: an output directory (if not provided, defaults to OUTPUT_DIR)
+
+    Args:
+        authors: variable number of author full names or Goodread author IDs
+        prefix: a prefix for a dumpfile's name
+        kwargs: optional arguments
+    """
+    try:
+        _dump_data(*authors, scraper_type=AuthorScraper, prefix=prefix, **kwargs)
+    except Exception as e:
+        _log.critical(str(e))
+
+
+def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any) -> None:
+    """Scrape data on books specified by provided cues and dump it to JSON.
+
+    Providing Goodreads book IDs as 'book_cues' cuts the needed number of requests considerably.
+    If not provided, specifying 'authors_data' in optional arguments speeds up derivation of the
+    needed IDs.
+
+    Recognized optional aguments:
+        authors_data: authors' data as read from JSON saved by dump_authors()
+        use_timestamp: whether to append a timestamp to the dumpfile's name
+        filename: a complete filename for the dumpfile (renders moot other filename-concerned arguments)
+        output_dir: an output directory (if not provided, defaults to OUTPUT_DIR)
+
+    Args:
+        book_cues: variable number of either Goodreads book IDs or (book's title, book's author) tuples
+        prefix: a prefix for a dumpfile's name
+        kwargs: optional arguments
+    """
+    try:
+        _dump_data(*book_cues, scraper_type=BookScraper, prefix=prefix, **kwargs)
+    except Exception as e:
+        _log.critical(str(e))
+
+
 def update_authors(authors_json: PathLike) -> None:
     """Load authors from ``authors_json``, scrape them again and save at the same location (
     with updated file timestamp).
@@ -823,11 +909,11 @@ def update_authors(authors_json: PathLike) -> None:
     Args:
         authors_json: path to a JSON file saved earlier by dump_authors()
     """
-    output_dir = Path(authors_json).parent
+    output_dir = getfile(authors_json).parent
     data = load_authors(authors_json)
     authors = data["authors"]
     ids = [author.id for author in authors]
-    dump_authors(*ids, prefix="authors", output_dir=output_dir)
+    dump_authors(*ids, output_dir=output_dir)
 
 
 def update_tolkien() -> None:
