@@ -130,7 +130,12 @@ def name2langcode(langname: str, alpha3=False) -> str | None:
 def init_log() -> None:
     """Initialize logging.
     """
-    logfile = getdir(Path(__file__).parent.parent.parent / "temp" / "logs") / "bookscrape.log"
+    output_dir = Path(__file__).parent.parent.parent / "temp" / "logs"
+    if output_dir.exists():
+        logfile = output_dir / "bookscrape.log"
+    else:
+        logfile = "bookscrape.log"
+
     log_format = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
     log_level = logging.INFO
 

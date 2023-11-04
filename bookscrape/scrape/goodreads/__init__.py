@@ -10,6 +10,7 @@
 import itertools
 import json
 import logging
+import traceback
 from collections import OrderedDict, defaultdict, namedtuple
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -308,12 +309,13 @@ class _ScriptTagParser:
         try:
             complete_title = self._book_data["titleComplete"]
             details = self._book_data["details"]
+            lang = details["language"]["name"]
             main_edition = MainEdition(
                 publisher=details["publisher"],
                 publication=self._parse_timestamp(details["publicationTime"]),
                 format=details["format"],
                 pages=details["numPages"],
-                language=name2langcode(details["language"]["name"]),
+                language=name2langcode(lang) if lang else None,
                 isbn=details["isbn"],
                 isbn13=details["isbn13"],
                 asin=details["asin"],
@@ -339,10 +341,11 @@ class _ScriptTagParser:
             awards = []
             for item in self._work_data["details"]["awardsWon"]:
                 *_, id_ = item["webUrl"].split("/")
+                timestamp = item["awardedAt"]
                 award = BookAward(
                     name=item["name"],
                     id=id_,
-                    date=self._parse_timestamp(item["awardedAt"]),
+                    date=self._parse_timestamp(timestamp) if timestamp else None,
                     category=item["category"],
                     designation=item["designation"],
                 )
@@ -633,7 +636,7 @@ class BookScraper:
         h3 = div.find("h3")
         if h3 is None:
             return False
-        if any(char in h3.text for char in ",-"):
+        if any(char in h3.text for char in ",-/"):
             return False
         if "BOOK" not in h3.text.upper():
             return False
@@ -715,7 +718,7 @@ class BookScraper:
         for i in counter:
             editions, editions_count = self._parse_editions_page(i, editions)
             total += editions_count
-            if editions_count < 100 or i > 10:
+            if editions_count < 100 or i > 20:
                 break
         ordered = OrderedDict(sorted([(name2langcode(lang), sorted(titles))
                               for lang, titles in editions.items()]))
@@ -875,7 +878,7 @@ def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
     try:
         _dump_data(*authors, scraper_type=AuthorScraper, prefix=prefix, **kwargs)
     except Exception as e:
-        _log.critical(str(e))
+        _log.critical(f"{type(e)}: {e}:\n{traceback.format_exc()}")
 
 
 def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any) -> None:
@@ -899,7 +902,7 @@ def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any)
     try:
         _dump_data(*book_cues, scraper_type=BookScraper, prefix=prefix, **kwargs)
     except Exception as e:
-        _log.critical(str(e))
+        _log.critical(f"{type(e)}: {e}:\n{traceback.format_exc()}")
 
 
 def update_authors(authors_json: PathLike) -> None:

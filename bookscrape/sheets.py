@@ -8,6 +8,7 @@
 
 """
 import logging
+from collections import namedtuple
 from typing import List
 
 import gspread
@@ -33,10 +34,10 @@ def retrieve_gsheets_col(spreadsheet: str, worksheet: str,
 
 
 @timed
-def retrieve_sf_books_authors() -> List[str]:
+def retrieve_sf_authors() -> List[str]:
     """Retrieve a list of author names from 'sf_books' private Google sheet.
     """
-    _log.info("Retrieving data from gsheets...")
+    _log.info("Retrieving author names from gsheets...")
     items = retrieve_gsheets_col("sf_books", "books", 3, 4)
     authors = set()
     for item in items:
@@ -47,3 +48,22 @@ def retrieve_sf_books_authors() -> List[str]:
             authors.add(item.strip())
     return sorted(authors)
 
+
+BookRecord = namedtuple("BookRecord", ["title", "author"])
+
+
+@timed
+def retrieve_sf_books() -> List[BookRecord]:
+    """Retrieve a list of book records from 'sf_books' private Google sheet.
+    """
+    _log.info("Retrieving book records from gsheets...")
+    titles = [title.strip() for title in retrieve_gsheets_col("sf_books", "books", 2, 4)]
+    author_tokens = retrieve_gsheets_col("sf_books", "books", 3, 4)
+    authors = []
+    for token in author_tokens:
+        if "," in token:
+            names = [token.strip() for token in token.split(",")]
+            authors.append(names[0])
+        else:
+            authors.append(token.strip())
+    return [BookRecord(title, author) for title, author in zip(titles, authors)]

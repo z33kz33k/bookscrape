@@ -169,31 +169,37 @@ class MainEdition:
     publisher: str
     publication: datetime
     format: str
-    pages: int
-    language: str
-    isbn: str
-    isbn13: str
-    asin: str
+    pages: Optional[int]
+    language: Optional[str]
+    isbn: Optional[str]
+    isbn13: Optional[str]
+    asin: Optional[str]
 
     @property
     def as_dict(self) -> Dict[str, str | int]:
-        return {
+        data = {
             "publisher": self.publisher,
             "publication": self.publication.strftime(READABLE_TIMESTAMP_FORMAT),
             "format": self.format,
-            "pages": self.pages,
-            "language": self.language,
-            "isbn": self.isbn,
-            "isbn13": self.isbn13,
-            "asin": self.asin,
         }
+        if self.pages is not None:
+            data["pages"] = self.pages
+        if self.language:
+            data["language"] = self.language
+        if self.isbn:
+            data["isbn"] = self.isbn
+        if self.isbn13:
+            data["isbn13"] = self.isbn13
+        if self.asin:
+            data["asin"] = self.asin
+        return data
 
 
 @dataclass
 class BookAward:
     name: str
     id: str
-    date: datetime
+    date: Optional[datetime]
     category: Optional[str]
     designation: str
 
@@ -202,9 +208,10 @@ class BookAward:
         data = {
             "name": self.name,
             "id": self.id,
-            "date": self.date.strftime(READABLE_TIMESTAMP_FORMAT),
             "designation": self.designation,
         }
+        if self.date is not None:
+            data["date"] = self.date.strftime(READABLE_TIMESTAMP_FORMAT)
         if self.category:
             data["category"] = self.category
 
