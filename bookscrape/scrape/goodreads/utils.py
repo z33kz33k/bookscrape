@@ -28,6 +28,12 @@ def numeric_id(text_id: str) -> int:
 
 @type_checker(str)
 def is_goodreads_id(text: str) -> bool:
+    """Check if text is a Goodreads ID.
+
+    Example of possible formats:
+        '625094.The_Leopard'
+        '9969571-ready-player-one'
+    """
     if len(text) <= 2:
         return False
     if "." in text and "-" in text:
@@ -45,3 +51,14 @@ def is_goodreads_id(text: str) -> bool:
     if not all((char.isalnum() and char.isascii()) or char in "_-" for char in right):
         return False
     return True
+
+
+def url2id(url: str) -> str | None:
+    """Extract Goodreads ID from URL.
+    """
+    if "/" not in url:
+        return None
+    *_, id_ = url.split("/")
+    if is_goodreads_id(id_):
+        return id_
+    return None

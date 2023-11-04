@@ -50,12 +50,16 @@ def first_df_row_as_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 @type_checker(str)
 def extract_float(text: str) -> float:
+    """Extract floating point number from text.
+    """
     text = "".join([char for char in text if char.isdigit() or char in ",."])
     return float(text.replace(",", "."))
 
 
 @type_checker(str)
 def extract_int(text: str) -> int:
+    """Extract an integer text.
+    """
     text = "".join([char for char in text if char.isdigit()])
     return int(text)
 

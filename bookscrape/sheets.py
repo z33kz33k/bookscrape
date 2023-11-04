@@ -13,6 +13,7 @@ from typing import List
 
 import gspread
 
+from bookscrape.scrape.goodreads import url2id
 from bookscrape.utils import timed
 
 
@@ -38,7 +39,7 @@ def retrieve_sf_authors() -> List[str]:
     """Retrieve a list of author names from 'sf_books' private Google sheet.
     """
     _log.info("Retrieving author names from gsheets...")
-    items = retrieve_gsheets_col("sf_books", "books", 3, 4)
+    items = retrieve_gsheets_col("sf_books", "books", 4, 4)
     authors = set()
     for item in items:
         if "," in item:
@@ -53,12 +54,12 @@ BookRecord = namedtuple("BookRecord", ["title", "author"])
 
 
 @timed
-def retrieve_sf_books() -> List[BookRecord]:
+def retrieve_sf_book_records() -> List[BookRecord]:
     """Retrieve a list of book records from 'sf_books' private Google sheet.
     """
     _log.info("Retrieving book records from gsheets...")
     titles = [title.strip() for title in retrieve_gsheets_col("sf_books", "books", 2, 4)]
-    author_tokens = retrieve_gsheets_col("sf_books", "books", 3, 4)
+    author_tokens = retrieve_gsheets_col("sf_books", "books", 4, 4)
     authors = []
     for token in author_tokens:
         if "," in token:
@@ -67,3 +68,11 @@ def retrieve_sf_books() -> List[BookRecord]:
         else:
             authors.append(token.strip())
     return [BookRecord(title, author) for title, author in zip(titles, authors)]
+
+
+@timed
+def retrieve_sf_book_ids() -> List[str]:
+    """Retrieve a list of book IDs from 'sf_books' private Google sheet.
+    """
+    _log.info("Retrieving book IDs from gsheets...")
+    return [url2id(url) for url in retrieve_gsheets_col("sf_books", "books", 3, 4)]

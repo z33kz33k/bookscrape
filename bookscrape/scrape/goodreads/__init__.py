@@ -24,7 +24,7 @@ from requests import Timeout
 
 from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILENAME_TIMESTAMP_FORMAT)
-from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id
+from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
 from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_iterable, \
     name2langcode
 from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, ReviewsDistribution
@@ -141,7 +141,9 @@ class AuthorScraper:
         # URL now ought to look like this:
         # 'https://www.goodreads.com/author/show/7415.Harlan_Ellison?from_search=true&from_srp=true'
         url, _ = url.split("?")  # stripping the trash part
-        *_, id_ = url.split("/")
+        id_ = url2id(url)
+        if not id_:
+            raise ParsingError(f"Could not extract author's ID from URL: {url!r}")
         return id_
 
     @staticmethod
@@ -325,7 +327,10 @@ class _ScriptTagParser:
             for item in self._book_data["bookGenres"]:
                 genre = item["genre"]
                 genres.append(genre["name"])
-            *_, work_id = self._work_data["details"]["webUrl"].split("/")
+            work_id = url2id(self._work_data["details"]["webUrl"])
+            if not work_id:
+                raise ParsingError(
+                    f"Could not parse work ID from URL: {self._work_data['details']['webUrl']}")
             original_title = self._work_data["details"]["originalTitle"]
             first_publication = self._work_data["details"]["publicationTime"]
             first_publication = self._parse_timestamp(
@@ -340,7 +345,9 @@ class _ScriptTagParser:
             total_reviews = self._work_data["stats"]["textReviewsCount"]
             awards = []
             for item in self._work_data["details"]["awardsWon"]:
-                *_, id_ = item["webUrl"].split("/")
+                id_ = url2id(item["webUrl"])
+                if not id_:
+                    continue
                 timestamp = item["awardedAt"]
                 award = BookAward(
                     name=item["name"],
@@ -354,7 +361,9 @@ class _ScriptTagParser:
             for item in self._work_data["details"]["places"]:
                 year = item["year"]
                 year = datetime(int(year), 1, 1) if year else None
-                *_, id_ = item["webUrl"].split("/")
+                id_ = url2id(item["webUrl"])
+                if not id_:
+                    continue
                 place = BookSetting(
                     name=item["name"],
                     id=id_,
@@ -554,7 +563,9 @@ class BookScraper:
         url = a_tag.attrs.get("href")
         if not url:
             raise ParsingError("No 'href' attribute on contributor 'a' tag")
-        *_, id_ = url.split("/")
+        id_ = url2id(url)
+        if not id_:
+            raise ParsingError(f"Could not extract Goodreads ID from '{url}'")
         return _Contributor(id_, a_tag.find("span", class_="ContributorLink__role") is not None)
 
     @classmethod
@@ -616,7 +627,9 @@ class BookScraper:
         a = tag.find("a")
         if a is None:
             return None
-        *_, id_ = a.attrs.get("href").split("/")
+        id_ = url2id(a.attrs.get("href"))
+        if not id_:
+            raise ParsingError(f"Could not extract Goodreads ID from '{a.attrs.get('href')}'")
         return id_
 
     @throttled(THROTTLING_DELAY)
@@ -636,7 +649,7 @@ class BookScraper:
         h3 = div.find("h3")
         if h3 is None:
             return False
-        if any(char in h3.text for char in ",-/"):
+        if any(char in h3.text for char in ",-/&"):
             return False
         if "BOOK" not in h3.text.upper():
             return False
@@ -815,6 +828,31 @@ def scrape_data(*cues: str | Tuple[str, str],
             print()
 
 
+def scrape_data_debug(*cues: str | Tuple[str, str],
+                      scraper_type: Type[AuthorScraper | BookScraper] = AuthorScraper,
+                      **kwargs: Any) -> Generator[Author | DetailedBook, None, None]:
+    for i, cue in enumerate(cues, start=1):
+        _log.info(f"Scraping item #{i}: '{cue}'...")
+        try:
+            if scraper_type is AuthorScraper:
+                parser = scraper_type(cue)
+            elif scraper_type is BookScraper:
+                if isinstance(cue, str):
+                    parser = scraper_type(cue)
+                else:
+                    parser = scraper_type(*cue, authors_data=kwargs.get("authors_data"))
+            else:
+                break
+
+            yield parser.scrape()
+        except Exception as e:
+            _log.error(f"{e}. Skipping...\n{traceback.format_exc()}")
+            continue
+
+        if i != len(cues):
+            print()
+
+
 def _dump_data(*cues: str | Tuple[str, str],
                scraper_type: Type[AuthorScraper | BookScraper] = AuthorScraper,
                **kwargs: Any) -> None:
@@ -825,8 +863,10 @@ def _dump_data(*cues: str | Tuple[str, str],
         scraped = sorted(scraped, key=lambda item: item["name"].casefold())
         dataname = "authors"
     elif scraper_type is BookScraper:
-        scraped = [s.as_dict for s in scrape_data(
+        scraped = [s.as_dict for s in scrape_data_debug(
             *cues, scraper_type=scraper_type, authors_data=kwargs.get("authors_data"))]
+        # scraped = [s.as_dict for s in scrape_data(
+        #     *cues, scraper_type=scraper_type, authors_data=kwargs.get("authors_data"))]
         scraped = sorted(scraped, key=lambda item: item["title"].casefold())
         dataname = "books"
     else:
