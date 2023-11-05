@@ -681,7 +681,8 @@ class BookScraper:
             raise ParsingError(f"Could not extract Goodreads ID from '{a.attrs.get('href')}'")
         return id_
 
-    @throttled(THROTTLING_DELAY)
+    # response is so slow it doesn't need throttling
+    # besides, _parse_authors_line() calls is already throttled
     def _parse_book_page(self) -> Tuple[_ScriptTagData, List[SimpleAuthor], str]:
         soup = getsoup(self._url)
         script_data = self._parse_meta_script_tag(soup)
@@ -698,9 +699,14 @@ class BookScraper:
         h3 = div.find("h3")
         if h3 is None:
             return False
-        if any(char in h3.text for char in ",-/&"):
+        if " " not in h3.text:
             return False
-        if "BOOK" not in h3.text.upper():
+        first, second = h3.text.split(maxsplit=1)
+        if first.upper() != "BOOK":
+            return False
+        try:
+            float(second)
+        except ValueError:
             return False
         return True
 
