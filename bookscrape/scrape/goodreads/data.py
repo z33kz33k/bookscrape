@@ -8,10 +8,11 @@
 
 """
 import json
+from collections import OrderedDict
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, OrderedDict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from bookscrape.constants import Json, READABLE_TIMESTAMP_FORMAT
 from bookscrape.scrape import FiveStars, ReviewsDistribution, Renown
@@ -181,7 +182,7 @@ class SimpleAuthor(Author):
         }
 
     @classmethod
-    def from_dict(cls, data: Json) -> "Author":
+    def from_dict(cls, data: Json) -> "SimpleAuthor":  # overriden
         return cls(
             data["name"],
             data["id"],
@@ -224,6 +225,19 @@ class MainEdition:
             data["asin"] = self.asin
         return data
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, str | int]) -> "MainEdition":
+        return cls(
+            data["publisher"],
+            datetime.strptime(data["publication"], READABLE_TIMESTAMP_FORMAT),
+            data["format"],
+            data.get("pages"),
+            data.get("language"),
+            data.get("isbn"),
+            data.get("isbn13"),
+            data.get("asin"),
+        )
+
 
 @dataclass
 class BookAward:
@@ -247,6 +261,17 @@ class BookAward:
 
         return data
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, str]) -> "BookAward":
+        return cls(
+            data["name"],
+            data["id"],
+            datetime.strptime(
+                data["date"], READABLE_TIMESTAMP_FORMAT) if data.get("date") else None,
+            data.get("category"),
+            data["designation"],
+        )
+
 
 @dataclass
 class BookSetting:
@@ -267,6 +292,16 @@ class BookSetting:
             data["year"] = self.year.strftime(READABLE_TIMESTAMP_FORMAT)
 
         return data
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, str]) -> "BookSetting":
+        return cls(
+            data["name"],
+            data["id"],
+            data.get("country"),
+            datetime.strptime(
+                data["year"], READABLE_TIMESTAMP_FORMAT) if data.get("year") else None,
+        )
 
 
 @dataclass
@@ -295,6 +330,17 @@ class BookDetails:
 
         return data
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "BookDetails":
+        return cls(
+            data["description"],
+            MainEdition.from_dict(data["main_edition"]),
+            data["genres"],
+            [BookAward.from_dict(award) for award in data["awards"]],
+            [BookSetting.from_dict(place) for place in data["places"]],
+            data["characters"],
+        )
+
 
 @dataclass
 class _ScriptTagData:
@@ -317,6 +363,10 @@ class BookSeries:
     @property
     def as_dict(self) -> Dict[str, str | Dict[float, str]]:
         return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, str | Dict[float, str]]) -> "BookSeries":
+        return cls(**data)
 
 
 @dataclass
@@ -389,6 +439,17 @@ class BookStats:
             "editions_to_ratings": self.e2r_percent,
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "BookStats":
+        return cls(
+            FiveStars(data["ratings"]),
+            ReviewsDistribution(data["reviews"]),
+            data["total_reviews"],
+            OrderedDict(sorted([(k, v) for k, v in data["shelves"].items()], reverse=True)),
+            OrderedDict(sorted((k, v) for k, v in data["editions"].items())),
+            data["total_editions"],
+        )
+
 
 @dataclass
 class DetailedBook:
@@ -417,3 +478,18 @@ class DetailedBook:
         if self.series:
             data["series"] = self.series.as_dict
         return data
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DetailedBook":
+        return cls(
+            data["title"],
+            data["complete_title"],
+            data["book_id"],
+            data["work_id"],
+            [SimpleAuthor.from_dict(author) for author in data["authors"]],
+            datetime.strptime(
+                data["first_publication"], READABLE_TIMESTAMP_FORMAT),
+            BookSeries.from_dict(data["series"]) if data.get("series") else None,
+            BookDetails.from_dict(data["details"]),
+            BookStats.from_dict(data["stats"]),
+        )
