@@ -18,7 +18,7 @@ import pandas as pd
 from contexttimer import Timer
 from langcodes import Language, tag_is_valid
 
-from bookscrape.constants import PathLike, T, FILENAME_TIMESTAMP_FORMAT
+from bookscrape.constants import PathLike, T
 from bookscrape.utils.check_type import type_checker
 
 

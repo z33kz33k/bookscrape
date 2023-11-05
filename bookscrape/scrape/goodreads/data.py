@@ -29,7 +29,7 @@ def _load_tolkien() -> Tuple[int, int]:
 
     try:
         tolkien_ratings = data["authors"][0]["stats"]["ratings"]
-        hobbit_ratings = data["authors"][0]["books"][0]["ratings"]
+        hobbit_ratings = data["authors"][0]["top_books"][0]["ratings"]
     except (KeyError, IndexError):
         raise ValueError(f"Invalid data in '{source}'")
     return tolkien_ratings, hobbit_ratings
