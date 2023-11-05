@@ -1,8 +1,8 @@
 """
 
-    bookscrape.goodreads.scrapers.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Goodreads scraper classes.
+    bookscrape.scrape.goodreads.scrapers.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Goodreads scraper objects.
 
     @author: z33k
 
@@ -489,7 +489,7 @@ class BookScraper:
                 raise ValueError("Author must be specified when Book ID not provided")
             self._book_id = self.find_book_id(book, author, authors_data)
         if not self._book_id:
-            raise ValueError("Unable to derive Goodreads book ID from provided input")
+            raise ValueError("Could not derive Goodreads book ID from provided input")
         self._work_id = None  # this is different than book_id
         self._series_id = None
         self._url = self.URL_TEMPLATE.format(self.book_id)

@@ -1,7 +1,7 @@
 """
 
-    bookscrape.goodreads.data.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    bookscrape.scrape.goodreads.data.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Data objects for Goodreads scraping.
 
     @author: z33k

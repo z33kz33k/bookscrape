@@ -1,7 +1,7 @@
 """
 
-    bookscrape.goodreads.utils.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    bookscrape.scrape.goodreads.utils.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Utilities specific to Goodreads scraping.
 
     @author: z33k
@@ -22,7 +22,7 @@ def numeric_id(text_id: str) -> int:
     """
     match = re.search(r"\d+", text_id)
     if not match:
-        raise ValueError(f"Unable to extract numeric part of Goodread ID: {text_id!r}")
+        raise ValueError(f"Could not extract numeric part of Goodread ID: {text_id!r}")
     return int(match.group())
 
 

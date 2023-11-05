@@ -47,7 +47,9 @@ def retrieve_sf_authors() -> List[str]:
             authors.update(names)
         else:
             authors.add(item.strip())
-    return sorted(authors)
+    authors = sorted(authors)
+    _log.info(f"Retrieved {len(authors)} author names")
+    return authors
 
 
 BookRecord = namedtuple("BookRecord", ["title", "author"])
@@ -67,7 +69,9 @@ def retrieve_sf_book_records() -> List[BookRecord]:
             authors.append(names[0])
         else:
             authors.append(token.strip())
-    return [BookRecord(title, author) for title, author in zip(titles, authors)]
+    records = [BookRecord(title, author) for title, author in zip(titles, authors)]
+    _log.info(f"Retrieved {len(records)} book records")
+    return records
 
 
 @timed

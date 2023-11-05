@@ -1,7 +1,7 @@
 """
 
-    bookscrape.scrape.py
-    ~~~~~~~~~~~~~~~~~~~~
+    bookscrape.scrape.__init__.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Common scraping-related logic.
 
     @author: z33k

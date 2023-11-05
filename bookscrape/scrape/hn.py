@@ -1,7 +1,7 @@
 """
 
-    bookscrape.hn.py
-    ~~~~~~~~~~~~~~~~
+    bookscrape.scrape.hn.py
+    ~~~~~~~~~~~~~~~~~~~~~~~
     Scrape Hugo and Nebula awards data
 
     @author: z33k

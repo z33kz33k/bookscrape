@@ -1,14 +1,13 @@
 """
 
-    bookscrape.utils.py
-    ~~~~~~~~~~~~~~~~~~~
-    Projec's utilities
+    bookscrape.utils.__init__.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Project's utilities.
 
     @author: z33k
 
 """
 import logging
-from datetime import datetime
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 from pathlib import Path

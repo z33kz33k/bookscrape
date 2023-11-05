@@ -1,8 +1,8 @@
 """
 
-    bookscrape.goodreads.__init__.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Scrape and parse Goodreads data
+    bookscrape.scrape.goodreads.__init__.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Handle data scraped from Goodreads.
 
     @author: z33k
 
@@ -214,5 +214,6 @@ def update_tolkien() -> None:
     author/book stats.
     """
     outputdir = Path(__file__).parent.parent.parent / "data"
-    dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir,
-                 filename="tolkien.json")
+    dump_authors("J.R.R. Tolkien", outputdir=outputdir, filename="tolkien.json")
+    dump_books("5907.The_Hobbit", outputdir=outputdir, filename="hobbit.json")
+
