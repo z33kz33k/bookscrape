@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Generator, Tuple, Type
 
-from bookscrape.constants import (OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
+from bookscrape.constants import (Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP_FORMAT,
                                   FILENAME_TIMESTAMP_FORMAT)
 from bookscrape.scrape.goodreads.scrapers import AuthorScraper, BookScraper, _AuthorsData
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
@@ -38,6 +38,19 @@ def load_authors(authors_json: PathLike) -> _AuthorsData:
     data = json.loads(authors_json.read_text(encoding="utf8"))
     data["timestamp"] = datetime.strptime(data["timestamp"], READABLE_TIMESTAMP_FORMAT)
     data["authors"] = [Author.from_dict(item) for item in data["authors"]]
+    return data
+
+
+def load_books(books_json: PathLike) -> Json:
+    """Load ``books_json`` into a dictionary containg a list of DetailedBook objects and return it.
+
+    Args:
+        books_json: path to a JSON file saved earlier by dump_books()
+    """
+    books_json = getfile(books_json, ext=".json")
+    data = json.loads(books_json.read_text(encoding="utf8"))
+    data["timestamp"] = datetime.strptime(data["timestamp"], READABLE_TIMESTAMP_FORMAT)
+    data["books"] = [DetailedBook.from_dict(item) for item in data["books"]]
     return data
 
 
@@ -182,7 +195,24 @@ def update_authors(authors_json: PathLike) -> None:
     dump_authors(*ids, output_dir=output_dir)
 
 
+def update_books(books_json: PathLike) -> None:
+    """Load books from ``books_json``, scrape them again and save at the same location (
+    with updated file timestamp).
+
+    Args:
+        books_json: path to a JSON file saved earlier by dump_books()
+    """
+    output_dir = getfile(books_json).parent
+    data = load_books(books_json)
+    books = data["books"]
+    ids = [book.book_id for book in books]
+    dump_books(*ids, output_dir=output_dir)
+
+
 def update_tolkien() -> None:
+    """Update J.R.R. Tolkien's data that is used as a measuring stick for calculating renown in
+    author/book stats.
+    """
     outputdir = Path(__file__).parent.parent.parent / "data"
     dump_authors("J.R.R. Tolkien", use_timestamp=False, outputdir=outputdir,
                  filename="tolkien.json")

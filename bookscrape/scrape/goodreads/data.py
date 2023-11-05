@@ -187,7 +187,7 @@ class SimpleAuthor(Author):
             data["name"],
             data["id"],
             AuthorStats.from_dict(data["stats"]),
-            [book.id for book in data["top_books"]]
+            data["top_books"],
         )
 
     @property
@@ -318,9 +318,9 @@ class BookDetails:
         data = {
             "description": self.description,
             "main_edition": self.main_edition.as_dict,
-            "genres": self.genres,
-            "characters": self.characters
         }
+        if self.genres:
+            data["genres"] = self.genres
         if self.awards:
             data["awards"] = [award.as_dict for award in self.awards]
         if self.places:
@@ -335,10 +335,11 @@ class BookDetails:
         return cls(
             data["description"],
             MainEdition.from_dict(data["main_edition"]),
-            data["genres"],
-            [BookAward.from_dict(award) for award in data["awards"]],
-            [BookSetting.from_dict(place) for place in data["places"]],
-            data["characters"],
+            data.get("genres") or [],
+            [BookAward.from_dict(award) for award in data["awards"]] if data.get("awards") else [],
+            [BookSetting.from_dict(place) for place in data["places"]] if data.get(
+                "places") else [],
+            data.get("characters") or [],
         )
 
 
@@ -366,7 +367,11 @@ class BookSeries:
 
     @classmethod
     def from_dict(cls, data: Dict[str, str | Dict[float, str]]) -> "BookSeries":
-        return cls(**data)
+        return cls(
+            data["title"],
+            data["id"],
+            {float(k): v for k, v in data["layout"].items()} if data.get("layout") else {},
+        )
 
 
 @dataclass
@@ -442,10 +447,10 @@ class BookStats:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "BookStats":
         return cls(
-            FiveStars(data["ratings"]),
+            FiveStars({int(k): v for k, v in data["ratings"].items()}),
             ReviewsDistribution(data["reviews"]),
             data["total_reviews"],
-            OrderedDict(sorted([(k, v) for k, v in data["shelves"].items()], reverse=True)),
+            OrderedDict(sorted([(int(k), v) for k, v in data["shelves"].items()], reverse=True)),
             OrderedDict(sorted((k, v) for k, v in data["editions"].items())),
             data["total_editions"],
         )
