@@ -776,6 +776,8 @@ class BookScraper:
             if data_row is None:
                 continue
             lang = data_row.find("div", class_="dataValue").text.strip()
+            if not lang or not title or name2langcode(lang) is None:
+                continue
             editions[lang].add(title)
 
         return editions, count
