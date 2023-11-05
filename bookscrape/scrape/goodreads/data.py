@@ -133,7 +133,7 @@ class Author:
     name: str
     id: str
     stats: AuthorStats
-    books: List[Book]
+    top_books: List[Book]
 
     @property
     def as_dict(self) -> Json:
@@ -143,7 +143,7 @@ class Author:
             "stats": self.stats.as_dict,
             "total_editions": self.total_editions,
             "renown": self.renown.name,
-            "books": [b.as_dict for b in self.books],
+            "top_books": [b.as_dict for b in self.top_books],
         }
 
     @classmethod
@@ -152,16 +152,46 @@ class Author:
             data["name"],
             data["id"],
             AuthorStats.from_dict(data["stats"]),
-            [Book.from_dict(book) for book in data["books"]]
+            [Book.from_dict(book) for book in data["top_books"]]
         )
 
     @property
     def total_editions(self) -> int:
-        return sum(book.editions for book in self.books if book.editions)
+        return sum(book.editions for book in self.top_books if book.editions)
 
     @property
     def renown(self) -> Renown:
         return Renown.calculate(self.stats.ratings, TOLKIEN_RATINGS)
+
+
+@dataclass
+class SimpleAuthor(Author):
+    """An author with books only as a list of IDs.
+    """
+    top_books: List[str]  # overriden
+
+    @property
+    def as_dict(self) -> Json:  # overriden
+        return {
+            "name": self.name,
+            "id": self.id,
+            "stats": self.stats.as_dict,
+            "renown": self.renown.name,
+            "top_books": self.top_books,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Json) -> "Author":
+        return cls(
+            data["name"],
+            data["id"],
+            AuthorStats.from_dict(data["stats"]),
+            [book.id for book in data["top_books"]]
+        )
+
+    @property
+    def total_editions(self) -> None:  # overriden
+        return None
 
 
 @dataclass
@@ -366,7 +396,7 @@ class DetailedBook:
     complete_title: str
     book_id: str
     work_id: str
-    authors: List[str]  # list of author ID's
+    authors: List[SimpleAuthor]
     first_publication: datetime
     series: Optional[BookSeries]
     details: BookDetails
@@ -379,7 +409,7 @@ class DetailedBook:
             "complete_title": self.complete_title,
             "book_id": self.book_id,
             "work_id": self.work_id,
-            "authors": self.authors,
+            "authors": [author.as_dict for author in self.authors],
             "first_publication": self.first_publication.strftime(READABLE_TIMESTAMP_FORMAT),
             "details": self.details.as_dict,
             "stats": self.stats.as_dict,

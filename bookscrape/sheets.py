@@ -75,4 +75,6 @@ def retrieve_sf_book_ids() -> List[str]:
     """Retrieve a list of book IDs from 'sf_books' private Google sheet.
     """
     _log.info("Retrieving book IDs from gsheets...")
-    return [url2id(url) for url in retrieve_gsheets_col("sf_books", "books", 3, 4)]
+    ids = [url2id(url) for url in retrieve_gsheets_col("sf_books", "books", 3, 4)]
+    _log.info(f"Retrieved {len(ids)} book IDs")
+    return ids

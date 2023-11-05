@@ -30,7 +30,8 @@ from bookscrape.utils import getdir, getfile, extract_int, extract_float, from_i
 from bookscrape.scrape import ParsingError, getsoup, throttled, FiveStars, ReviewsDistribution
 from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, BookSeries,
                                               BookStats, DetailedBook,
-                                              MainEdition, BookAward, BookSetting, _ScriptTagData)
+                                              MainEdition, BookAward, BookSetting, SimpleAuthor,
+                                              _ScriptTagData)
 
 PROVIDER = "www.goodreads.com"
 # the unofficially known enforced throttling delay
@@ -212,7 +213,9 @@ class AuthorScraper:
         href = a.attrs.get("href")
         if not href:
             raise ParsingError(f"No 'href' attribute in 'a' title' tag within a row: {row}")
-        id_ = href.replace("/book/show/", "")
+        id_ = url2id(href)
+        if not id_:
+            raise ParsingError(f"Could not extract book's ID from URL: {href!r}")
         ratings_text = row.find("span", class_="minirating").text.strip()
         avg, ratings = ratings_text.split(" — ")
         avg = extract_float(avg)
@@ -224,15 +227,7 @@ class AuthorScraper:
         return Book(title, id_, avg, ratings, published, editions)
 
     @throttled(THROTTLING_DELAY)
-    def _parse_author_page(self) -> Author:
-        """Parse Goodreads 'Books by author' page and return an Author object.
-
-        Example URL:
-            https://www.goodreads.com/author/list/7415.Harlan_Ellison
-
-        Returns:
-            an Author object
-        """
+    def _parse_author_page_contents(self) -> Tuple[List[Tag], AuthorStats]:
         url = self.URL_TEMPLATE.format(self.author_id)
         soup = getsoup(url)
         container = soup.find("div", class_="leftContainer")
@@ -240,22 +235,36 @@ class AuthorScraper:
         if name_tag is None:
             raise ParsingError("No author name tag")
         self._author_name = name_tag.text.strip()
-
         # author stats
         div = container.find("div", class_="")
         text = div.text.strip()
         parts = [part.strip() for part in text.split("\n")[1:]]
         parts = [part.strip(" ·") for part in parts]
         stats = self._parse_author_stats(parts)
-
         # books
         table = container.find("table", class_="tableList")
         rows = table.find_all("tr")
-        books = [self._parse_book_table_row(row) for row in rows]
+        return rows, stats
 
-        return Author(self.author_name, self.author_id, stats, books)
+    def _parse_author_page(self) -> Author:
+        """Parse Goodreads 'Books by author' page and return an author object.
 
-    def scrape(self) -> Author:
+        Example URL:
+            https://www.goodreads.com/author/list/7415.Harlan_Ellison
+
+        Returns:
+            an Author object
+        """
+        rows, stats = self._parse_author_page_contents()
+        top_books = [self._parse_book_table_row(row) for row in rows]
+        return Author(self.author_name, self.author_id, stats, top_books)
+
+    def scrape(self) -> Author | SimpleAuthor:
+        """Scrape Goodreads for either full or simplified author data.
+
+        Returns:
+            an Author or SimpleAuthor (if called on SimpleAuthorParser) object
+        """
         try:
             if not self.author_id:
                 self._author_id = self.find_author_id(self.author_name)
@@ -267,10 +276,56 @@ class AuthorScraper:
         return author
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
-    def scrape_with_backoff(self) -> Author:
+    def scrape_with_backoff(self) -> Author | SimpleAuthor:
+        """Scrape Goodreads for either full or simplified author data with (one minute max)
+        backoff on timeout.
+        """
         if not self.author_id:
             self._author_id = self.find_author_id(self.author_name)
         return self._parse_author_page()
+
+
+class SimpleAuthorScraper(AuthorScraper):
+    """Scraper of Goodreads author data in a simplified form.
+
+    As the superclass does, it scrapes Goodreads 'Books by author' page that displays the author's
+    stats and a list of their 30 most popular books. The difference is that instead of an Author
+    object with full data on author's books it returns a SimpleAuthor object that holds only book
+    IDs as the books data.
+    """
+    @classmethod
+    def _parse_book_table_row(cls, row: Tag) -> str:  # overridden
+        """Parse a book table row of the author page's book list for Goodreads book ID only.
+
+        Args:
+            row: a BeautifulSoup Tag object representing the row
+
+        Returns:
+            a Book object
+        """
+        a = row.find("a")
+        if not a:
+            raise ParsingError(f"No 'a' tag with title data in a row: {row}")
+        href = a.attrs.get("href")
+        if not href:
+            raise ParsingError(f"No 'href' attribute in 'a' title' tag within a row: {row}")
+        id_ = url2id(href)
+        if not id_:
+            raise ParsingError(f"Could not extract book's ID from URL: {href!r}")
+        return id_
+
+    def _parse_author_page(self) -> SimpleAuthor:  # overridden
+        """Parse Goodreads 'Books by author' page and return an author object.
+
+        Example URL:
+            https://www.goodreads.com/author/list/7415.Harlan_Ellison
+
+        Returns:
+            a SimpleAuthor object
+        """
+        rows, stats = self._parse_author_page_contents()
+        top_books = [self._parse_book_table_row(row) for row in rows]
+        return SimpleAuthor(self.author_name, self.author_id, stats, top_books)
 
 
 class _ScriptTagParser:
@@ -462,17 +517,17 @@ class BookScraper:
 
     @staticmethod
     def _find_book_in_author_books(author: Author, title: str) -> Book | None:
-        book = from_iterable(author.books, lambda b: b.title.casefold() == title.casefold())
+        book = from_iterable(author.top_books, lambda b: b.title.casefold() == title.casefold())
         if not book:
             # Goodreads gets fancy with their apostrophes...
             book = from_iterable(
-                author.books, lambda b: b.title.casefold() == title.replace("'", "’").casefold())
+                author.top_books, lambda b: b.title.casefold() == title.replace("'", "’").casefold())
             # let's be even less strict...
             if not book:
-                book = from_iterable(author.books, lambda b: title.casefold() in b.title.casefold())
+                book = from_iterable(author.top_books, lambda b: title.casefold() in b.title.casefold())
                 if not book:
                     book = from_iterable(
-                        author.books, lambda b: title.replace(
+                        author.top_books, lambda b: title.replace(
                             "'", "’").casefold() in b.title.casefold())
         return book
 
@@ -569,7 +624,7 @@ class BookScraper:
         return _Contributor(id_, a_tag.find("span", class_="ContributorLink__role") is not None)
 
     @classmethod
-    def _parse_authors_line(cls, soup: BeautifulSoup) -> List[str]:
+    def _parse_authors_line(cls, soup: BeautifulSoup) -> List[SimpleAuthor]:
         contributor_div = soup.find("div", class_="ContributorLinksList")
         if contributor_div is None:
             raise ParsingError("No 'div' tag with contributors data")
@@ -579,8 +634,8 @@ class BookScraper:
         contributors = [cls._parse_contributor(tag) for tag in contributor_tags]
         authors = [c for c in contributors if not c.has_role]
         if not authors:
-            return [contributors[0].author_id]
-        return [a.author_id for a in authors]
+            return [SimpleAuthorScraper(contributors[0].author_id).scrape()]
+        return [SimpleAuthorScraper(a.author_id).scrape() for a in authors]
 
     @staticmethod
     def _parse_specifics_row(row: Tag) -> Tuple[int, int]:  # not used
@@ -633,7 +688,7 @@ class BookScraper:
         return id_
 
     @throttled(THROTTLING_DELAY)
-    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[str], str]:
+    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[SimpleAuthor], str]:
         soup = getsoup(self._url)
         script_data = self._parse_meta_script_tag(soup)
         authors = self._parse_authors_line(soup)
@@ -765,6 +820,8 @@ class BookScraper:
         )
 
     def scrape(self) -> DetailedBook:
+        """Scrape detailed book data from Goodreads.
+        """
         try:
             book = self._scrape_book()
         except Timeout:
@@ -775,6 +832,8 @@ class BookScraper:
 
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def scrape_with_backoff(self) -> DetailedBook:
+        """Scrape detailed book data from Goodreads with (one minute max) backoff on timeout.
+        """
         return self._scrape_book()
 
 
@@ -808,31 +867,6 @@ def scrape_data(*cues: str | Tuple[str, str],
     """
     for i, cue in enumerate(cues, start=1):
         _log.info(f"Scraping item #{i}: '{cue}'...")
-        if scraper_type is AuthorScraper:
-            parser = scraper_type(cue)
-        elif scraper_type is BookScraper:
-            if isinstance(cue, str):
-                parser = scraper_type(cue)
-            else:
-                parser = scraper_type(*cue, authors_data=kwargs.get("authors_data"))
-        else:
-            break
-
-        try:
-            yield parser.scrape()
-        except ParsingError as e:
-            _log.error(f"{e}. Skipping...")
-            continue
-
-        if i != len(cues):
-            print()
-
-
-def scrape_data_debug(*cues: str | Tuple[str, str],
-                      scraper_type: Type[AuthorScraper | BookScraper] = AuthorScraper,
-                      **kwargs: Any) -> Generator[Author | DetailedBook, None, None]:
-    for i, cue in enumerate(cues, start=1):
-        _log.info(f"Scraping item #{i}: '{cue}'...")
         try:
             if scraper_type is AuthorScraper:
                 parser = scraper_type(cue)
@@ -863,10 +897,8 @@ def _dump_data(*cues: str | Tuple[str, str],
         scraped = sorted(scraped, key=lambda item: item["name"].casefold())
         dataname = "authors"
     elif scraper_type is BookScraper:
-        scraped = [s.as_dict for s in scrape_data_debug(
+        scraped = [s.as_dict for s in scrape_data(
             *cues, scraper_type=scraper_type, authors_data=kwargs.get("authors_data"))]
-        # scraped = [s.as_dict for s in scrape_data(
-        #     *cues, scraper_type=scraper_type, authors_data=kwargs.get("authors_data"))]
         scraped = sorted(scraped, key=lambda item: item["title"].casefold())
         dataname = "books"
     else:
