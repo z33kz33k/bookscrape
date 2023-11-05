@@ -334,10 +334,11 @@ class _ScriptTagParser:
             raise ParsingError("No 'Work:kca://' data on the 'script' tag")
 
     def _item(self, key_part: str) -> Any | None:
-        key = from_iterable(self._data, lambda k: key_part in k)
-        if not key:
+        key_items = sorted([v for k, v in self._data.items() if key_part in k], key=len,
+                           reverse=True)
+        if not key_items:
             return None
-        return self._data[key]
+        return key_items[0]
 
     @staticmethod
     def _parse_timestamp(timestamp: int) -> datetime:  # GPT3
@@ -356,13 +357,13 @@ class _ScriptTagParser:
 
     def parse(self) -> _ScriptTagData:
         try:
-            complete_title = self._book_data["titleComplete"]
             details = self._book_data["details"]
             lang = details["language"]["name"]
             main_edition = MainEdition(
                 publisher=details["publisher"],
-                publication=self._parse_timestamp(details["publicationTime"]),
                 format=details["format"],
+                publication=self._parse_timestamp(
+                    details["publicationTime"]) if details.get("publicationTime") else None,
                 pages=details["numPages"],
                 language=name2langcode(lang) if lang else None,
                 isbn=details["isbn"],
@@ -378,7 +379,7 @@ class _ScriptTagParser:
             if not work_id:
                 raise ParsingError(
                     f"Could not parse work ID from URL: {self._work_data['details']['webUrl']}")
-            original_title = self._work_data["details"]["originalTitle"]
+            original_title = self._work_data["details"]["originalTitle"].strip()
             first_publication = self._work_data["details"]["publicationTime"]
             first_publication = self._parse_timestamp(
                 first_publication) if first_publication is not None else None
@@ -424,7 +425,6 @@ class _ScriptTagParser:
 
         return _ScriptTagData(
             title=original_title,
-            complete_title=complete_title,
             work_id=work_id,
             ratings=ratings,
             reviews=reviews,
@@ -780,13 +780,14 @@ class BookScraper:
 
         return editions, count
 
+    # capped at 10 pages as, for older books, there are cases of more almost 600 pages (!)
     def _scrape_editions(self) -> Tuple[OrderedDict[str, List[str]], int]:
         counter = itertools.count(1)
         editions, total, next_page = None, 0,  True
         for i in counter:
             editions, editions_count = self._parse_editions_page(i, editions)
             total += editions_count
-            if editions_count < 100 or i > 20:
+            if editions_count < 100 or i > 10:
                 break
         ordered = OrderedDict(sorted([(name2langcode(lang), sorted(titles))
                               for lang, titles in editions.items()]))
@@ -809,7 +810,6 @@ class BookScraper:
         )
         return DetailedBook(
             title=script_data.title,
-            complete_title=script_data.complete_title,
             book_id=self.book_id,
             work_id=self.work_id,
             authors=authors,

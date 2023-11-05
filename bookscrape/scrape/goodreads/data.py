@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from bookscrape.constants import Json, READABLE_TIMESTAMP_FORMAT
 from bookscrape.scrape import FiveStars, ReviewsDistribution, Renown
-from bookscrape.utils import getfile
+from bookscrape.utils import from_iterable, getfile
 
 
 def _load_tolkien() -> Tuple[int, int]:
@@ -198,8 +198,8 @@ class SimpleAuthor(Author):
 @dataclass
 class MainEdition:
     publisher: str
-    publication: datetime
     format: str
+    publication: Optional[datetime]
     pages: Optional[int]
     language: Optional[str]
     isbn: Optional[str]
@@ -210,9 +210,10 @@ class MainEdition:
     def as_dict(self) -> Dict[str, str | int]:
         data = {
             "publisher": self.publisher,
-            "publication": self.publication.strftime(READABLE_TIMESTAMP_FORMAT),
             "format": self.format,
         }
+        if self.publication is not None:
+            data["publication"] = self.publication.strftime(READABLE_TIMESTAMP_FORMAT)
         if self.pages is not None:
             data["pages"] = self.pages
         if self.language:
@@ -229,8 +230,9 @@ class MainEdition:
     def from_dict(cls, data: Dict[str, str | int]) -> "MainEdition":
         return cls(
             data["publisher"],
-            datetime.strptime(data["publication"], READABLE_TIMESTAMP_FORMAT),
             data["format"],
+            datetime.strptime(data["publication"], READABLE_TIMESTAMP_FORMAT) if data.get(
+                "publication") else None,
             data.get("pages"),
             data.get("language"),
             data.get("isbn"),
@@ -346,7 +348,6 @@ class BookDetails:
 @dataclass
 class _ScriptTagData:
     title: Optional[str]
-    complete_title: str
     work_id: str
     ratings: FiveStars
     reviews: ReviewsDistribution
@@ -380,7 +381,8 @@ class BookStats:
     reviews: ReviewsDistribution
     total_reviews: int  # this is different from total calculated from 'reviews' dict
     shelves: OrderedDict[int, str]  # number of shelvings to shelves, only the first page is scraped
-    editions: OrderedDict[str, List[str]]  # iso lang codes to editions' titles
+    # iso lang codes to editions' titles, parsing capped at 10 pages
+    editions: OrderedDict[str, List[str]]
     total_editions: int
 
     @property
@@ -459,7 +461,6 @@ class BookStats:
 @dataclass
 class DetailedBook:
     title: str
-    complete_title: str
     book_id: str
     work_id: str
     authors: List[SimpleAuthor]
@@ -467,6 +468,15 @@ class DetailedBook:
     series: Optional[BookSeries]
     details: BookDetails
     stats: BookStats
+
+    @property
+    def complete_title(self) -> str | None:
+        if self.series:
+            record = from_iterable(self.series.layout.items(), lambda pair: pair[1] == self.book_id)
+            if not record:
+                return None
+            return f"{self.title} ({self.series.title} #{record[0]})"
+        return None
 
     @property
     def as_dict(self) -> Dict[str, Any]:
@@ -488,7 +498,6 @@ class DetailedBook:
     def from_dict(cls, data: Dict[str, Any]) -> "DetailedBook":
         return cls(
             data["title"],
-            data["complete_title"],
             data["book_id"],
             data["work_id"],
             [SimpleAuthor.from_dict(author) for author in data["authors"]],
