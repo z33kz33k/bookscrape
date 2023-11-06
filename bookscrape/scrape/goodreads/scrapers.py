@@ -755,9 +755,10 @@ class BookScraper:
             raise ParsingError("No 'leftContainer' tag with total shelvings data")
         span_tag = lc_tag.find("span", class_="smallText")
         if span_tag is None:
-            raise ParsingError("No'span' tag with total shelvings data")
+            raise ParsingError("No 'span' tag with total shelvings data")
         *_, text = span_tag.text.split()
-        total_shelvings = extract_int(text.strip())
+        total_shelvings = extract_int(text)
+
         shelf_tags = soup.find_all("div", class_="shelfStat")
         shelves = OrderedDict()
         for tag in shelf_tags:
@@ -773,8 +774,19 @@ class BookScraper:
     def _parse_editions_page(
             self, page: int,
             editions: DefaultDict[str, Set[str]] | None = None
-    ) -> Tuple[DefaultDict[str, Set[str]], int]:
+    ) -> Tuple[DefaultDict[str, Set[str]], int, int | None]:
         soup = getsoup(self._editions_url(page))
+        total_editions = None
+        if page == 1:
+            wi_tag = soup.find("div", class_="left workInfo")
+            if wi_tag is None:
+                raise ParsingError("No 'left workInfo' tag with total editions data")
+            span_tag = wi_tag.find("span", class_="smallText")
+            if span_tag is None:
+                raise ParsingError("No 'span' tag with total editions data")
+            *_, text = span_tag.text.split()
+            total_editions = extract_int(text)
+
         items = soup.find_all("div", class_="elementList clearFix")
         editions = editions or defaultdict(set)
         count = 0
@@ -796,20 +808,23 @@ class BookScraper:
                 continue
             editions[lang].add(title)
 
-        return editions, count
+        return editions, count, total_editions
 
     # capped at 10 pages as, for older books, there are cases of more almost 600 pages (!)
     def _scrape_editions(self) -> Tuple[OrderedDict[str, List[str]], int]:
         counter = itertools.count(1)
-        editions, total, next_page = None, 0,  True
+        editions, total_editions, next_page = None, None, True
         for i in counter:
-            editions, editions_count = self._parse_editions_page(i, editions)
-            total += editions_count
+            editions, editions_count, total = self._parse_editions_page(i, editions)
+            if i == 1:
+                total_editions = total
             if editions_count < 100 or i > 10:
                 break
         ordered = OrderedDict(sorted([(name2langcode(lang), sorted(titles))
                               for lang, titles in editions.items()]))
-        return ordered, total
+        if total_editions is None:
+            raise ParsingError("Failed to parse total editions data")
+        return ordered, total_editions
 
     def _scrape_book(self) -> DetailedBook:
         script_data, authors, self._series_id = self._parse_book_page()
