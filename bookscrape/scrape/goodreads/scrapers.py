@@ -250,7 +250,7 @@ class AuthorScraper:
         top_books = [self._parse_book_table_row(row) for row in rows]
         return Author(self.author_name, self.author_id, stats, top_books)
 
-    @timed
+    @timed("author scraping")
     def scrape(self) -> Author | SimpleAuthor:
         """Scrape Goodreads for either full or simplified author data.
 
@@ -267,7 +267,7 @@ class AuthorScraper:
             return self.scrape_with_backoff()
         return author
 
-    @timed
+    @timed("author scraping (with backoff)")
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def scrape_with_backoff(self) -> Author | SimpleAuthor:
         """Scrape Goodreads for either full or simplified author data with (one minute max)
@@ -748,8 +748,16 @@ class BookScraper:
         return BookSeries(title, self.series_id, series)
 
     @throttled(THROTTLING_DELAY)
-    def _parse_shelves_page(self) -> OrderedDict[int, str]:
+    def _parse_shelves_page(self) -> Tuple[OrderedDict[int, str], int]:
         soup = getsoup(self._shelves_url)
+        lc_tag = soup.find("div", class_="leftContainer")
+        if lc_tag is None:
+            raise ParsingError("No 'leftContainer' tag with total shelvings data")
+        span_tag = lc_tag.find("span", class_="smallText")
+        if span_tag is None:
+            raise ParsingError("No'span' tag with total shelvings data")
+        *_, text = span_tag.text.split()
+        total_shelvings = extract_int(text.strip())
         shelf_tags = soup.find_all("div", class_="shelfStat")
         shelves = OrderedDict()
         for tag in shelf_tags:
@@ -759,7 +767,7 @@ class BookScraper:
                 continue
             shelvings = extract_int(shelvings_tag.text)
             shelves[shelvings] = name
-        return shelves
+        return shelves, total_shelvings
 
     @throttled(THROTTLING_DELAY)
     def _parse_editions_page(
@@ -803,19 +811,19 @@ class BookScraper:
                               for lang, titles in editions.items()]))
         return ordered, total
 
-    @timed
     def _scrape_book(self) -> DetailedBook:
         script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
         self._set_secondary_urls()
         series = self._parse_series_page() if self.series_id else None
-        shelves = self._parse_shelves_page()
+        shelves, total_shelvings = self._parse_shelves_page()
         editions, total_editions = self._scrape_editions()
         stats = BookStats(
             ratings=script_data.ratings,
             reviews=script_data.reviews,
             total_reviews=script_data.total_reviews,
             shelves=shelves,
+            total_shelvings=total_shelvings,
             editions=editions,
             total_editions=total_editions,
         )
@@ -830,6 +838,7 @@ class BookScraper:
             stats=stats,
         )
 
+    @timed("book scraping", precision=2)
     def scrape(self) -> DetailedBook:
         """Scrape detailed book data from Goodreads.
         """
@@ -841,6 +850,7 @@ class BookScraper:
             return self.scrape_with_backoff()
         return book
 
+    @timed("book scraping (with backoff)", precision=2)
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def scrape_with_backoff(self) -> DetailedBook:
         """Scrape detailed book data from Goodreads with (one minute max) backoff on timeout.

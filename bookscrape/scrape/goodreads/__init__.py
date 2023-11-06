@@ -54,7 +54,6 @@ def load_books(books_json: PathLike) -> Json:
     return data
 
 
-@timed
 def scrape_data(*cues: str | Tuple[str, str],
                 scraper_type: Type[AuthorScraper | BookScraper] = AuthorScraper,
                 **kwargs: Any) -> Generator[Author | DetailedBook, None, None]:
@@ -87,9 +86,6 @@ def scrape_data(*cues: str | Tuple[str, str],
         except Exception as e:
             _log.error(f"{type(e).__qualname__}. Skipping...\n{traceback.format_exc()}")
             continue
-
-        if i != len(cues):
-            print()
 
 
 def _dump_data(*cues: str | Tuple[str, str],
@@ -137,6 +133,7 @@ def _dump_data(*cues: str | Tuple[str, str],
         _log.info(f"Successfully dumped '{dest}'")
 
 
+@timed("author data dump", precision=1)
 def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
     """Scrape data on ``authors`` and dump it to JSON.
 
@@ -158,6 +155,7 @@ def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
         _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
 
+@timed("book data dump", precision=1)
 def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any) -> None:
     """Scrape data on books specified by provided cues and dump it to JSON.
 

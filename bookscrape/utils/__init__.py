@@ -25,19 +25,28 @@ from bookscrape.utils.check_type import type_checker
 _log = logging.getLogger(__name__)
 
 
-def timed(func: Callable) -> Callable:
+def timed(operation_name="", precision=3) -> Callable:
     """Add time measurement to the decorated operation.
+
+    Args:
+        operation_name: optionally, name of the time-measured operation
+        precision: precision of the time measurement in seconds
 
     Returns:
         the decorated function
     """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        with Timer() as t:
-            result = func(*args, **kwargs)
-        _log.info(f"Completed {func.__name__!r} in {t.elapsed:.3f} seconds")
-        return result
-    return wrapper
+    if precision < 0:
+        precision = 0
+
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            with Timer() as t:
+                result = func(*args, **kwargs)
+            _log.info(f"Completed {operation_name} in {t.elapsed:.{precision}f} seconds")
+            return result
+        return wrapper
+    return decorator
 
 
 @type_checker(pd.DataFrame)

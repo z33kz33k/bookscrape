@@ -79,7 +79,7 @@ class Renown(Enum):
             raise ValueError(f"Invalid ratings count: {ratings:,}")
 
 
-@timed
+@timed("request")
 @type_checker(str)
 def getsoup(url: str) -> BeautifulSoup:
     """Return BeautifulSoup object based on ``url``.

@@ -382,6 +382,7 @@ class BookStats:
     total_reviews: int  # this is different from total calculated from 'reviews' dict
     shelves: OrderedDict[int, str]  # number of shelvings to shelves, only the first page is scraped
     # iso lang codes to editions' titles, parsing capped at 10 pages
+    total_shelvings: int
     editions: OrderedDict[str, List[str]]
     total_editions: int
 
@@ -405,10 +406,6 @@ class BookStats:
     def r2r_percent(self) -> str:
         r2r = self.r2r * 100
         return f"{r2r:.2f} %"
-
-    @property
-    def total_shelvings(self) -> int:
-        return sum(s for s in self.shelves)
 
     @property
     def sh2r(self) -> float:
@@ -453,6 +450,7 @@ class BookStats:
             ReviewsDistribution(data["reviews"]),
             data["total_reviews"],
             OrderedDict(sorted([(int(k), v) for k, v in data["shelves"].items()], reverse=True)),
+            data["total_shelvings"],
             OrderedDict(sorted((k, v) for k, v in data["editions"].items())),
             data["total_editions"],
         )
@@ -470,13 +468,13 @@ class DetailedBook:
     stats: BookStats
 
     @property
-    def complete_title(self) -> str | None:
+    def complete_title(self) -> str:
         if self.series:
             record = from_iterable(self.series.layout.items(), lambda pair: pair[1] == self.book_id)
             if not record:
-                return None
+                return self.title
             return f"{self.title} ({self.series.title} #{record[0]})"
-        return None
+        return self.title
 
     @property
     def as_dict(self) -> Dict[str, Any]:

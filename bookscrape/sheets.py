@@ -20,6 +20,7 @@ from bookscrape.utils import timed
 _log = logging.getLogger(__name__)
 
 
+@timed("retrieving from Google Sheets")
 def retrieve_gsheets_col(spreadsheet: str, worksheet: str,
                          col=1, start_row=1, ignore_none=True) -> List[str]:
     if col < 1 or start_row < 1:
@@ -34,7 +35,6 @@ def retrieve_gsheets_col(spreadsheet: str, worksheet: str,
     return values
 
 
-@timed
 def retrieve_sf_authors() -> List[str]:
     """Retrieve a list of author names from 'sf_books' private Google sheet.
     """
@@ -55,7 +55,6 @@ def retrieve_sf_authors() -> List[str]:
 BookRecord = namedtuple("BookRecord", ["title", "author"])
 
 
-@timed
 def retrieve_sf_book_records() -> List[BookRecord]:
     """Retrieve a list of book records from 'sf_books' private Google sheet.
     """
