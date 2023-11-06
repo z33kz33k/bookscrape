@@ -35,7 +35,7 @@ def timed(func: Callable) -> Callable:
     def wrapper(*args, **kwargs):
         with Timer() as t:
             result = func(*args, **kwargs)
-        _log.info(f"Completed in {t.elapsed:.3f} seconds")
+        _log.info(f"Completed {func.__name__!r} in {t.elapsed:.3f} seconds")
         return result
     return wrapper
 

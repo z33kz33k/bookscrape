@@ -23,8 +23,7 @@ from bookscrape.scrape import FiveStars, ParsingError, ReviewsDistribution, gets
 from bookscrape.scrape.goodreads.data import Author, AuthorStats, Book, BookAward, BookDetails, \
     BookSeries, BookSetting, BookStats, DetailedBook, MainEdition, SimpleAuthor, _ScriptTagData
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
-from bookscrape.utils import extract_float, extract_int, from_iterable, name2langcode
-
+from bookscrape.utils import extract_float, extract_int, from_iterable, name2langcode, timed
 
 _log = logging.getLogger(__name__)
 # the unofficially known enforced throttling delay
@@ -251,6 +250,7 @@ class AuthorScraper:
         top_books = [self._parse_book_table_row(row) for row in rows]
         return Author(self.author_name, self.author_id, stats, top_books)
 
+    @timed
     def scrape(self) -> Author | SimpleAuthor:
         """Scrape Goodreads for either full or simplified author data.
 
@@ -267,6 +267,7 @@ class AuthorScraper:
             return self.scrape_with_backoff()
         return author
 
+    @timed
     @backoff.on_exception(backoff.expo, Timeout, max_time=60)
     def scrape_with_backoff(self) -> Author | SimpleAuthor:
         """Scrape Goodreads for either full or simplified author data with (one minute max)
@@ -802,6 +803,7 @@ class BookScraper:
                               for lang, titles in editions.items()]))
         return ordered, total
 
+    @timed
     def _scrape_book(self) -> DetailedBook:
         script_data, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id

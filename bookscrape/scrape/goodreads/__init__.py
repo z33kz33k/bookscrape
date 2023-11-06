@@ -18,7 +18,7 @@ from bookscrape.constants import (Json, OUTPUT_DIR, PathLike, READABLE_TIMESTAMP
                                   FILENAME_TIMESTAMP_FORMAT)
 from bookscrape.scrape.goodreads.scrapers import AuthorScraper, BookScraper, _AuthorsData
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
-from bookscrape.utils import getdir, getfile
+from bookscrape.utils import getdir, getfile, timed
 from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDetails, BookSeries,
                                               BookStats, DetailedBook,
                                               MainEdition, BookAward, BookSetting, SimpleAuthor,
@@ -54,6 +54,7 @@ def load_books(books_json: PathLike) -> Json:
     return data
 
 
+@timed
 def scrape_data(*cues: str | Tuple[str, str],
                 scraper_type: Type[AuthorScraper | BookScraper] = AuthorScraper,
                 **kwargs: Any) -> Generator[Author | DetailedBook, None, None]:
@@ -214,6 +215,6 @@ def update_tolkien() -> None:
     author/book stats.
     """
     outputdir = Path(__file__).parent.parent.parent / "data"
-    dump_authors("J.R.R. Tolkien", outputdir=outputdir, filename="tolkien.json")
+    dump_authors("656983.J_R_R_Tolkien", outputdir=outputdir, filename="tolkien.json")
     dump_books("5907.The_Hobbit", outputdir=outputdir, filename="hobbit.json")
 
