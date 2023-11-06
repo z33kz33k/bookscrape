@@ -355,6 +355,13 @@ class _ScriptTagParser:
         dt_cet = dt_offset.astimezone(cet_tz)
         return dt_cet
 
+    def _parse_blurb(self) -> str:
+        blurb = self._book_data.get('description({"stripped":true})')
+        if blurb:
+            return blurb.strip()
+        blurb = self._book_data.get('description')
+        return blurb.strip() if blurb is not None else ""
+
     def parse(self) -> _ScriptTagData:
         try:
             details = self._book_data["details"]
@@ -370,7 +377,7 @@ class _ScriptTagParser:
                 isbn13=details["isbn13"],
                 asin=details["asin"],
             )
-            blurb = self._book_data['description({"stripped":true})'].strip()
+            blurb = self._parse_blurb()
             genres = []
             for item in self._book_data["bookGenres"]:
                 genre = item["genre"]
