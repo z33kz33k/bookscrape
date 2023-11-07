@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from bookscrape.constants import Json, READABLE_TIMESTAMP_FORMAT
 from bookscrape.scrape import FiveStars, ReviewsDistribution, Renown
-from bookscrape.utils import from_iterable, getfile
+from bookscrape.utils import from_iterable, getfile, timedelta2years
 
 
 def _load_tolkien() -> Tuple[int, int]:
@@ -456,6 +456,7 @@ class BookStats:
         )
 
 
+
 @dataclass
 class DetailedBook:
     title: str
@@ -478,6 +479,7 @@ class DetailedBook:
 
     @property
     def as_dict(self) -> Dict[str, Any]:
+
         data = {
             "title": self.title,
             "complete_title": self.complete_title,
@@ -486,7 +488,7 @@ class DetailedBook:
             "authors": [author.as_dict for author in self.authors],
             "first_publication": self.first_publication.strftime(READABLE_TIMESTAMP_FORMAT),
             "details": self.details.as_dict,
-            "stats": self.stats.as_dict,
+            "stats": dict(**self.stats.as_dict, **self.time_metrics),
         }
         if self.series:
             data["series"] = self.series.as_dict
@@ -505,3 +507,16 @@ class DetailedBook:
             BookDetails.from_dict(data["details"]),
             BookStats.from_dict(data["stats"]),
         )
+
+    @property
+    def time_metrics(self) -> Dict[str, float]:
+        tz = self.first_publication.tzinfo
+        years = timedelta2years(self.first_publication, datetime.now(tz))
+        return {
+            "lifetime_in_years": round(years, 2),
+            "ratings_per_year": round(self.stats.total_ratings / years, 2),
+            "reviews_per_year": round(self.stats.total_reviews / years, 2),
+            "shelvings_per_year": round(self.stats.total_shelvings / years, 2),
+            "editions_per_year": round(self.stats.total_editions / years, 2),
+        }
+

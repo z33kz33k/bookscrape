@@ -23,6 +23,7 @@ Function = Callable[[Tuple[Any, ...]], Any]  # function with signature def funcn
 REQUEST_TIMOUT = 15  # seconds
 FILENAME_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"
 READABLE_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+SECONDS_IN_YEAR = 365.25 * 24 * 60 * 60  # with leap years
 
 OUTPUT_DIR = Path("temp") / "output"
 if not OUTPUT_DIR.is_dir():

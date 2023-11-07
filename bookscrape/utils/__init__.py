@@ -8,6 +8,7 @@
 
 """
 import logging
+from datetime import datetime
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -18,7 +19,7 @@ import pandas as pd
 from contexttimer import Timer
 from langcodes import Language, tag_is_valid
 
-from bookscrape.constants import PathLike, T
+from bookscrape.constants import PathLike, T, SECONDS_IN_YEAR
 from bookscrape.utils.check_type import type_checker
 
 
@@ -117,6 +118,7 @@ def is_increasing(seq: Sequence[Comparable]) -> bool:
     return all(seq[i] > seq[i-1] for i, _ in enumerate(seq, start=1) if i < len(seq))
 
 
+@type_checker(str)
 def langcode2name(langcode: str) -> str | None:
     """Convert ``langcode`` to language name or `None` if it cannot be converted.
     """
@@ -126,6 +128,7 @@ def langcode2name(langcode: str) -> str | None:
     return lang.display_name()
 
 
+@type_checker(str)
 def name2langcode(langname: str, alpha3=False) -> str | None:
     """Convert supplied language name to a 2-letter ISO language code or `None` if it cannot be
     converted. Optionally, convert it to 3-letter ISO code (aka "alpha3").
@@ -163,3 +166,10 @@ def init_log() -> None:
     stream_handler.setFormatter(formatter)
     stream_handler.setLevel(log_level)
     root_logger.addHandler(stream_handler)
+
+
+@type_checker(datetime, datetime)
+def timedelta2years(start: datetime, stop: datetime) -> float:
+    delta = stop - start
+    return delta.total_seconds() / SECONDS_IN_YEAR
+
