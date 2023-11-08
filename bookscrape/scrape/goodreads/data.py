@@ -54,6 +54,7 @@ class AuthorStats:
             "reviews": self.reviews,
             "shelvings": self.shelvings,
             "reviews_to_ratings": self.r2r_percent,
+            "shelvings_to_ratings": self.sh2r_percent,
         }
 
     @classmethod
@@ -142,8 +143,8 @@ class Author:
             "name": self.name,
             "id": self.id,
             "stats": self.stats.as_dict,
-            "total_editions": self.total_editions,
             "renown": self.renown.name,
+            "total_editions": self.total_editions,
             "top_books": [b.as_dict for b in self.top_books],
         }
 
@@ -380,9 +381,10 @@ class BookStats:
     ratings: FiveStars
     reviews: ReviewsDistribution
     total_reviews: int  # this is different from total calculated from 'reviews' dict
-    shelves: OrderedDict[int, str]  # number of shelvings to shelves, only the first page is scraped
-    # iso lang codes to editions' titles, parsing capped at 10 pages
-    total_shelvings: int
+    # mapping of number of shelvings to top shelves (only the first shelves page is scraped)
+    top_shelves: OrderedDict[int, str]
+    total_shelves: int  # total shelves created
+    # mapping of iso lang codes to editions' titles, parsing capped at 10 pages
     editions: OrderedDict[str, List[str]]
     total_editions: int
 
@@ -408,8 +410,12 @@ class BookStats:
         return f"{r2r:.2f} %"
 
     @property
+    def total_top_shelvings(self) -> int:
+        return sum(s for s in self.top_shelves)
+
+    @property
     def sh2r(self) -> float:
-        return self.total_shelvings / self.total_ratings if self.total_ratings else 0
+        return self.total_top_shelvings / self.total_ratings if self.total_ratings else 0
 
     @property
     def sh2r_percent(self) -> str:
@@ -435,9 +441,10 @@ class BookStats:
             "reviews": self.reviews.as_dict,
             "total_reviews": self.total_reviews,
             "reviews_to_ratings": self.r2r_percent,
-            "shelves": self.shelves,
-            "total_shelvings": self.total_shelvings,
+            "top_shelves": self.top_shelves,
+            "total_top_shelvings": self.total_top_shelvings,
             "shelvings_to_ratings": self.sh2r_percent,
+            "total_shelves": self.total_shelves,
             "editions": self.editions,
             "total_editions": self.total_editions,
             "editions_to_ratings": self.e2r_percent,
@@ -449,12 +456,12 @@ class BookStats:
             FiveStars({int(k): v for k, v in data["ratings"].items()}),
             ReviewsDistribution(data["reviews"]),
             data["total_reviews"],
-            OrderedDict(sorted([(int(k), v) for k, v in data["shelves"].items()], reverse=True)),
-            data["total_shelvings"],
+            OrderedDict(sorted([(int(k), v) for k, v in data["top_shelves"].items()],
+                               reverse=True)),
+            data["total_shelves"],
             OrderedDict(sorted((k, v) for k, v in data["editions"].items())),
             data["total_editions"],
         )
-
 
 
 @dataclass
@@ -516,7 +523,7 @@ class DetailedBook:
             "lifetime_in_years": round(years, 2),
             "ratings_per_year": round(self.stats.total_ratings / years, 2),
             "reviews_per_year": round(self.stats.total_reviews / years, 2),
-            "shelvings_per_year": round(self.stats.total_shelvings / years, 2),
+            "shelvings_per_year": round(self.stats.total_shelves / years, 2),
             "editions_per_year": round(self.stats.total_editions / years, 2),
         }
 

@@ -26,11 +26,11 @@ from bookscrape.utils.check_type import type_checker
 _log = logging.getLogger(__name__)
 
 
-def timed(operation_name="", precision=3) -> Callable:
+def timed(operation="", precision=3) -> Callable:
     """Add time measurement to the decorated operation.
 
     Args:
-        operation_name: optionally, name of the time-measured operation
+        operation: optionally, name of the time-measured operation
         precision: precision of the time measurement in seconds
 
     Returns:
@@ -44,7 +44,7 @@ def timed(operation_name="", precision=3) -> Callable:
         def wrapper(*args, **kwargs):
             with Timer() as t:
                 result = func(*args, **kwargs)
-            _log.info(f"Completed {operation_name} in {t.elapsed:.{precision}f} seconds")
+            _log.info(f"Completed {operation} in {t.elapsed:.{precision}f} seconds")
             return result
         return wrapper
     return decorator

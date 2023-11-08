@@ -1,10 +1,10 @@
 {
-    "timestamp": "2023-11-05 21:48:58",
+    "timestamp": "2023-11-08 20:41:44",
     "provider": "www.goodreads.com",
     "books": [
         {
             "title": "The Hobbit",
-            "complete_title": "The Hobbit (The Lord of the Rings, #0)",
+            "complete_title": "The Hobbit (The Lord of the Rings #0.0)",
             "book_id": "5907.The_Hobbit",
             "work_id": "1540236-the-hobbit",
             "authors": [
@@ -13,8 +13,8 @@
                     "id": "656983.J_R_R_Tolkien",
                     "stats": {
                         "avg_rating": 4.36,
-                        "ratings": 10702676,
-                        "reviews": 195892,
+                        "ratings": 10708065,
+                        "reviews": 196071,
                         "shelvings": 16710190,
                         "reviews_to_ratings": "1.83 %"
                     },
@@ -57,8 +57,8 @@
                     "id": "1582.Douglas_A_Anderson",
                     "stats": {
                         "avg_rating": 4.28,
-                        "ratings": 3542063,
-                        "reviews": 48040,
+                        "ratings": 3544120,
+                        "reviews": 48071,
                         "shelvings": 5037277,
                         "reviews_to_ratings": "1.36 %"
                     },
@@ -102,8 +102,8 @@
                 "description": "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort.\r\nWritten for J.R.R. Tolkien’s own children, The Hobbit met with instant critical acclaim when it was first published in 1937. Now recognized as a timeless classic, this introduction to the hobbit Bilbo Baggins, the wizard Gandalf, Gollum, and the spectacular world of Middle-earth recounts of the adventures of a reluctant hero, a powerful and dangerous ring, and the cruel dragon Smaug the Magnificent. The text in this 372-page paperback edition is based on that first published in Great Britain by Collins Modern Classics (1998), and includes a note on the text by Douglas A. Anderson (2001).",
                 "main_edition": {
                     "publisher": "Houghton Mifflin",
-                    "publication": "2002-08-15 01:00:00",
                     "format": "Paperback",
+                    "publication": "2002-08-15 01:00:00",
                     "pages": 366,
                     "language": "en"
                 },
@@ -171,14 +171,14 @@
             },
             "stats": {
                 "ratings": {
-                    "1": 81015,
-                    "2": 123896,
-                    "3": 458853,
-                    "4": 1097506,
-                    "5": 2028834
+                    "1": 81063,
+                    "2": 123954,
+                    "3": 459079,
+                    "4": 1098087,
+                    "5": 2030130
                 },
-                "avg_rating": 4.2847,
-                "total_ratings": 3790104,
+                "avg_rating": 4.2848,
+                "total_ratings": 3792313,
                 "renown": "SUPERSTAR",
                 "reviews": {
                     "af": 1,
@@ -190,15 +190,15 @@
                     "ca": 21,
                     "cs": 116,
                     "da": 40,
-                    "de": 294,
+                    "de": 295,
                     "el": 32,
-                    "en": 57154,
+                    "en": 57189,
                     "eo": 5,
-                    "es": 2258,
+                    "es": 2259,
                     "et": 20,
                     "eu": 2,
                     "fa": 163,
-                    "fi": 76,
+                    "fi": 77,
                     "fr": 217,
                     "ga": 1,
                     "gl": 4,
@@ -208,7 +208,7 @@
                     "hy": 3,
                     "id": 166,
                     "is": 9,
-                    "it": 561,
+                    "it": 562,
                     "ka": 21,
                     "kn": 1,
                     "ko": 1,
@@ -218,11 +218,11 @@
                     "ms": 2,
                     "nl": 216,
                     "no": 19,
-                    "pl": 369,
+                    "pl": 370,
                     "pt": 597,
-                    "ro": 38,
+                    "ro": 39,
                     "ru": 49,
-                    "sk": 30,
+                    "sk": 31,
                     "sl": 8,
                     "sr": 10,
                     "sv": 91,
@@ -235,110 +235,110 @@
                     "zh": 2,
                     "zh-TW": 3
                 },
-                "total_reviews": 67143,
+                "total_reviews": 67190,
                 "reviews_to_ratings": "1.77 %",
-                "shelves": {
-                    "88811": "currently-reading",
-                    "62927": "fantasy",
+                "top_shelves": {
+                    "88883": "currently-reading",
+                    "62966": "fantasy",
                     "27857": "favorites",
                     "21588": "classics",
-                    "17629": "fiction",
-                    "17611": "to-read",
-                    "8524": "owned",
-                    "7122": "own",
-                    "6098": "books-i-own",
+                    "18416": "to-read",
+                    "17634": "fiction",
+                    "8535": "owned",
+                    "7124": "own",
+                    "6103": "books-i-own",
                     "3984": "classic",
-                    "3829": "adventure",
-                    "3142": "young-adult",
-                    "2948": "favourites",
-                    "2693": "tolkien",
-                    "1980": "high-fantasy",
-                    "1966": "physical-tbr",
+                    "3831": "adventure",
+                    "3140": "young-adult",
+                    "2946": "favourites",
+                    "2694": "tolkien",
+                    "1984": "high-fantasy",
+                    "1973": "physical-tbr",
                     "1940": "owned-books",
                     "1923": "sci-fi-fantasy",
                     "1626": "2022",
-                    "1603": "audiobook",
+                    "1604": "audiobook",
                     "1487": "childrens",
                     "1441": "2021",
-                    "1391": "novels",
+                    "1392": "novels",
                     "1374": "epic-fantasy",
-                    "1355": "audiobooks",
+                    "1359": "2023",
+                    "1356": "audiobooks",
                     "1349": "series",
-                    "1345": "2023",
-                    "1293": "dragons",
-                    "1278": "re-read",
+                    "1294": "dragons",
+                    "1277": "re-read",
                     "1236": "2020",
                     "1199": "default",
-                    "1196": "my-books",
-                    "1193": "fantasy-sci-fi",
-                    "1189": "literature",
+                    "1195": "my-books",
+                    "1194": "fantasy-sci-fi",
+                    "1191": "literature",
                     "1179": "my-library",
                     "1105": "magic",
-                    "1081": "library",
-                    "1042": "dnf",
+                    "1082": "library",
+                    "1044": "dnf",
                     "1027": "children",
                     "1001": "2013",
-                    "954": "tbr",
-                    "933": "ya",
+                    "956": "tbr",
+                    "934": "ya",
                     "914": "2012",
-                    "909": "j-r-r-tolkien",
-                    "885": "childhood",
+                    "912": "j-r-r-tolkien",
+                    "888": "childhood",
                     "836": "2014",
                     "821": "all-time-favorites",
                     "761": "2018",
-                    "754": "2019",
-                    "753": "scifi-fantasy",
-                    "736": "kindle",
+                    "754": "scifi-fantasy",
+                    "753": "books",
+                    "738": "kindle",
                     "727": "bookshelf",
                     "726": "english",
-                    "710": "reread",
+                    "713": "reread",
                     "706": "2015",
                     "695": "novel",
-                    "672": "children-s",
+                    "674": "children-s",
                     "662": "middle-earth",
                     "659": "2017",
                     "643": "fantasia",
                     "640": "i-own",
-                    "628": "audio",
+                    "630": "audio",
+                    "628": "favorite-books",
                     "622": "school",
-                    "620": "audible",
+                    "619": "audible",
                     "602": "adult",
-                    "600": "middle-grade",
-                    "584": "5-stars",
+                    "601": "middle-grade",
+                    "585": "5-stars",
                     "581": "science-fiction",
                     "579": "lord-of-the-rings",
                     "572": "british",
                     "569": "on-my-shelf",
                     "565": "1001-books",
-                    "546": "favorite",
+                    "548": "favorite",
                     "533": "my-bookshelf",
                     "532": "science-fiction-fantasy",
-                    "531": "fantasía",
                     "530": "sci-fi",
-                    "514": "to-buy",
+                    "513": "to-buy",
                     "507": "classic-literature",
                     "499": "home-library",
                     "497": "fantasy-scifi",
                     "489": "2016",
-                    "462": "kids",
-                    "455": "epic",
-                    "447": "wishlist",
+                    "463": "kids",
+                    "457": "epic",
+                    "445": "wishlist",
                     "444": "book-club",
                     "436": "children-s-books",
-                    "431": "kindle-unlimited",
-                    "429": "20th-century",
+                    "433": "kindle-unlimited",
+                    "428": "20th-century",
                     "426": "abandoned",
-                    "415": "did-not-finish",
+                    "416": "did-not-finish",
                     "407": "fiction-fantasy",
-                    "401": "ebook",
+                    "402": "ebook",
                     "383": "fantasy-fiction",
                     "378": "childhood-favorites",
                     "377": "have",
-                    "376": "personal-library",
                     "370": "on-my-bookshelf"
                 },
-                "total_shelvings": 344995,
-                "shelvings_to_ratings": "9.10 %",
+                "total_top_shelvings": 345711,
+                "total_shelves": 73171,
+                "shelvings_to_ratings": "9.12 %",
                 "editions": {
                     "af": [
                         "Die Hobbit"
@@ -357,14 +357,10 @@
                         "El Hobbit",
                         "El Hobbit n'asturianu"
                     ],
-                    "az": [
-                        "Hobbit"
-                    ],
                     "be": [
                         "Хобіт, альбо вандроўка туды і назад"
                     ],
                     "bg": [
-                        "Билбо Бегинс или Дотам и Обратно",
                         "Билбо Бегинс или Дотам и обратно",
                         "Билбо Бегинс, или дотам и обратно",
                         "Хобит. Билбо Бегинс, или дотам и обратно",
@@ -377,12 +373,9 @@
                         "দ্য হবিট"
                     ],
                     "br": [
-                        "An Hobbit",
                         "An Hobbit, pe, Eno ha Distro: The Hobbit in Breton"
                     ],
                     "ca": [
-                        "El Hobbit",
-                        "El Hòbbit",
                         "El hòbbit",
                         "El hòbbit o viatge d'anada i tornada",
                         "El hòbbit: o viatge d'anada i tornada"
@@ -413,9 +406,7 @@
                         "Der Hobbit: oder Hin und zurück. Mit Illustrationen von Alan Lee.",
                         "Der Kleine Hobbit",
                         "Der kleine Hobbit",
-                        "Der kleine Hobbit: Hörspiel",
-                        "Hobbit",
-                        "Hobit"
+                        "Der kleine Hobbit: Hörspiel"
                     ],
                     "den": [
                         "Hobit, abo tam i nazŏd"
@@ -425,8 +416,6 @@
                     ],
                     "en": [
                         "Annotated Hobbit",
-                        "Bilbo le hobbit",
-                        "Bilbo's quest for identity and maturity in J.R.R. Tolkien's The Hobbit",
                         "De hobbit",
                         "El Hobbit",
                         "El Hobbit +",
@@ -439,12 +428,9 @@
                         "Hobbitus Ille: The Classic Bestselling Fantasy Novel: The Latin Hobbit",
                         "J.R.R. Tolkien, The Hobbit First Printing August 1965 with Lion",
                         "J.R.R.Tolkien's The Hobbit or There and Back Again",
-                        "Modern Classics on CD – The Hobbit: Abridged",
                         "Modern Classics on Tape – The Hobbit",
                         "THE HOBBIT",
                         "The Annotated Hobbit",
-                        "The Annotated Hobbit Book",
-                        "The Annotated Hobbit, Third Edition",
                         "The Annotated Hobbit:  The Hobbit, or, There and Back Again",
                         "The Annotated Hobbit: The Hobbit, or There and Back Again",
                         "The Annotated Hobbit: The Hobbit, or, There and back again",
@@ -473,7 +459,6 @@
                         "The Hobbit: Illustrated by the Author",
                         "The Hobbit: Illustrated by the Author [Illustrated Edition]",
                         "The Hobbit: Illustrated by the Author: Illustrated Deluxe edition",
-                        "The Hobbit: Jackanory by J.R.R. Tolkien",
                         "The Hobbit: Or There And Back Again",
                         "The Hobbit: Or There and Back Again",
                         "The Hobbit: Or there and back again",
@@ -486,11 +471,9 @@
                         "The Hobbit¨",
                         "The Illustrated Hobbit",
                         "The Illustrated Hobbit: Or, There and Back Again",
-                        "the Hobbit",
                         "الهوبيت"
                     ],
                     "eo": [
-                        "La Hobito aŭ Tien kaj Reen",
                         "La Hobito – aŭ tien kaj reen",
                         "La Hobito, aŭ, Tien kaj Reen",
                         "La hobito, aŭ tien kaj reen"
@@ -508,7 +491,6 @@
                         "El Hobbit: Edición especial 75 aniversario",
                         "El Hobito",
                         "El hobbit",
-                        "El hòbbit",
                         "El tratado de la pintura",
                         "Hobbit",
                         "The Hobbit"
@@ -526,7 +508,6 @@
                     ],
                     "fa": [
                         "هابیت",
-                        "هابیت: آنجا و بازگشت دوباره",
                         "هابیت؛ یا آنجا و بازگشت دوباره"
                     ],
                     "fi": [
@@ -543,7 +524,6 @@
                         "Bilbo le Hobbit - Edition film 2014",
                         "Bilbo le hobbit",
                         "Bilbo le hobbit - édition texte intégral avec l'affiche du film 3 en couverture",
-                        "Bilbon lo Hòbbit",
                         "Le Hobbit",
                         "Le Hobbit - Collector",
                         "Le Hobbit annoté",
@@ -584,8 +564,7 @@
                         "Babó"
                     ],
                     "hy": [
-                        "Հոբիթը",
-                        "Հոբիթը / The Hobbit"
+                        "Հոբիթը"
                     ],
                     "id": [
                         "Hobbit",
@@ -598,21 +577,17 @@
                         "Lo Hobbit",
                         "Lo Hobbit - illustrato",
                         "Lo Hobbit annotato",
-                        "Lo Hobbit o La Riconquista del tesoro",
                         "Lo Hobbit o la Riconquista del Tesoro",
                         "Lo Hobbit o la riconquista del tesoro",
                         "Lo Hobbit: Un viaggio inaspettato",
                         "Lo Hobbit: o La riconquista del tesoro",
                         "Lo hobbit",
                         "Lo hobbit o La riconquista del tesoro",
-                        "Lo hobbit o la Riconquista del Tesoro",
                         "Lo hobbit o la riconquista del tesoro"
                     ],
                     "ja": [
-                        "Hobbit",
                         "ホビット - ゆきてかえりし物語 [Hobitto : Yukite Kaerishi Monogatari]",
-                        "ホビット : ゆきてかえりし物語 第四版・注釈版 上 [Hobitto : yukite kaerishi monogatari daiyonpan chūshakuban 1]",
-                        "ホビットの冒険 オリジナル版"
+                        "ホビット : ゆきてかえりし物語 第四版・注釈版 上 [Hobitto : yukite kaerishi monogatari daiyonpan chūshakuban 1]"
                     ],
                     "ka": [
                         "ჰობიტი"
@@ -625,7 +600,6 @@
                     ],
                     "kw": [
                         "An Hobys, Po an Fordh Dy Ha Tre Arta: The Hobbit in Cornish",
-                        "An Hobys, pò An Fordh Dy ha Tre Arta",
                         "An Hobys, pò, An Fordh Dy ha Tre Arta: The Hobbit in Cornish"
                     ],
                     "la": [
@@ -645,9 +619,6 @@
                     ],
                     "mk": [
                         "Хобитот"
-                    ],
-                    "mr": [
-                        "The Hobbit"
                     ],
                     "nb": [
                         "Hobbiten",
@@ -676,21 +647,15 @@
                         "Hobbit albo tam i z powrotem",
                         "Hobbit czyli Tam i z powrotem",
                         "Hobbit czyli tam i z powrotem",
-                        "Hobbit z objasnieniami",
                         "Hobbit z objaśnieniami",
                         "Hobbit, czyli tam i z powrotem",
-                        "Hobbit, czyli tam i z powrotem - J.R.R. Tolkien [AUDIOBOOK]",
                         "The Hobbit",
-                        "The Hobbit albo tam i z powrotem",
-                        "The Hobbit, or There and Back Again"
+                        "The Hobbit albo tam i z powrotem"
                     ],
                     "pt": [
-                        "O HOBBIT - Capa Filme 2 - A Desolação de Smaug",
                         "O Hobbit",
                         "O Hobbit anotado",
-                        "O Hobbit: Anotado",
                         "O Hobbit: ou lá e volta outra vez",
-                        "O gnomo",
                         "O hobbit",
                         "o hobbit"
                     ],
@@ -698,21 +663,15 @@
                         "Hobbitul",
                         "Hobbitul - O călătorie neaşteptată",
                         "Hobbitul sau Dus şi întors",
-                        "O poveste cu un hobbit",
-                        "Povestea unui Hobbit"
+                        "O poveste cu un hobbit"
                     ],
                     "ru": [
                         "Hobbit Classics",
-                        "The Hobbit",
-                        "The Hobbit = Hobbit",
                         "The Hobbit: Or There and Back Again",
                         "Хоббит",
                         "Хоббит, или Путешествие Туда и Обратно",
-                        "Хоббит, или Туда и Обратно",
                         "Хоббит, или Туда и обратно",
-                        "Хоббит, или Туда и обратно [Khobbit, ili tuda i obratno]",
-                        "Хоббит, или туда и обратно",
-                        "хоббит"
+                        "Хоббит, или туда и обратно"
                     ],
                     "si": [
                         "අහිමි වූ උරුමය"
@@ -729,7 +688,6 @@
                         "Bilbo Hobiti"
                     ],
                     "sr": [
-                        "HOBIT",
                         "Hobit",
                         "Hobit - specijalno izdanje sa komentarima",
                         "Hobit, ili Tamo i natrag",
@@ -744,14 +702,12 @@
                         "Bilbo : En hobbits äventyr",
                         "Bilbo : en hobbits äventyr",
                         "Bilbo – En hobbits äventyr",
-                        "Bilbo: En Hobbits Äventyr",
                         "Bilbo: En hobbits äventyr",
                         "Hobbiten",
                         "Hobbiten eller Bort och hem igen",
                         "Hobbiten eller bort och hem igen",
                         "Hobbiten: eller Bort och hem igen",
-                        "Hobbiten: eller bort och hem igen",
-                        "Hompen, En resa dit och tillbaks igen"
+                        "Hobbiten: eller bort och hem igen"
                     ],
                     "th": [
                         "ฮอบบิท"
@@ -767,12 +723,8 @@
                         "The Hobbit"
                     ],
                     "uk": [
-                        "Гобіт",
                         "Гобіт, або Мандрівка за Імлисті гори",
                         "Гобіт, або Туди і звідти"
-                    ],
-                    "ur": [
-                        "دی ہابٹ"
                     ],
                     "vi": [
                         "Anh Chàng Hobbit",
@@ -780,21 +732,22 @@
                         "Chúa tể của những chiếc nhẫn: người Hobbit"
                     ],
                     "yi": [
-                        "Der Hobit, Oder, Ahin Un Vider Tsurik",
-                        "Der Hobit, Oder, Ahin Un Vider Tsurik: The Hobbit in Yiddish",
-                        "דער האָביט"
+                        "Der Hobit, Oder, Ahin Un Vider Tsurik: The Hobbit in Yiddish"
                     ],
                     "zh": [
-                        "The Hobbit",
                         "哈比人",
                         "霍比特人",
-                        "霍比特人：插图详注本",
                         "魔戒: 前传: 霍比特人",
                         "魔戒前傳：哈比人歷險記"
                     ]
                 },
                 "total_editions": 1344,
-                "editions_to_ratings": "0.035 %"
+                "editions_to_ratings": "0.035 %",
+                "lifetime_in_years": 86.13,
+                "ratings_per_year": 44028.93,
+                "reviews_per_year": 780.08,
+                "shelvings_per_year": 849.52,
+                "editions_per_year": 15.6
             },
             "series": {
                 "title": "The Lord of the Rings",

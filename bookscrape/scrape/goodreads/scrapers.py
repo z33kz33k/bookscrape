@@ -752,12 +752,12 @@ class BookScraper:
         soup = getsoup(self._shelves_url)
         lc_tag = soup.find("div", class_="leftContainer")
         if lc_tag is None:
-            raise ParsingError("No 'leftContainer' tag with total shelvings data")
+            raise ParsingError("No 'leftContainer' tag with total shelves created data")
         span_tag = lc_tag.find("span", class_="smallText")
         if span_tag is None:
-            raise ParsingError("No 'span' tag with total shelvings data")
+            raise ParsingError("No 'span' tag with total shelves created data")
         *_, text = span_tag.text.split()
-        total_shelvings = extract_int(text)
+        total_shelves_created = extract_int(text)
 
         shelf_tags = soup.find_all("div", class_="shelfStat")
         shelves = OrderedDict()
@@ -768,7 +768,7 @@ class BookScraper:
                 continue
             shelvings = extract_int(shelvings_tag.text)
             shelves[shelvings] = name
-        return shelves, total_shelvings
+        return shelves, total_shelves_created
 
     @throttled(THROTTLING_DELAY)
     def _parse_editions_page(
@@ -831,14 +831,14 @@ class BookScraper:
         self._work_id = script_data.work_id
         self._set_secondary_urls()
         series = self._parse_series_page() if self.series_id else None
-        shelves, total_shelvings = self._parse_shelves_page()
+        shelves, total_shelves = self._parse_shelves_page()
         editions, total_editions = self._scrape_editions()
         stats = BookStats(
             ratings=script_data.ratings,
             reviews=script_data.reviews,
             total_reviews=script_data.total_reviews,
-            shelves=shelves,
-            total_shelvings=total_shelvings,
+            top_shelves=shelves,
+            total_shelves=total_shelves,
             editions=editions,
             total_editions=total_editions,
         )
