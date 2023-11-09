@@ -8,11 +8,11 @@
 
 """
 import logging
-from collections import namedtuple
 from typing import List
 
 import gspread
 
+from bookscrape.constants import BookRecord
 from bookscrape.scrape.goodreads import url2id
 from bookscrape.utils import timed
 
@@ -50,9 +50,6 @@ def retrieve_sf_authors() -> List[str]:
     authors = sorted(authors)
     _log.info(f"Retrieved {len(authors)} author names")
     return authors
-
-
-BookRecord = namedtuple("BookRecord", ["title", "author"])
 
 
 def retrieve_sf_book_records() -> List[BookRecord]:

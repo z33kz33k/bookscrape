@@ -26,6 +26,9 @@ from bookscrape.scrape.goodreads.data import (Author, AuthorStats, Book, BookDet
 
 _log = logging.getLogger(__name__)
 PROVIDER = "www.goodreads.com"
+_BORKED = [
+    "44037.Vernor_Vinge",  # works only with ID,
+]
 
 
 def load_authors(authors_json: PathLike) -> _AuthorsData:

@@ -81,18 +81,21 @@ class Renown(Enum):
 
 @timed("request")
 @type_checker(str)
-def getsoup(url: str) -> BeautifulSoup:
+def getsoup(url: str, headers: Dict[str, str] | None = None) -> BeautifulSoup:
     """Return BeautifulSoup object based on ``url``.
 
     Args:
         url: URL string
+        headers: a dictionary of headers to add to the request
 
     Returns:
         a BeautifulSoup object
     """
     _log.info(f"Requesting: {url!r}")
-    markup = requests.get(url, timeout=REQUEST_TIMOUT).text
-    return BeautifulSoup(markup, "lxml")
+    response = requests.get(url, timeout=REQUEST_TIMOUT, headers=headers)
+    if str(response.status_code)[0] in ("4", "5"):
+        _log.warning(f"Request failed with: '{response.status_code} {response.reason}'")
+    return BeautifulSoup(response.text, "lxml")
 
 
 def throttle(delay: float) -> None:
