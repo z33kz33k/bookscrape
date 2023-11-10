@@ -29,6 +29,18 @@ PROVIDER = "www.goodreads.com"
 _BORKED = [
     "44037.Vernor_Vinge",  # works only with ID,
 ]
+PROPER_AUTHORS = {
+    "Mary Shelley": "Mary Wollstonecraft Shelley",
+    "Stanislaw Lem": "Stanisław Lem",
+}
+PROPER_TITLES = {
+    "The Island of Doctor Moreau": "The Island of Dr. Moreau",
+    "Planet of the Apes (aka Monkey Planet)": "Planet of the Apes",
+    "The Songs of Distant Earth": "Songs of Distant Earth",
+    "Galapagos": "Galápagos",
+    "How to Live Safely in a Sci-Fi Universe": "How to Live Safely in a Science Fictional Universe",
+    "Readme": "Reamde",
+}
 
 
 def load_authors(authors_json: PathLike) -> _AuthorsData:
@@ -81,7 +93,8 @@ def scrape_data(*cues: str | Tuple[str, str],
                 if isinstance(cue, str):
                     scraper = scraper_type(cue)
                 else:
-                    scraper = scraper_type(*cue, authors_data=kwargs.get("authors_data"))
+                    scraper = scraper_type(
+                        *cue, authors_data=kwargs.get("authors_data") or kwargs.get("author_data"))
             else:
                 break
 
@@ -102,7 +115,8 @@ def _dump_data(*cues: str | Tuple[str, str],
         dataname = "authors"
     elif scraper_type is BookScraper:
         scraped = [s.as_dict for s in scrape_data(
-            *cues, scraper_type=scraper_type, authors_data=kwargs.get("authors_data"))]
+            *cues, scraper_type=scraper_type, authors_data=kwargs.get(
+                "authors_data") or kwargs.get("author_data"))]
         scraped = sorted(scraped, key=lambda item: item["title"].casefold())
         dataname = "books"
     else:

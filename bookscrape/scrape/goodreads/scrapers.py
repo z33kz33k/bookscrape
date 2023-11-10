@@ -110,8 +110,8 @@ class AuthorScraper:
         def parse_spans(spans_: List[Tag]) -> Optional[Tag]:
             for span in spans_:
                 a_ = span.find(
-                    lambda t: t.name == "a" and cls.normalize_name(author_name) in t.attrs.get(
-                        "href"))
+                    lambda t: t.name == "a" and cls.normalize_name(
+                        author_name).casefold() in t.attrs["href"].casefold())
                 if a_ is not None:
                     return a_
             return None

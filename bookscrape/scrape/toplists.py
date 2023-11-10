@@ -7,12 +7,15 @@
     @author: z33k
 
 """
+import re
 from typing import List
 
 from bs4 import Tag
 
 from bookscrape.constants import BookRecord
 from bookscrape.scrape import getsoup
+from bookscrape.scrape.goodreads import PROPER_AUTHORS, PROPER_TITLES
+
 
 LISTS = [
     "http://scifilists.sffjazz.com/lists_books_rank1.html",
@@ -43,6 +46,17 @@ LISTS = [
 ]
 
 
+def cp1252_hex_escape_to_utf8(escape: str) -> str:
+    return bytes([ord(escape)]).decode("cp1252")
+
+
+def trim_from_sep(text: str, sep: str) -> str:
+    if sep in text:
+        text, *_ = text.split(sep)
+        text = text.strip()
+    return text
+
+
 class SffJazzScraper:
     HEADERS = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,"
@@ -61,16 +75,38 @@ class SffJazzScraper:
     }
 
     @staticmethod
-    def _parse_row(row: Tag) -> BookRecord | None:
+    def _trim_from_sep(text: str, sep: str) -> str:
+        if text == "Arkady & Boris Strugatsky":
+            return "Arkady Strugatsky"
+        if text == "Pratchett & Baxter":
+            return "Terry Pratchett"
+        if text == "B. Herbert & K.J. Anderson":
+            return "Brian Herbert"
+        return trim_from_sep(text, sep)
+
+    @classmethod
+    def _sanitize_author(cls, author: str) -> str:
+        author = cls._trim_from_sep(author, "[")
+        author = cls._trim_from_sep(author, "&")
+        return PROPER_AUTHORS.get(author) or author
+
+    @staticmethod
+    def _sanitize_title(title: str) -> str:
+        title = trim_from_sep(title, "[")
+        # sffjazz.com site uses windows cp1252 encoding but response comes in ascii with all
+        # non-ascii characters encoded as cp1252 hex escape sequence
+        # the logic below translates e.g. '\x97' into '—'
+        title = re.sub(r'[^\x00-\x7F]+', lambda m: cp1252_hex_escape_to_utf8(m.group(0)), title)
+        return PROPER_TITLES.get(title) or title
+
+    @classmethod
+    def _parse_row(cls, row: Tag) -> BookRecord:
         colums = row.find_all("td")[1:3]
-        if len(colums) != 2:
-            return None
         author_col, title_col = colums
         author = author_col.text.strip()
         title = title_col.find("a").text
-        if "[" in title:
-            title, *_ = title.split("[")
-            title = title.strip()
+        author = cls._sanitize_author(author)
+        title = cls._sanitize_title(title)
         return BookRecord(title, author)
 
     @classmethod
@@ -97,4 +133,3 @@ class SffJazzScraper:
     @classmethod
     def scrape_post_2000(cls) -> List[BookRecord]:
         return cls._scrape_list(2)
-
