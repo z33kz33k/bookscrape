@@ -10,6 +10,7 @@
     This module provides only basic type validation based on `isintance()` check.
 
 """
+# TODO: Google style docstrings
 from functools import wraps
 from typing import Any, Iterable, Type
 
@@ -159,9 +160,10 @@ def uniform_type_checker(*expected_types: Type, is_method=False,
     return decorate
 
 
+# TODO: choose arg to validate with optional meta arg 'arg_idx'
 def generic_iterable_type_checker(*expected_types: Type, is_method=False,
                                   none_allowed=False) -> Function | Method:
-    """Validate all of decorated function's input iterable's items to be one of ``expected_types``.
+    """Validate all items of decorated function's first argument to be one of ``expected_types``.
 
     .. note:: Defaults, if specified, have to be passed as keywords arguments. Otherwise, they will be treated as types to validate.
 
@@ -194,11 +196,12 @@ def generic_iterable_type_checker(*expected_types: Type, is_method=False,
     return decorate
 
 
+# TODO: choose arg to validate with optional meta arg 'arg_idx'
 def generic_dict_type_checker(key_expected_types: Iterable[Type],
                               value_expected_types: Iterable[Type],
                               is_method=False,
                               none_allowed=False) -> Function | Method:
-    """Validate all of decorated function's input dict's keys and values to be, respectively,
+    """Validate all keys and values of decorated function's first argument to be, respectively,
     one of ``key_expected_types`` and one of ``value_expected_types.
 
     .. note:: Defaults, if specified, have to be passed as keywords arguments. Otherwise, they will be treated as types to validate.

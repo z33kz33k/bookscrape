@@ -13,7 +13,7 @@ import traceback
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, List, Tuple
+from typing import Any, Generator, Iterable, List, Tuple
 
 from bookscrape.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, PathLike, \
     READABLE_TIMESTAMP_FORMAT
@@ -253,6 +253,6 @@ def update_tolkien() -> None:
     dump_books("5907.The_Hobbit", outputdir=outputdir, filename="hobbit.json")
 
 
-# def dumps2ids(book_records: Iterable[BookRecord],
-#               *book_jsons: PathLike) -> Generator[Author | DetailedBook,]:
+# def dumps2ids(book_records: Iterable[Tuple[str, str]],
+#               *book_jsons: PathLike) -> Generator[str, None, None]:
 #     books = []
