@@ -133,3 +133,8 @@ class SffJazzScraper:
     @classmethod
     def scrape_post_2000(cls) -> List[BookRecord]:
         return cls._scrape_list(2)
+
+    @classmethod
+    def scrape_all(cls) -> List[BookRecord]:
+        return [*cls.scrape_pre_2000_first(), *cls.scrape_pre_2000_second(),
+                *cls.scrape_post_2000()]

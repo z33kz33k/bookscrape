@@ -13,6 +13,7 @@ from functools import wraps
 from typing import Callable, Dict
 
 import requests
+from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 
 from bookscrape.constants import REQUEST_TIMOUT
@@ -42,7 +43,10 @@ def getsoup(url: str, headers: Dict[str, str] | None = None) -> BeautifulSoup:
     _log.info(f"Requesting: {url!r}")
     response = requests.get(url, timeout=REQUEST_TIMOUT, headers=headers)
     if str(response.status_code)[0] in ("4", "5"):
-        _log.warning(f"Request failed with: '{response.status_code} {response.reason}'")
+        msg = f"Request failed with: '{response.status_code} {response.reason}'"
+        if response.status_code in (502, 503, 504):
+            raise HTTPError(msg)
+        _log.warning(msg)
     return BeautifulSoup(response.text, "lxml")
 
 

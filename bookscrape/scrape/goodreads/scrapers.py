@@ -17,7 +17,7 @@ from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Set, Tuple
 import backoff
 import pytz
 from bs4 import BeautifulSoup, Tag
-from requests import Timeout
+from requests import HTTPError, Timeout
 
 from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
 from bookscrape.scrape.goodreads.data import Author, AuthorStats, Book, BookAward, BookDetails, \
@@ -262,6 +262,10 @@ class AuthorScraper:
             if not self.author_id:
                 self._author_id = self.find_author_id(self.author_name)
             author = self._parse_author_page()
+        except HTTPError as e:
+            _log.warning(f"Goodreads had a hiccup ({e}). Retrying with backoff "
+                         "(60 seconds max)...")
+            return self.scrape_with_backoff()
         except Timeout:
             _log.warning("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
                          "(60 seconds max)...")
@@ -269,7 +273,7 @@ class AuthorScraper:
         return author
 
     @timed("author scraping (with backoff)")
-    @backoff.on_exception(backoff.expo, Timeout, max_time=60)
+    @backoff.on_exception(backoff.expo, (Timeout, HTTPError), max_time=60)
     def scrape_with_backoff(self) -> Author | SimpleAuthor:
         """Scrape Goodreads for either full or simplified author data with (one minute max)
         backoff on timeout.
@@ -861,14 +865,19 @@ class BookScraper:
         """
         try:
             book = self._scrape_book()
+        except HTTPError as e:
+            _log.warning(f"Goodreads had a hiccup ({e}). Retrying with backoff "
+                         "(60 seconds max)...")
+            return self.scrape_with_backoff()
         except Timeout:
             _log.warning("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
                          "(60 seconds max)...")
             return self.scrape_with_backoff()
+
         return book
 
     @timed("book scraping (with backoff)", precision=2)
-    @backoff.on_exception(backoff.expo, Timeout, max_time=60)
+    @backoff.on_exception(backoff.expo, (Timeout, HTTPError), max_time=60)
     def scrape_with_backoff(self) -> DetailedBook:
         """Scrape detailed book data from Goodreads with (one minute max) backoff on timeout.
         """
