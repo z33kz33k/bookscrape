@@ -13,7 +13,7 @@ from typing import List
 import gspread
 
 from bookscrape.constants import BookRecord
-from bookscrape.scrape.goodreads import url2id
+from bookscrape.scrape.goodreads.utils import url2id
 from bookscrape.utils import timed
 
 

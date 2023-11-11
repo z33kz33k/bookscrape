@@ -13,7 +13,7 @@ from typing import List
 from bs4 import Tag
 
 from bookscrape.constants import BookRecord
-from bookscrape.scrape import getsoup
+from bookscrape.scrape.utils import getsoup
 from bookscrape.scrape.goodreads import PROPER_AUTHORS, PROPER_TITLES
 
 

@@ -2,326 +2,257 @@
 
     bookscrape.scrape.__init__.py
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Common scraping-related logic.
+    Scrape data on authors and books from various sites.
 
     @author: z33k
 
 """
 import logging
-import time
-from collections import OrderedDict
-from enum import Enum, auto
-from functools import wraps
-from typing import Callable, Dict, Iterable, Tuple
+import json
+import traceback
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from typing import Any, List, Tuple
 
-import requests
-from bs4 import BeautifulSoup
-from langcodes import tag_is_valid
-
-from bookscrape.constants import REQUEST_TIMOUT
-from bookscrape.utils import is_increasing, timed, type_checker, langcode2name, name2langcode
-
+from bookscrape.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, PathLike, \
+    READABLE_TIMESTAMP_FORMAT
+from bookscrape.scrape.goodreads import scrape_data as scrape_goodreads_data
+from bookscrape.scrape.goodreads.data import PROVIDER as GOODREADS
+from bookscrape.scrape.goodreads.data import Author as GoodreadsAuthor
+from bookscrape.scrape.goodreads.data import DetailedBook as GoodreadsBook
+from bookscrape.utils import getdir, getfile, timed
 
 _log = logging.getLogger(__name__)
 
 
-class ParsingError(ValueError):
-    """Raised whenever parser's assumptions are not met.
-    """
-
-
-class Renown(Enum):
-    SUPERSTAR = auto()
-    STAR = auto()
-    FAMOUS = auto()
-    POPULAR = auto()
-    WELL_KNOWN = auto()
-    KNOWN = auto()
-    SOMEWHAT_KNOWN = auto()
-    LITTLE_KNOWN = auto()
-    OBSCURE = auto()
-
-    @staticmethod
-    def calculate(ratings: int, model_ratings: int,
-                  fractions=(3, 11, 29, 66, 141, 291, 591, 1191)) -> "Renown":
-        # fraction differences: 3, 8, 18, 37, 75, 150, 300, 600
-        if len(fractions) != len(Renown) - 1:
-            raise ValueError(f"Fractions must have exactly {len(Renown) - 1} items, "
-                             f"got: {len(fractions)}")
-        if not is_increasing(fractions):
-            raise ValueError(f"Fractions must be an increasing sequence, got: {fractions}")
-        if ratings >= int(model_ratings * 1 / fractions[0]):
-            return Renown.SUPERSTAR
-        elif int(model_ratings * 1 / fractions[1]) <= ratings < int(
-                model_ratings * 1 / fractions[0]):
-            return Renown.STAR
-        elif int(model_ratings * 1 / fractions[2]) <= ratings < int(
-                model_ratings * 1 / fractions[1]):
-            return Renown.FAMOUS
-        elif int(model_ratings * 1 / fractions[3]) <= ratings < int(
-                model_ratings * 1 / fractions[2]):
-            return Renown.POPULAR
-        elif int(model_ratings * 1 / fractions[4]) <= ratings < int(
-                model_ratings * 1 / fractions[3]):
-            return Renown.WELL_KNOWN
-        elif int(model_ratings * 1 / fractions[5]) <= ratings < int(
-                model_ratings * 1 / fractions[4]):
-            return Renown.KNOWN
-        elif int(model_ratings * 1 / fractions[6]) <= ratings < int(
-                model_ratings * 1 / fractions[5]):
-            return Renown.SOMEWHAT_KNOWN
-        elif int(model_ratings * 1 / fractions[7]) <= ratings < int(
-                model_ratings * 1 / fractions[6]):
-            return Renown.LITTLE_KNOWN
-        elif 0 <= ratings < int(model_ratings * 1 / fractions[7]):
-            return Renown.OBSCURE
-        else:
-            raise ValueError(f"Invalid ratings count: {ratings:,}")
-
-
-@timed("request")
-@type_checker(str)
-def getsoup(url: str, headers: Dict[str, str] | None = None) -> BeautifulSoup:
-    """Return BeautifulSoup object based on ``url``.
-
-    Args:
-        url: URL string
-        headers: a dictionary of headers to add to the request
-
-    Returns:
-        a BeautifulSoup object
-    """
-    _log.info(f"Requesting: {url!r}")
-    response = requests.get(url, timeout=REQUEST_TIMOUT, headers=headers)
-    if str(response.status_code)[0] in ("4", "5"):
-        _log.warning(f"Request failed with: '{response.status_code} {response.reason}'")
-    return BeautifulSoup(response.text, "lxml")
-
-
-def throttle(delay: float) -> None:
-    _log.info(f"Throttling for {delay} seconds...")
-    time.sleep(delay)
-
-
-def throttled(delay: float) -> Callable:
-    """Add throttling delay after the decorated operation.
-
-    Args:
-        throttling delay in fraction of seconds
-
-    Returns:
-        the decorated function
-    """
-    def decorate(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            result = func(*args, **kwargs)
-            throttle(delay)
-            return result
-        return wrapper
-    return decorate
-
-
-class RatingsDistribution:
-    """Ratings distribution that rescales itself to any given rank scheme.
-    """
-    @property
-    def dist(self) -> OrderedDict[int | float, int]:
-        return self._dist
+@dataclass
+class AuthorData:
+    # there's room for more
+    goodreads: GoodreadsAuthor
 
     @property
-    def rank_scheme(self) -> Tuple[int | float, ...]:
-        return self._rank_scheme
+    def as_dict(self) -> Json:
+        return {GOODREADS: self.goodreads.as_dict}
+
+    @classmethod
+    def from_dict(cls, data: Json) -> "AuthorData":
+        return cls(GoodreadsAuthor.from_dict(data[GOODREADS]))
+
+
+@dataclass
+class BookData:
+    # there's room for more
+    goodreads: GoodreadsBook
 
     @property
-    def total(self) -> int:
-        return sum(votes for _, votes in self.dist.items())
+    def as_dict(self) -> Json:
+        return {GOODREADS: self.goodreads.as_dict}
+
+    @classmethod
+    def from_dict(cls, data: Json) -> "BookData":
+        return cls(GoodreadsBook.from_dict(data[GOODREADS]))
+
+
+@dataclass
+class AuthorDump:
+    timestamp: datetime
+    authors: List[AuthorData]
 
     @property
-    def avg_rating(self) -> float:
-        return sum(rank * votes for rank, votes in self.dist.items()) / self.total
-
-    @property
-    def scaled_dist(self) -> OrderedDict[int | float, int]:
-        if self.rank_scheme == tuple(sorted(self.dist)):
-            return self.dist
-
-        pairs, max_rank = [], max(self.rank_scheme)
-        for i, rank in enumerate(self.rank_scheme):
-            if i == 0:
-                ratings = self._span_ratings(0, round(rank / max_rank, 3))
-                pairs.append((rank, ratings))
-            elif i == len(self.rank_scheme) - 1:
-                previous_rank = self.rank_scheme[i - 1]
-                ratings = self._span_ratings(round(previous_rank / max_rank, 3), 1)
-                pairs.append((rank, ratings))
-            else:
-                previous_rank = self.rank_scheme[i - 1]
-                min_ = round(previous_rank / max_rank, 3)
-                max_ = round(rank / max_rank, 3)
-                pair = rank, self._span_ratings(min_, max_)
-                pairs.append(pair)
-        return OrderedDict(pairs)
-
-    def __init__(self, distribution: Dict[int | float, int],
-                 rank_scheme: Iterable[int | float] = ()) -> None:
-        """Initialize.
-
-        If no rank scheme is supplied the keys of supplied distribution dict are assumed as
-        such and no effective scaling is perfomed.
-
-        Args:
-            distribution: a mapping of (at least three) non-negative rating ranks to number of votes for them
-            rank_scheme: iterable of (at least three) non-negative numbers to rescale supplied distribution to
-        """
-        if not rank_scheme:
-            rank_scheme = [*distribution]
-        self._dist = OrderedDict(sorted([(r, v) for r, v in distribution.items()]))
-        self._rank_scheme = tuple(sorted(set(rank_scheme)))
-        if any(rank < 0 for rank in distribution) or len(distribution) < 3:
-            raise ValueError("Ratings distribution must be a mapping of at least three "
-                             "non-negative rating ranks to number of votes fot them, got: "
-                             f"{distribution}")
-        if any(rank < 0 for rank in self.rank_scheme) or len(self.rank_scheme) < 3:
-            raise ValueError("Rank scheme must be an iterable of at least three non-negative "
-                             f"numbers, got: {rank_scheme}")
-        self._normalized = [(rank / max(self.dist), votes) for rank, votes in self.dist.items()]
-
-    def _span_ratings(self, min_: float, max_: float) -> int:
-        return sum(votes for rank, votes in self._normalized if min_ < rank <= max_)
-
-    def ratings(self, rank: int | float) -> int:
-        if rank not in self.rank_scheme:
-            raise ValueError(f"Rank must be defined in the rank scheme: '{self.rank_scheme}'")
-        return self.scaled_dist[rank]
-
-    def ratings_percent(self, rank: int | float) -> str:
-        if rank not in self.rank_scheme:
-            raise ValueError(f"Rank must be defined in the rank scheme: '{self.rank_scheme}'")
-        percent = self.ratings(rank) * 100 / self.total
-        return f"{percent:.2f} %"
-
-    def __repr__(self) -> str:
-        return repr(self.scaled_dist).replace("OrderedDict", self.__class__.__name__)
-
-    def as_dict(self) -> Dict[str, OrderedDict[int | float, int] | Tuple[int | float, ...]]:
+    def as_dict(self) -> Json:
         return {
-            "dist": self.dist,
-            "rank_scheme": self.rank_scheme,
+            "timestamp": self.timestamp.strftime(READABLE_TIMESTAMP_FORMAT),
+            "authors": [author.as_dict for author in self.authors],
         }
 
+    @classmethod
+    def from_dict(cls, data: Json) -> "AuthorDump":
+        return cls(
+            datetime.strptime(data["timestamp"], READABLE_TIMESTAMP_FORMAT),
+            [AuthorData.from_dict(author) for author in data["authors"]],
+        )
 
-class FiveStars(RatingsDistribution):
-    """A rating distribution with pre-defined (1, 2, 3, 4, 5) rank scheme and some convenience
-    properties.
+
+@dataclass
+class BookDump:
+    timestamp: datetime
+    books: List[BookData]
+
+    @property
+    def as_dict(self) -> Json:
+        return {
+            "timestamp": self.timestamp.strftime(READABLE_TIMESTAMP_FORMAT),
+            "books": [book.as_dict for book in self.books],
+        }
+
+    @classmethod
+    def from_dict(cls, data: Json) -> "BookDump":
+        return cls(
+            datetime.strptime(data["timestamp"], READABLE_TIMESTAMP_FORMAT),
+            [BookData.from_dict(book) for book in data["books"]],
+        )
+
+
+def load_authors(*author_jsons: PathLike) -> List[AuthorDump]:
+    """Deserialize JSON files with author data into a list of data objects.
     """
-    def __init__(self, distribution: Dict[int | float, int]) -> None:
-        super().__init__(distribution=distribution, rank_scheme=(1, 2, 3, 4, 5))
-
-    @property
-    def one_star_ratings(self) -> int:
-        return self.ratings(1)
-
-    @property
-    def one_star_percent(self) -> str:
-        return self.ratings_percent(1)
-
-    @property
-    def two_stars_ratings(self) -> int:
-        return self.ratings(2)
-
-    @property
-    def two_star_percent(self) -> str:
-        return self.ratings_percent(2)
-
-    @property
-    def three_stars_ratings(self) -> int:
-        return self.ratings(3)
-
-    @property
-    def three_star_percent(self) -> str:
-        return self.ratings_percent(3)
-
-    @property
-    def four_stars_ratings(self) -> int:
-        return self.ratings(4)
-
-    @property
-    def four_star_percent(self) -> str:
-        return self.ratings_percent(4)
-
-    @property
-    def five_stars_ratings(self) -> int:
-        return self.ratings(5)
-
-    @property
-    def five_star_percent(self) -> str:
-        return self.ratings_percent(5)
-
-    @property
-    def as_dict(self) -> OrderedDict[int | float, int]:
-        return self.scaled_dist
+    authors = []
+    for author_json in author_jsons:
+        author_json = getfile(author_json, ext=".json")
+        data = json.loads(author_json.read_text(encoding="utf8"))
+        authors.append(AuthorDump.from_dict(data))
+    return authors
 
 
-class ReviewsDistribution:
-    """Language based reviews distribution.
+def load_books(*book_jsons: PathLike) -> List[BookDump]:
+    """Deserialize JSON files with book data into a list of data objects.
     """
-    @property
-    def dist(self) -> OrderedDict[str, int]:
-        return self._dist
+    books = []
+    for book_json in book_jsons:
+        books_json = getfile(book_json, ext=".json")
+        data = json.loads(books_json.read_text(encoding="utf8"))
+        books.append(BookDump.from_dict(data))
+    return books
 
-    @property
-    def dist_by_reviews(self) -> OrderedDict[str, int]:
-        return OrderedDict(sorted([(lang, r) for lang, r in self.dist.items()],
-                                  key=lambda pair: pair[1], reverse=True))
 
-    @property
-    def langnames_dist(self) -> OrderedDict[str, int]:
-        return OrderedDict(sorted([(langcode2name(lang), r) for lang, r in self.dist.items()]))
+def _dump_data(data: AuthorDump | BookDump, **kwargs: Any) -> None:
+    """Dump the provided data to a JSON file.
 
-    @property
-    def alpha3_dist(self) -> OrderedDict[str, int]:
-        return OrderedDict(sorted([(name2langcode(langcode2name(lang), alpha3=True), r)
-                                   for lang, r in self.dist.items()]))
+    Recognized optional arguments:
+        use_timestamp: whether to append a timestamp to the dumpfile's name (default: True)
+        prefix: a prefix for a dumpfile's name
+        filename: a complete filename for the dumpfile (renders moot other filename-concerned arguments)
+        output_dir: an output directory (if not provided, defaults to OUTPUT_DIR)
 
-    @property
-    def total(self) -> int:
-        return sum(reviews for _, reviews in self.dist.items())
+    Args:
+        data: the data to dump
+        kwargs: optional arguments
+    """
+    prefix = kwargs.get("prefix") or ""
+    prefix = f"{prefix}_" if prefix else ""
+    use_timestamp = kwargs.get("use_timestamp") if kwargs.get("use_timestamp") is not None else \
+        True
+    timestamp = f"_{data.timestamp.strftime(FILENAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
+    output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
+    output_dir = getdir(output_dir)
+    filename = kwargs.get("filename")
+    if filename:
+        filename = filename
+    else:
+        filename = f"{prefix}dump{timestamp}.json"
 
-    def __init__(self, distribution: Dict[str, int]) -> None:
-        """Initialize.
+    dest = output_dir / filename
+    with dest.open("w", encoding="utf8") as f:
+        json.dump(data.as_dict, f, indent=4, ensure_ascii=False)
 
-        Args:
-            distribution: a mapping of 2-letter ISO language codes to number of reviews written in that language
-        """
-        self._dist = OrderedDict(
-            sorted([(lang, r) for lang, r in distribution.items() if tag_is_valid(lang)]))
+    if dest.exists():
+        _log.info(f"Successfully dumped '{dest}'")
 
-    def reviews(self, lang: str) -> int | None:
-        """Return number of reviews for the language specified or `None`.
 
-        Args:
-            lang: either a language code or language name
-        """
-        reviews = self.dist.get(lang)
-        if reviews is None:
-            reviews = self.langnames_dist.get(lang)
-            if reviews is None:
-                reviews = self.alpha3_dist.get(lang)
-                if reviews is None:
-                    return None
-        return reviews
+@timed("authors data dump", precision=1)
+def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
+    """Scrape data on ``authors`` and dump it to JSON.
 
-    def reviews_percent(self, lang: str) -> str:
-        reviews = self.reviews(lang)
-        if reviews is None:
-            raise ValueError(f"Unrecognized language: {lang!r}")
-        percent = reviews * 100 / self.total
-        return f"{percent:.2f} %"
+    Providing Goodreads authors IDs as 'authors' cuts the needed number of requests by half.
 
-    def __repr__(self) -> str:
-        return repr(self.dist).replace("OrderedDict", self.__class__.__name__)
+    Recognized optional arguments:
+        use_timestamp: whether to append a timestamp to the dumpfile's name (default: True)
+        filename: a complete filename for the dumpfile (renders moot other filename-concerned arguments)
+        output_dir: an output directory (if not provided, defaults to OUTPUT_DIR)
 
-    @property
-    def as_dict(self) -> OrderedDict[str, int]:
-        return self.dist
+    Args:
+        authors: variable number of author full names or Goodread author IDs
+        prefix: a prefix for a dumpfile's name
+        kwargs: optional arguments
+    """
+    try:
+        scraped = sorted(scrape_goodreads_data(*authors, scrape_authors=True),
+                         key=lambda author: author.name.casefold())
+        data = AuthorDump(datetime.now(), [AuthorData(author) for author in scraped])
+        _dump_data(data, prefix=prefix, **kwargs)
+    except Exception as e:
+        _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
+
+
+@timed("books data dump", precision=1)
+def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any) -> None:
+    """Scrape data on books specified by provided cues and dump it to JSON.
+
+    Providing Goodreads book IDs as 'book_cues' cuts the needed number of requests considerably.
+    If not provided, specifying 'authors_data' in optional arguments speeds up derivation of the
+    needed IDs.
+
+    Recognized optional aguments:
+        authors_data: iterable of previously scraped data objects containing Goodreads author IDs
+        use_timestamp: whether to append a timestamp to the dumpfile's name
+        filename: a complete filename for the dumpfile (renders moot other filename-concerned arguments)
+        output_dir: an output directory (if not provided, defaults to OUTPUT_DIR)
+
+    Args:
+        book_cues: variable number of either Goodreads book IDs or (title, author) tuples
+        prefix: a prefix for a dumpfile's name
+        kwargs: optional arguments
+    """
+    try:
+        scraped = scrape_goodreads_data(
+            *book_cues, authors_data=kwargs.get("authors_data") or kwargs.get("author_data"))
+        scraped = sorted(scraped, key=lambda book: book.title.casefold())
+        data = BookDump(datetime.now(), [BookData(book) for book in scraped])
+        _dump_data(data, prefix=prefix, **kwargs)
+    except Exception as e:
+        _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
+
+
+def update_authors(*authors_jsons: PathLike) -> None:
+    """For each ``authors_json`` specified, deserialize it, extract Goodreads author IDs,
+    scrape those authors again and save the scraped data at the previous location (with updated
+    file timestamp).
+
+    Args:
+        authors_jsons: vairable number of paths to a JSON files saved earlier by dump_authors()
+    """
+    for authors_json in authors_jsons:
+        output_dir = getfile(authors_json).parent
+        _log.info(f"Updating '{authors_json}'...")
+        data = load_authors(authors_json)
+        if not data:
+            continue
+        data = data[0]
+        authors = data.authors
+        ids = [author.goodreads.id for author in authors]
+        dump_authors(*ids, output_dir=output_dir)
+
+
+def update_books(*books_jsons: PathLike) -> None:
+    """For each ``books_json`` specified, deserialize it, extract Goodreads book IDs,
+    scrape those books again and save the scraped data at the previous location (with updated
+    file timestamp).
+
+    Args:
+        books_jsons: vairable number of paths to a JSON files saved earlier by dump_books()
+    """
+    for books_json in books_jsons:
+        output_dir = getfile(books_json).parent
+        _log.info(f"Updating '{books_json}'...")
+        data = load_books(books_json)
+        if not data:
+            continue
+        data = data[0]
+        books = data.books
+        ids = [book.goodreads.book_id for book in books]
+        dump_books(*ids, output_dir=output_dir)
+
+
+def update_tolkien() -> None:
+    """Update J.R.R. Tolkien's data that is used as a measuring stick for calculating renown in
+    author/book stats.
+    """
+    outputdir = Path(__file__).parent.parent / "data"
+    dump_authors("656983.J_R_R_Tolkien", outputdir=outputdir, filename="tolkien.json")
+    dump_books("5907.The_Hobbit", outputdir=outputdir, filename="hobbit.json")
+
+
+# def dumps2ids(book_records: Iterable[BookRecord],
+#               *book_jsons: PathLike) -> Generator[Author | DetailedBook,]:
+#     books = []

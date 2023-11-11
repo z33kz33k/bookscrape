@@ -15,8 +15,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from bookscrape.constants import Json, READABLE_TIMESTAMP_FORMAT
-from bookscrape.scrape import FiveStars, ReviewsDistribution, Renown
+from bookscrape.scrape.stats import FiveStars, Renown, ReviewsDistribution
 from bookscrape.utils import from_iterable, getfile, timedelta2years
+
+
+PROVIDER = "www.goodreads.com"
 
 
 def _load_tolkien() -> Tuple[int, int]:
@@ -28,8 +31,8 @@ def _load_tolkien() -> Tuple[int, int]:
         raise ValueError(f"No data in '{source}'")
 
     try:
-        tolkien_ratings = data["authors"][0]["stats"]["ratings"]
-        hobbit_ratings = data["authors"][0]["top_books"][0]["ratings"]
+        tolkien_ratings = data["authors"][0][PROVIDER]["stats"]["ratings"]
+        hobbit_ratings = data["authors"][0][PROVIDER]["top_books"][0]["ratings"]
     except (KeyError, IndexError):
         raise ValueError(f"Invalid data in '{source}'")
     return tolkien_ratings, hobbit_ratings
@@ -317,7 +320,7 @@ class BookDetails:
     characters: List[str]
 
     @property
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> Json:
         data = {
             "description": self.description,
             "main_edition": self.main_edition.as_dict,
@@ -334,7 +337,7 @@ class BookDetails:
         return data
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "BookDetails":
+    def from_dict(cls, data: Json) -> "BookDetails":
         return cls(
             data["description"],
             MainEdition.from_dict(data["main_edition"]),
@@ -432,7 +435,7 @@ class BookStats:
         return f"{e2r:.3f} %"
 
     @property
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> Json:
         return {
             "ratings": self.ratings.as_dict,
             "avg_rating": round(self.avg_rating, 4),
@@ -451,7 +454,7 @@ class BookStats:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "BookStats":
+    def from_dict(cls, data: Json) -> "BookStats":
         return cls(
             FiveStars({int(k): v for k, v in data["ratings"].items()}),
             ReviewsDistribution(data["reviews"]),
@@ -526,4 +529,5 @@ class DetailedBook:
             "shelvings_per_year": round(self.stats.total_shelves / years, 2),
             "editions_per_year": round(self.stats.total_editions / years, 2),
         }
+
 

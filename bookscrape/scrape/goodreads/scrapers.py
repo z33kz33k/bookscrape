@@ -12,17 +12,18 @@ import json
 import logging
 from collections import OrderedDict, defaultdict, namedtuple
 from datetime import datetime, timedelta
-from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
+from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Set, Tuple
 
 import backoff
 import pytz
 from bs4 import BeautifulSoup, Tag
 from requests import Timeout
 
-from bookscrape.scrape import FiveStars, ParsingError, ReviewsDistribution, getsoup, throttled
+from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
 from bookscrape.scrape.goodreads.data import Author, AuthorStats, Book, BookAward, BookDetails, \
     BookSeries, BookSetting, BookStats, DetailedBook, MainEdition, SimpleAuthor, _ScriptTagData
-from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
+from bookscrape.scrape.stats import FiveStars, ReviewsDistribution
+from bookscrape.scrape.utils import getsoup, throttled, ParsingError
 from bookscrape.utils import extract_float, extract_int, from_iterable, name2langcode, timed
 
 _log = logging.getLogger(__name__)
@@ -476,7 +477,7 @@ class BookScraper:
         return self._series_id
 
     def __init__(self, book: str, author: str | None = None,
-                 authors_data: _AuthorsData | None = None) -> None:
+                 authors_data: Iterable[Author] | None = None) -> None:
         """Provide either a Goodreads book ID or book's title and author (either their full
         name or their Goodreads ID) to scrape detailed data on it.
 
@@ -488,7 +489,7 @@ class BookScraper:
         Args:
             book: Goodreads book ID or, optionally, its title and...
             author: optionally, book author's full name or Goodreads author ID
-            authors_data: optionally, data as read from JSON saved by dump_authors()
+            authors_data: optionally, previously scraped authors data to speed up book IDs derivation
         """
         if is_goodreads_id(book):
             self._book_id = book
@@ -534,7 +535,8 @@ class BookScraper:
         return book
 
     @classmethod
-    def book_id_from_data(cls, title: str, author: str, authors_data: _AuthorsData) -> str | None:
+    def book_id_from_data(cls, title: str, author: str,
+                          authors_data: Iterable[Author]) -> str | None:
         """Derive Goodreads book ID from provided authors data.
 
         Args:
@@ -545,11 +547,11 @@ class BookScraper:
         Returns:
             derived book ID or None
         """
-        authors: List[Author] = authors_data["authors"]
         if is_goodreads_id(author):
-            author = from_iterable(authors, lambda a: a.id == author)
+            author = from_iterable(authors_data, lambda a: a.id == author)
         else:
-            author = from_iterable(authors, lambda a: a.name.casefold() == author.casefold())
+            author = from_iterable(
+                authors_data, lambda a: a.name.casefold() == author.casefold())
         if not author:
             return None
         book = cls._find_book_in_author_books(author, title)
@@ -576,7 +578,7 @@ class BookScraper:
 
     @classmethod
     def find_book_id(cls, title: str, author: str,
-                     authors_data: _AuthorsData | None = None) -> str | None:
+                     authors_data: Iterable[Author] | None = None) -> str | None:
         """Find Goodreads book ID based on provided arguments.
 
         Performs the look-up on ``authors_data`` if provided. Otherwise, scrapes Goodreads author
@@ -585,7 +587,7 @@ class BookScraper:
         Args:
             title: book's title
             author: book's author or author ID
-            authors_data: data as read from JSON saved by dump_authors()
+            authors_data: iterable of Author data objects or None
 
         Returns:
             book ID found or None

@@ -21,7 +21,7 @@ import pandas as pd
 
 from bookscrape.constants import Json
 from bookscrape.utils import first_df_row_as_columns, getfile
-from bookscrape.scrape import getsoup
+from bookscrape.scrape.utils import getsoup
 
 _log = logging.getLogger(__name__)
 URL = "http://www.nicholaswhyte.info/sf/nh2.htm"
@@ -111,7 +111,7 @@ class Work:
         """Overload '==' operator.
 
         NOTE: this solution was based on:
-        https://stackoverflow.com/questions/390250/elegant-ways-to-support-equivalence-equality-in-python-classes)
+        https://stackoverflow.com/questions/390250/elegant-ways-to-support-equivalence-equality-in-python-classes
         """
         if isinstance(self, other.__class__):
             return self.title.lower() == other.title.lower()
