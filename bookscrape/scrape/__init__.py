@@ -288,9 +288,9 @@ def extract_matching_ids(book_records: Iterable[Tuple[str, str]],
     books = books_data(*book_jsons)
     ids_map = {}
     for book in books:
-        ids_map[(book.title, book.authors[0].name)] = book.book_id
+        ids_map[(book.title.casefold(), book.authors[0].name.casefold())] = book.book_id
     for title, author in book_records:
-        if book_id := ids_map.get((title, author)):
+        if book_id := ids_map.get((title.casefold(), author.casefold())):
             yield book_id
         else:
             if blank is not None:

@@ -351,7 +351,7 @@ class BookDetails:
 
 @dataclass
 class _ScriptTagData:
-    title: Optional[str]
+    original_title: Optional[str]
     work_id: str
     ratings: FiveStars
     reviews: ReviewsDistribution
@@ -470,6 +470,7 @@ class BookStats:
 @dataclass
 class DetailedBook:
     title: str
+    original_title: str
     book_id: str
     work_id: str
     authors: List[SimpleAuthor]
@@ -493,6 +494,7 @@ class DetailedBook:
         data = {
             "title": self.title,
             "complete_title": self.complete_title,
+            "original_title": self.original_title,
             "book_id": self.book_id,
             "work_id": self.work_id,
             "authors": [author.as_dict for author in self.authors],
@@ -508,6 +510,7 @@ class DetailedBook:
     def from_dict(cls, data: Dict[str, Any]) -> "DetailedBook":
         return cls(
             data["title"],
+            data["original_title"],
             data["book_id"],
             data["work_id"],
             [SimpleAuthor.from_dict(author) for author in data["authors"]],

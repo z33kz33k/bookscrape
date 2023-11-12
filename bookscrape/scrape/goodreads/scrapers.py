@@ -10,6 +10,7 @@
 import itertools
 import json
 import logging
+import re
 from collections import OrderedDict, defaultdict, namedtuple
 from datetime import datetime, timedelta
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Set, Tuple
@@ -406,6 +407,8 @@ class _ScriptTagParser:
                 raise ParsingError(
                     f"Could not parse work ID from URL: {self._work_data['details']['webUrl']}")
             original_title = self._work_data["details"]["originalTitle"].strip()
+            # sanitize "Dauntless (The Lost Fleet, #1)" cases
+            original_title = re.sub(r"\s\(.+#\d{1,2}\)$", "", original_title)
             first_publication = self._work_data["details"]["publicationTime"]
             first_publication = self._parse_timestamp(
                 first_publication) if first_publication is not None else None
@@ -450,7 +453,7 @@ class _ScriptTagParser:
             raise ParsingError(f"A key on 'script' tag data is unavailable: {ke}")
 
         return _ScriptTagData(
-            title=original_title,
+            original_title=original_title,
             work_id=work_id,
             ratings=ratings,
             reviews=reviews,
@@ -714,16 +717,15 @@ class BookScraper:
 
     # response is so slow it doesn't need throttling
     # besides, _parse_authors_line() calls is already throttled
-    def _parse_book_page(self) -> Tuple[_ScriptTagData, List[SimpleAuthor], str]:
+    def _parse_book_page(self) -> Tuple[_ScriptTagData, str, List[SimpleAuthor], str]:
         soup = getsoup(self._url)
         script_data = self._parse_meta_script_tag(soup)
+        title = self._parse_title(soup)
         authors = self._parse_authors_line(soup)
         series_id = self._parse_series_id(soup)
-        if not script_data.title:
-            script_data.title = self._parse_title(soup)
         if script_data.first_publication is None:
             script_data.first_publication = self._parse_first_publication(soup)
-        return script_data, authors, series_id
+        return script_data, title, authors, series_id
 
     @staticmethod
     def _validate_series_div(div: Tag) -> bool:
@@ -850,7 +852,7 @@ class BookScraper:
         return ordered, total_editions
 
     def _scrape_book(self) -> DetailedBook:
-        script_data, authors, self._series_id = self._parse_book_page()
+        script_data, title, authors, self._series_id = self._parse_book_page()
         self._work_id = script_data.work_id
         self._set_secondary_urls()
         series = self._parse_series_page() if self.series_id else None
@@ -866,7 +868,8 @@ class BookScraper:
             total_editions=total_editions,
         )
         return DetailedBook(
-            title=script_data.title,
+            title=title,
+            original_title=script_data.original_title,
             book_id=self.book_id,
             work_id=self.work_id,
             authors=authors,

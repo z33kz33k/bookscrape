@@ -24,23 +24,27 @@ PROPER_AUTHORS = {
     "Stanislaw Lem": "Stanisław Lem",
 }
 PROPER_TITLES = {
-    "The Island of Doctor Moreau": "The Island of Dr. Moreau",
-    "Planet of the Apes (aka Monkey Planet)": "Planet of the Apes",
-    "The Songs of Distant Earth": "Songs of Distant Earth",
     "Galapagos": "Galápagos",
     "How to Live Safely in a Sci-Fi Universe": "How to Live Safely in a Science Fictional Universe",
+    "Planet of the Apes (aka Monkey Planet)": "Planet of the Apes",
     "Readme": "Reamde",
+    "The Island of Doctor Moreau": "The Island of Dr. Moreau",
+    "The Long Way to a Small Angry Planet": "The Long Way to a Small, Angry Planet",
+    "The Real Story": "The Gap Into Conflict",
+    "The Songs of Distant Earth": "Songs of Distant Earth",
+    "The Word for World is Forest": "The Word for World Is Forest",
+    "Restaurant at the End of the Universe": "The Restaurant at the End of the Universe",
 }
 
 
-def scrape_authors(*cues: str | Tuple[str, str]) -> Generator[Author | DetailedBook, None, None]:
+def scrape_authors(*cues: str | Tuple[str, str]) -> Generator[Author, None, None]:
     """Scrape Goodreads for authors data according to the parameters provided.
 
     Cues can be either full author names or Goodreads author IDs.
     For book scraping cues can be either (title, author) tuples or Goodreads book IDs.
 
     Args:
-        cues: variable number of input arguments for the scraping specified
+        cues: variable number of author full names or Goodread author IDs
     """
     for i, cue in enumerate(cues, start=1):
         _log.info(f"Scraping {PROVIDER} for item #{i}: '{cue}'...")
@@ -53,7 +57,7 @@ def scrape_authors(*cues: str | Tuple[str, str]) -> Generator[Author | DetailedB
 
 
 def scrape_books(*cues: str | Tuple[str, str], authors_data: Iterable[Author] | None = None
-                 ) -> Generator[Author | DetailedBook, None, None]:
+                 ) -> Generator[DetailedBook, None, None]:
     """Scrape Goodreads for books data according to the parameters provided.
 
     Cues can be either (title, author) tuples or Goodreads book IDs.
@@ -62,7 +66,7 @@ def scrape_books(*cues: str | Tuple[str, str], authors_data: Iterable[Author] | 
     objects can be provided to speed up book IDs derivation.
 
     Args:
-        cues: variable number of input arguments for the scraping specified
+        cues: variable number of either Goodreads book IDs or (title, author) tuples
         authors_data: optionally, iterable of Author data objects
     """
     for i, cue in enumerate(cues, start=1):
@@ -73,6 +77,26 @@ def scrape_books(*cues: str | Tuple[str, str], authors_data: Iterable[Author] | 
             else:
                 scraper = BookScraper(*cue, authors_data=authors_data)
             yield scraper.scrape()
+        except Exception as e:
+            _log.error(f"{type(e).__qualname__}. Skipping...\n{traceback.format_exc()}")
+            continue
+
+
+def scrape_book_ids(*book_records: Tuple[str, str], authors_data: Iterable[Author] | None = None
+                    ) -> Generator[str, None, None]:
+    """Scrape Goodreads for books IDs according to the (title, author) records provided.
+
+    Previously scraped Author data objects can be provided to speed up book IDs derivation.
+
+    Args:
+        book_records: variable number of (title, author) records
+        authors_data: optionally, iterable of Author data objects
+    """
+    for i, record in enumerate(book_records, start=1):
+        _log.info(f"Scraping {PROVIDER} for item #{i}: '{record}'...")
+        try:
+            scraper = BookScraper(*record, authors_data=authors_data)
+            yield scraper.book_id
         except Exception as e:
             _log.error(f"{type(e).__qualname__}. Skipping...\n{traceback.format_exc()}")
             continue
