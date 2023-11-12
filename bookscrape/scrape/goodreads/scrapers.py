@@ -40,6 +40,7 @@ class AuthorScraper:
     most popular books.
     """
     URL_TEMPLATE = "https://www.goodreads.com/author/list/{}"
+    EXTENEDED_URL_TEMPLATE = "https://www.goodreads.com/author/list/{}?page=1&per_page=100"
 
     @property
     def author_name(self) -> str | None:
@@ -219,8 +220,7 @@ class AuthorScraper:
         return Book(title, id_, avg, ratings, published, editions)
 
     @throttled(THROTTLING_DELAY)
-    def _parse_author_page_contents(self) -> Tuple[List[Tag], AuthorStats]:
-        url = self.URL_TEMPLATE.format(self.author_id)
+    def _parse_author_page_contents(self, url: str) -> Tuple[List[Tag], AuthorStats]:
         soup = getsoup(url)
         container = soup.find("div", class_="leftContainer")
         name_tag = container.find("a", class_="authorName")
@@ -238,22 +238,30 @@ class AuthorScraper:
         rows = table.find_all("tr")
         return rows, stats
 
-    def _parse_author_page(self) -> Author:
+    def _parse_author_page(self, extended_top_books=False) -> Author:
         """Parse Goodreads 'Books by author' page and return an author object.
 
-        Example URL:
+        Example URLs:
             https://www.goodreads.com/author/list/7415.Harlan_Ellison
+            https://www.goodreads.com/author/list/7415.Harlan_Ellison?page=1&per_page=100
 
         Returns:
             an Author object
         """
-        rows, stats = self._parse_author_page_contents()
+        if extended_top_books:
+            url = self.EXTENEDED_URL_TEMPLATE.format(self.author_id)
+        else:
+            url = self.URL_TEMPLATE.format(self.author_id)
+        rows, stats = self._parse_author_page_contents(url)
         top_books = [self._parse_book_table_row(row) for row in rows]
         return Author(self.author_name, self.author_id, stats, top_books)
 
     @timed("author scraping")
-    def scrape(self) -> Author | SimpleAuthor:
-        """Scrape Goodreads for either full or simplified author data.
+    def scrape(self, extended_top_books=False) -> Author | SimpleAuthor:
+        """Scrape Goodreads for author data.
+
+        Args:
+            extended_top_books: if True, scrape 100 top books instead of Goodreads's default of 30
 
         Returns:
             an Author or SimpleAuthor (if called on SimpleAuthorParser) object
@@ -261,7 +269,7 @@ class AuthorScraper:
         try:
             if not self.author_id:
                 self._author_id = self.find_author_id(self.author_name)
-            author = self._parse_author_page()
+            author = self._parse_author_page(extended_top_books)
         except HTTPError as e:
             _log.warning(f"Goodreads had a hiccup ({e}). Retrying with backoff "
                          "(60 seconds max)...")
@@ -269,18 +277,18 @@ class AuthorScraper:
         except Timeout:
             _log.warning("Goodreads doesn't play nice. Timeout exceeded. Retrying with backoff "
                          "(60 seconds max)...")
-            return self.scrape_with_backoff()
+            return self.scrape_with_backoff(extended_top_books)
         return author
 
     @timed("author scraping (with backoff)")
     @backoff.on_exception(backoff.expo, (Timeout, HTTPError), max_time=60)
-    def scrape_with_backoff(self) -> Author | SimpleAuthor:
+    def scrape_with_backoff(self, extended_top_books=False) -> Author | SimpleAuthor:
         """Scrape Goodreads for either full or simplified author data with (one minute max)
         backoff on timeout.
         """
         if not self.author_id:
             self._author_id = self.find_author_id(self.author_name)
-        return self._parse_author_page()
+        return self._parse_author_page(extended_top_books)
 
 
 class SimpleAuthorScraper(AuthorScraper):
@@ -299,7 +307,7 @@ class SimpleAuthorScraper(AuthorScraper):
             row: a BeautifulSoup Tag object representing the row
 
         Returns:
-            a Book object
+            a Goodreads book ID
         """
         a = row.find("a")
         if not a:
@@ -312,18 +320,23 @@ class SimpleAuthorScraper(AuthorScraper):
             raise ParsingError(f"Could not extract book's ID from URL: {href!r}")
         return id_
 
-    def _parse_author_page(self) -> SimpleAuthor:  # overridden
+    def _parse_author_page(self, extended_top_books=False) -> SimpleAuthor:  # overridden
         """Parse Goodreads 'Books by author' page and return an author object.
 
-        Example URL:
+        Example URLs:
             https://www.goodreads.com/author/list/7415.Harlan_Ellison
+            https://www.goodreads.com/author/list/7415.Harlan_Ellison?page=1&per_page=100
 
         Returns:
             a SimpleAuthor object
         """
-        rows, stats = self._parse_author_page_contents()
-        top_books = [self._parse_book_table_row(row) for row in rows]
-        return SimpleAuthor(self.author_name, self.author_id, stats, top_books)
+        if extended_top_books:
+            url = self.EXTENEDED_URL_TEMPLATE.format(self.author_id)
+        else:
+            url = self.URL_TEMPLATE.format(self.author_id)
+        rows, stats = self._parse_author_page_contents(url)
+        top_book_ids = [self._parse_book_table_row(row) for row in rows]
+        return SimpleAuthor(self.author_name, self.author_id, stats, top_book_ids)
 
 
 class _ScriptTagParser:
@@ -574,10 +587,14 @@ class BookScraper:
         Returns:
             fetched book ID or None
         """
-        author = AuthorScraper(author).scrape()
+        scraper = AuthorScraper(author)
+        author = scraper.scrape()
         book = cls._find_book_in_author_books(author, title)
         if not book:
-            return None
+            author = scraper.scrape(extended_top_books=True)
+            book = cls._find_book_in_author_books(author, title)
+            if not book:
+                return None
         return book.id
 
     @classmethod

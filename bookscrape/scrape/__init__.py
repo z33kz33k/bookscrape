@@ -271,12 +271,16 @@ def books_data(*book_jsons: PathLike) -> List[GoodreadsBook]:
 
 
 def extract_matching_ids(book_records: Iterable[Tuple[str, str]],
-                         *book_jsons: PathLike) -> Generator[str, None, None]:
+                         *book_jsons: PathLike,
+                         blank: str | None = None) -> Generator[str, None, None]:
     """Yield Goodreads book IDs from book JSON dumps that match the provided book records.
+
+    If blank is not None, it is yielded instead of an ID that cannot be matched.
 
     Args:
         book_records: (title, author) tuples to match
         *book_jsons: JSON files saved earlier by dump_books()
+        blank: a value to yield instead of an ID that cannot be matched
 
     Returns:
         a generator of Goodreads book IDs
@@ -288,3 +292,6 @@ def extract_matching_ids(book_records: Iterable[Tuple[str, str]],
     for title, author in book_records:
         if book_id := ids_map.get((title, author)):
             yield book_id
+        else:
+            if blank is not None:
+                yield blank
