@@ -93,12 +93,10 @@ def save_to_gsheets_col(values: List[str], spreadsheet: str, worksheet: str, col
                         start_row=1) -> None:
     """Save a list of strings to a Google Sheets worksheet.
     """
-    _log.info("Saving to Google Sheets...")
     if col < 1 or start_row < 1:
         raise ValueError("Column and start row must be positive integers")
     worksheet = _worksheet(spreadsheet, worksheet)
-    for i, value in enumerate(values, start_row):
-        worksheet.update_cell(i, col, value)
+    worksheet.insert_rows([[value] for value in values], row=start_row)
 
 
 def save_ids_to_sf_lists_sheet(book_ids: List[str], col: int) -> None:

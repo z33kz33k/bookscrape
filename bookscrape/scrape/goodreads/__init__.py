@@ -78,8 +78,7 @@ def scrape_book_ids(*book_records: Tuple[str, str], authors_data: Iterable[Autho
     for i, record in enumerate(book_records, start=1):
         _log.info(f"Scraping {PROVIDER} for item #{i}: '{record}'...")
         try:
-            scraper = BookScraper(record, authors_data=authors_data)
-            yield scraper.book_id
+            yield BookScraper(record, authors_data=authors_data).book_id
         except Exception as e:
             _log.error(f"{type(e).__qualname__}. Skipping...\n{traceback.format_exc()}")
             continue
