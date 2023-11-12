@@ -30,8 +30,8 @@ def _worksheet(spreadsheet: str, worksheet: str) -> gspread.Worksheet:
 
 
 @timed("retrieving from Google Sheets")
-def retrieve_gsheets_col(spreadsheet: str, worksheet: str,
-                         col=1, start_row=1, ignore_none=True) -> List[str]:
+def retrieve_from_gsheets_col(spreadsheet: str, worksheet: str, col=1, start_row=1,
+                              ignore_none=True) -> List[str]:
     """Retrieve a list of string values from a Google Sheets worksheet.
     """
     if col < 1 or start_row < 1:
@@ -47,7 +47,7 @@ def retrieve_sf_authors() -> List[str]:
     """Retrieve a list of author names from 'sf_books' private Google sheet.
     """
     _log.info("Retrieving author names from Google Sheets...")
-    items = retrieve_gsheets_col("sf_books", "books", 4, 4)
+    items = retrieve_from_gsheets_col("sf_books", "books", 4, 4)
     authors = set()
     for item in items:
         if "," in item:
@@ -64,8 +64,8 @@ def retrieve_sf_book_records() -> List[BookRecord]:
     """Retrieve a list of book records from 'sf_books' private Google sheet.
     """
     _log.info("Retrieving book records from Google Sheets...")
-    titles = [title.strip() for title in retrieve_gsheets_col("sf_books", "books", 2, 4)]
-    author_tokens = retrieve_gsheets_col("sf_books", "books", 4, 4)
+    titles = [title.strip() for title in retrieve_from_gsheets_col("sf_books", "books", 2, 4)]
+    author_tokens = retrieve_from_gsheets_col("sf_books", "books", 4, 4)
     authors = []
     for token in author_tokens:
         if "," in token:
@@ -82,15 +82,15 @@ def retrieve_sf_book_ids() -> List[str]:
     """Retrieve a list of book IDs from 'sf_books' private Google sheet.
     """
     _log.info("Retrieving book IDs from Google Sheets...")
-    ids = [url2id(url) for url in retrieve_gsheets_col("sf_books", "books", 3, 4)]
+    ids = [url2id(url) for url in retrieve_from_gsheets_col("sf_books", "books", 3, 4)]
     _log.info(f"Retrieved {len(ids)} book IDs")
     return ids
 
 
 @timed("saving to Google Sheets")
 @generic_iterable_type_checker(str)
-def save_gsheets_col(values: List[str], spreadsheet: str, worksheet: str, col=1,
-                     start_row=1) -> None:
+def save_to_gsheets_col(values: List[str], spreadsheet: str, worksheet: str, col=1,
+                        start_row=1) -> None:
     """Save a list of strings to a Google Sheets worksheet.
     """
     _log.info("Saving to Google Sheets...")
@@ -101,9 +101,9 @@ def save_gsheets_col(values: List[str], spreadsheet: str, worksheet: str, col=1,
         worksheet.update_cell(i, col, value)
 
 
-def save_sf_lists_ids(book_ids: List[str], col: int) -> None:
-    """Save a list of Goodreads book IDs to 'sf_books' private Google sheet.
+def save_ids_to_sf_lists_sheet(book_ids: List[str], col: int) -> None:
+    """Save a list of Goodreads book IDs to 'sf_lists_ids' private Google sheet.
     """
     _log.info("Saving book IDs to Google Sheets...")
-    save_gsheets_col(book_ids, "sf_books", "sf_lists_ids", col, 2)
+    save_to_gsheets_col(book_ids, "sf_books", "sf_lists_ids", col, 2)
     _log.info(f"Saved {len(book_ids)} book IDs")

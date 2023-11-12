@@ -2,7 +2,7 @@
 
     bookscrape.scrape.toplists.py
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Scrape internet lists of top SF books for book (title, author) data.
+    Scrape internet lists of top books for book (title, author) data.
 
     @author: z33k
 

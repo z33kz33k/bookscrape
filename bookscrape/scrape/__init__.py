@@ -15,9 +15,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Generator, Iterable, List, Tuple
 
-from bookscrape.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, PathLike, \
+from bookscrape.constants import BookRecord, FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, PathLike, \
     READABLE_TIMESTAMP_FORMAT
-from bookscrape.scrape.goodreads import scrape_data as scrape_goodreads_data
+from bookscrape.scrape.goodreads import scrape_authors as scrape_goodreads_authors
+from bookscrape.scrape.goodreads import scrape_books as scrape_goodreads_books
 from bookscrape.scrape.goodreads.data import PROVIDER as GOODREADS
 from bookscrape.scrape.goodreads.data import Author as GoodreadsAuthor
 from bookscrape.scrape.goodreads.data import DetailedBook as GoodreadsBook
@@ -167,10 +168,13 @@ def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
         kwargs: optional arguments
     """
     try:
-        scraped = sorted(scrape_goodreads_data(*authors, scrape_authors=True),
+        scraped = sorted(scrape_goodreads_authors(*authors),
                          key=lambda author: author.name.casefold())
-        data = AuthorDump(datetime.now(), [AuthorData(author) for author in scraped])
-        _dump_data(data, prefix=prefix, **kwargs)
+        if scraped:
+            data = AuthorDump(datetime.now(), [AuthorData(author) for author in scraped])
+            _dump_data(data, prefix=prefix, **kwargs)
+        else:
+            _log.warning("Nothing has beenb scraped")
     except Exception as e:
         _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
@@ -195,11 +199,14 @@ def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any)
         kwargs: optional arguments
     """
     try:
-        scraped = scrape_goodreads_data(
+        scraped = scrape_goodreads_books(
             *book_cues, authors_data=kwargs.get("authors_data") or kwargs.get("author_data"))
-        scraped = sorted(scraped, key=lambda book: book.title.casefold())
-        data = BookDump(datetime.now(), [BookData(book) for book in scraped])
-        _dump_data(data, prefix=prefix, **kwargs)
+        if scraped:
+            scraped = sorted(scraped, key=lambda book: book.title.casefold())
+            data = BookDump(datetime.now(), [BookData(book) for book in scraped])
+            _dump_data(data, prefix=prefix, **kwargs)
+        else:
+            _log.warning("Nothing has been scraped")
     except Exception as e:
         _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
@@ -253,6 +260,31 @@ def update_tolkien() -> None:
     dump_books("5907.The_Hobbit", outputdir=outputdir, filename="hobbit.json")
 
 
-# def dumps2ids(book_records: Iterable[Tuple[str, str]],
-#               *book_jsons: PathLike) -> Generator[str, None, None]:
-#     books = []
+def authors_data(*author_jsons: PathLike) -> List[GoodreadsAuthor]:
+    dumps = load_authors(*author_jsons)
+    return [author.goodreads for dump in dumps for author in dump.authors]
+
+
+def books_data(*book_jsons: PathLike) -> List[GoodreadsBook]:
+    dumps = load_books(*book_jsons)
+    return [book.goodreads for dump in dumps for book in dump.books]
+
+
+def extract_matching_ids(book_records: Iterable[Tuple[str, str]],
+                         *book_jsons: PathLike) -> Generator[str, None, None]:
+    """Yield Goodreads book IDs from book JSON dumps that match the provided book records.
+
+    Args:
+        book_records: (title, author) tuples to match
+        *book_jsons: JSON files saved earlier by dump_books()
+
+    Returns:
+        a generator of Goodreads book IDs
+    """
+    books = books_data(*book_jsons)
+    ids_map = {}
+    for book in books:
+        ids_map[(book.title, book.authors[0].name)] = book.book_id
+    for title, author in book_records:
+        if book_id := ids_map.get((title, author)):
+            yield book_id
