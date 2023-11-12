@@ -14,7 +14,6 @@ from bs4 import Tag
 
 from bookscrape.constants import BookRecord
 from bookscrape.scrape.utils import getsoup
-from bookscrape.scrape.goodreads import PROPER_AUTHORS, PROPER_TITLES
 
 
 LISTS = [
@@ -88,7 +87,7 @@ class SffJazzScraper:
     def _sanitize_author(cls, author: str) -> str:
         author = cls._trim_from_sep(author, "[")
         author = cls._trim_from_sep(author, "&")
-        return PROPER_AUTHORS.get(author) or author
+        return author
 
     @staticmethod
     def _sanitize_title(title: str) -> str:
@@ -97,7 +96,7 @@ class SffJazzScraper:
         # non-ascii characters encoded as cp1252 hex escape sequence
         # the logic below translates e.g. '\x97' into '—'
         title = re.sub(r'[^\x00-\x7F]+', lambda m: cp1252_hex_escape_to_utf8(m.group(0)), title)
-        return PROPER_TITLES.get(title) or title
+        return title
 
     @classmethod
     def _parse_row(cls, row: Tag) -> BookRecord:

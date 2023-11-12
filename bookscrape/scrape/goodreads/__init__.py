@@ -19,22 +19,6 @@ _log = logging.getLogger(__name__)
 _BORKED = [
     "44037.Vernor_Vinge",  # works only with ID,
 ]
-PROPER_AUTHORS = {
-    "Mary Shelley": "Mary Wollstonecraft Shelley",
-    "Stanislaw Lem": "Stanisław Lem",
-}
-PROPER_TITLES = {
-    "Galapagos": "Galápagos",
-    "How to Live Safely in a Sci-Fi Universe": "How to Live Safely in a Science Fictional Universe",
-    "Planet of the Apes (aka Monkey Planet)": "Planet of the Apes",
-    "Readme": "Reamde",
-    "The Island of Doctor Moreau": "The Island of Dr. Moreau",
-    "The Long Way to a Small Angry Planet": "The Long Way to a Small, Angry Planet",
-    "The Real Story": "The Gap Into Conflict",
-    "The Songs of Distant Earth": "Songs of Distant Earth",
-    "The Word for World is Forest": "The Word for World Is Forest",
-    "Restaurant at the End of the Universe": "The Restaurant at the End of the Universe",
-}
 
 
 def scrape_authors(*cues: str | Tuple[str, str]) -> Generator[Author, None, None]:

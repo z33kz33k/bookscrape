@@ -64,7 +64,7 @@ class AuthorScraper:
         if is_goodreads_id(author):
             self._author_id = author
         else:
-            self._author_name = author
+            self._author_name = sanitize_input(author)
 
     @staticmethod
     def normalize_name(author_name: str) -> str:
@@ -218,7 +218,7 @@ class AuthorScraper:
         published = datetime(published, 1, 1) if published is not None else None
         editions = cls._parse_editions(row)
 
-        return Book(title, id_, avg, ratings, published, editions)
+        return Book(sanitize_output(title), id_, avg, ratings, published, editions)
 
     @throttled(THROTTLING_DELAY)
     def _parse_author_page_contents(self, url: str) -> Tuple[List[Tag], AuthorStats]:
@@ -227,7 +227,7 @@ class AuthorScraper:
         name_tag = container.find("a", class_="authorName")
         if name_tag is None:
             raise ParsingError("No author name tag")
-        self._author_name = name_tag.text.strip()
+        self._author_name = sanitize_output(name_tag.text)
         # author stats
         div = container.find("div", class_="")
         text = div.text.strip()
@@ -511,6 +511,7 @@ class BookScraper:
         """
         if isinstance(book_cue, tuple):
             book, author = book_cue
+            book, author = sanitize_input(book), sanitize_input(author)
             self._book_id = self.find_book_id(book, author, authors_data)
             if not self._book_id:
                 raise ValueError(f"Could not derive Goodreads book ID from {book_cue}")
@@ -539,18 +540,9 @@ class BookScraper:
     def _find_book_in_author_books(author: Author, title: str) -> Book | None:
         book = from_iterable(author.top_books, lambda b: b.title.casefold() == title.casefold())
         if not book:
-            # Goodreads gets fancy with their apostrophes...
-            book = from_iterable(
-                author.top_books, lambda b: b.title.casefold() == title.replace(
-                    "'", "’").casefold())
             # let's be even less strict...
-            if not book:
-                book = from_iterable(
-                    author.top_books, lambda b: title.casefold() in b.title.casefold())
-                if not book:
-                    book = from_iterable(
-                        author.top_books, lambda b: title.replace(
-                            "'", "’").casefold() in b.title.casefold())
+            book = from_iterable(
+                author.top_books, lambda b: title.casefold() in b.title.casefold())
         return book
 
     @classmethod
@@ -628,7 +620,7 @@ class BookScraper:
             lambda t: t.name == "h1" and t.attrs.get("data-testid") == "bookTitle")
         if tag is None:
             raise ParsingError("No tag with title data")
-        return tag.text
+        return sanitize_output(tag.text)
 
     @staticmethod
     def _parse_first_publication(soup: BeautifulSoup) -> datetime:  # not used
@@ -901,3 +893,43 @@ class BookScraper:
         """Scrape detailed book data from Goodreads with (one minute max) backoff on timeout.
         """
         return self._scrape_book()
+
+
+PROPER_AUTHORS = {
+    "Mary Shelley": "Mary Wollstonecraft Shelley",
+    "Stanislaw Lem": "Stanisław Lem",
+}
+PROPER_TITLES = {
+    "Galapagos": "Galápagos",
+    "How to Live Safely in a Sci-Fi Universe": "How to Live Safely in a Science Fictional Universe",
+    "Planet of the Apes (aka Monkey Planet)": "Planet of the Apes",
+    "Readme": "Reamde",
+    "The Island of Doctor Moreau": "The Island of Dr. Moreau",
+    "The Long Way to a Small Angry Planet": "The Long Way to a Small, Angry Planet",
+    "The Real Story": "The Gap Into Conflict",
+    "The Songs of Distant Earth": "Songs of Distant Earth",
+    "The Word for World is Forest": "The Word for World Is Forest",
+    "Restaurant at the End of the Universe": "The Restaurant at the End of the Universe",
+}
+
+
+def sanitize_output(text: str) -> str:
+    """Sanitize scraper's output text.
+    """
+    text = text.strip()
+    text = re.sub(r"\s{2,}", " ", text)
+    text = text.replace("’", "'")
+    return text
+
+
+def sanitize_input(text: str) -> str:
+    """Sanitize scraper's input text.
+    """
+    proper_authors = {k.casefold(): v for k, v in PROPER_AUTHORS.items()}
+    proper_titles = {k.casefold(): v for k, v in PROPER_TITLES.items()}
+    text = text.strip()
+    if text.casefold() in proper_authors:
+        return proper_authors[text.casefold()]
+    if text.casefold() in proper_titles:
+        return proper_titles[text.casefold()]
+    return sanitize_output(text)
