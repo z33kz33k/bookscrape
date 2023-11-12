@@ -496,29 +496,28 @@ class BookScraper:
     def series_id(self) -> str | None:
         return self._series_id
 
-    def __init__(self, book: str, author: str | None = None,
+    def __init__(self, book_cue: str | Tuple[str, str],
                  authors_data: Iterable[Author] | None = None) -> None:
         """Provide either a Goodreads book ID or book's title and author (either their full
         name or their Goodreads ID) to scrape detailed data on it.
 
         Information on the book's author is only needed to determine the book's Goodreads ID.
-        The fastest route is to provide both the author's Goodreads ID and authors' JSON data
-        (saved earlier by dump_authors()) that contains info on this author's books. Otherwise,
-        the missing pieces are scraped, with additional requests, from Goodreads.
+        The fastest route is to provide both the author's Goodreads ID and Author objects iterable.
+        Otherwise, the missing pieces are scraped, with additional requests.
 
         Args:
-            book: Goodreads book ID or, optionally, its title and...
-            author: optionally, book author's full name or Goodreads author ID
+            book_cue: Goodreads book ID or (title, author) tuple
             authors_data: optionally, previously scraped authors data to speed up book IDs derivation
         """
-        if is_goodreads_id(book):
-            self._book_id = book
-        else:
-            if not author:
-                raise ValueError("Author must be specified when Book ID not provided")
+        if isinstance(book_cue, tuple):
+            book, author = book_cue
             self._book_id = self.find_book_id(book, author, authors_data)
-        if not self._book_id:
-            raise ValueError("Could not derive Goodreads book ID from provided input")
+            if not self._book_id:
+                raise ValueError(f"Could not derive Goodreads book ID from {book_cue}")
+        elif not isinstance(book_cue, str) or not is_goodreads_id(book_cue):
+            raise ValueError("Book ID or (title, author) tuple must be provided")
+        else:
+            self._book_id = book_cue
         self._work_id = None  # this is different than book_id
         self._series_id = None
         self._url = self.URL_TEMPLATE.format(self.book_id)

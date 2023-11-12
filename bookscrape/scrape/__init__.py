@@ -152,7 +152,7 @@ def _dump_data(data: AuthorDump | BookDump, **kwargs: Any) -> None:
 
 
 @timed("authors data dump", precision=1)
-def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
+def dump_authors(*authors: str, prefix="authors", sort_output=True, **kwargs: Any) -> None:
     """Scrape data on ``authors`` and dump it to JSON.
 
     Providing Goodreads authors IDs as 'authors' cuts the needed number of requests by half.
@@ -165,22 +165,25 @@ def dump_authors(*authors: str, prefix="authors", **kwargs: Any) -> None:
     Args:
         authors: variable number of author full names or Goodread author IDs
         prefix: a prefix for a dumpfile's name
+        sort_output: whether to sort authors by name (default: True)
         kwargs: optional arguments
     """
     try:
-        scraped = sorted(scrape_goodreads_authors(*authors),
-                         key=lambda author: author.name.casefold())
+        scraped = [*scrape_goodreads_authors(*authors)]
         if scraped:
+            if sort_output:
+                scraped = sorted(scraped, key=lambda author: author.name.casefold())
             data = AuthorDump(datetime.now(), [AuthorData(author) for author in scraped])
             _dump_data(data, prefix=prefix, **kwargs)
         else:
-            _log.warning("Nothing has beenb scraped")
+            _log.warning("Nothing has been scraped")
     except Exception as e:
         _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
 
 @timed("books data dump", precision=1)
-def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any) -> None:
+def dump_books(*book_cues: str | Tuple[str, str], prefix="books", sort_output=True,
+               **kwargs: Any) -> None:
     """Scrape data on books specified by provided cues and dump it to JSON.
 
     Providing Goodreads book IDs as 'book_cues' cuts the needed number of requests considerably.
@@ -196,13 +199,15 @@ def dump_books(*book_cues: str | Tuple[str, str], prefix="books", **kwargs: Any)
     Args:
         book_cues: variable number of either Goodreads book IDs or (title, author) tuples
         prefix: a prefix for a dumpfile's name
+        sort_output: whether to sort books by title (default: True)
         kwargs: optional arguments
     """
     try:
-        scraped = scrape_goodreads_books(
-            *book_cues, authors_data=kwargs.get("authors_data") or kwargs.get("author_data"))
+        scraped = [*scrape_goodreads_books(
+            *book_cues, authors_data=kwargs.get("authors_data") or kwargs.get("author_data"))]
         if scraped:
-            scraped = sorted(scraped, key=lambda book: book.title.casefold())
+            if sort_output:
+                scraped = sorted(scraped, key=lambda book: book.title.casefold())
             data = BookDump(datetime.now(), [BookData(book) for book in scraped])
             _dump_data(data, prefix=prefix, **kwargs)
         else:

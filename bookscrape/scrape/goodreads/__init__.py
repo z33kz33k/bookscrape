@@ -63,7 +63,8 @@ def scrape_books(*cues: str | Tuple[str, str], authors_data: Iterable[Author] | 
     Cues can be either (title, author) tuples or Goodreads book IDs.
 
     When book IDs aren't supplied in the input, previously scraped Author data
-    objects can be provided to speed up book IDs derivation.
+    objects can be provided to speed up book IDs derivation. Also, expressing 'author' as an
+    author ID makes it even faster.
 
     Args:
         cues: variable number of either Goodreads book IDs or (title, author) tuples
@@ -72,10 +73,7 @@ def scrape_books(*cues: str | Tuple[str, str], authors_data: Iterable[Author] | 
     for i, cue in enumerate(cues, start=1):
         _log.info(f"Scraping {PROVIDER} for item #{i}: '{cue}'...")
         try:
-            if isinstance(cue, str):
-                scraper = BookScraper(cue)
-            else:
-                scraper = BookScraper(*cue, authors_data=authors_data)
+            scraper = BookScraper(cue, authors_data=authors_data)
             yield scraper.scrape()
         except Exception as e:
             _log.error(f"{type(e).__qualname__}. Skipping...\n{traceback.format_exc()}")
@@ -86,7 +84,8 @@ def scrape_book_ids(*book_records: Tuple[str, str], authors_data: Iterable[Autho
                     ) -> Generator[str, None, None]:
     """Scrape Goodreads for books IDs according to the (title, author) records provided.
 
-    Previously scraped Author data objects can be provided to speed up book IDs derivation.
+    Previously scraped Author data objects can be provided to speed up book IDs derivation. Also,
+    expressing 'author' as an author ID makes it even faster.
 
     Args:
         book_records: variable number of (title, author) records
@@ -95,7 +94,7 @@ def scrape_book_ids(*book_records: Tuple[str, str], authors_data: Iterable[Autho
     for i, record in enumerate(book_records, start=1):
         _log.info(f"Scraping {PROVIDER} for item #{i}: '{record}'...")
         try:
-            scraper = BookScraper(*record, authors_data=authors_data)
+            scraper = BookScraper(record, authors_data=authors_data)
             yield scraper.book_id
         except Exception as e:
             _log.error(f"{type(e).__qualname__}. Skipping...\n{traceback.format_exc()}")
