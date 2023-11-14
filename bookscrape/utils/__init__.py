@@ -80,11 +80,11 @@ def from_iterable(iterable: Iterable[T], predicate: Callable[[T], bool]) -> Opti
 
 
 @type_checker(PathLike)
-def getdir(path: PathLike) -> Path:
+def getdir(path: PathLike, create_missing=True) -> Path:
     """Return a directory at ``path`` creating it (and all its needed parents) if missing.
     """
     dir_ = Path(path)
-    if not dir_.exists():
+    if not dir_.exists() and create_missing:
         _log.warning(f"Creating missing directory at: '{dir_.resolve()}'...")
         dir_.mkdir(parents=True, exist_ok=True)
     else:

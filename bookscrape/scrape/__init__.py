@@ -15,13 +15,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Generator, Iterable, List, Tuple
 
-from bookscrape.constants import BookRecord, FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, PathLike, \
+from bookscrape.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, PathLike, \
     READABLE_TIMESTAMP_FORMAT
-from bookscrape.scrape.goodreads import scrape_authors as scrape_goodreads_authors
-from bookscrape.scrape.goodreads import scrape_books as scrape_goodreads_books
-from bookscrape.scrape.goodreads.data import PROVIDER as GOODREADS
-from bookscrape.scrape.goodreads.data import Author as GoodreadsAuthor
-from bookscrape.scrape.goodreads.data import DetailedBook as GoodreadsBook
+from bookscrape.scrape.provider.goodreads import scrape_authors as scrape_goodreads_authors
+from bookscrape.scrape.provider.goodreads import scrape_books as scrape_goodreads_books
+from bookscrape.scrape.provider.goodreads import PROVIDER as GOODREADS
+from bookscrape.scrape.provider.goodreads import Author as GoodreadsAuthor
+from bookscrape.scrape.provider.goodreads import DetailedBook as GoodreadsBook
 from bookscrape.utils import getdir, getfile, timed
 
 _log = logging.getLogger(__name__)
@@ -136,7 +136,7 @@ def _dump_data(data: AuthorDump | BookDump, **kwargs: Any) -> None:
         True
     timestamp = f"_{data.timestamp.strftime(FILENAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
     output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
-    output_dir = getdir(output_dir)
+    output_dir = getdir(output_dir, create_missing=False)
     filename = kwargs.get("filename")
     if filename:
         filename = filename

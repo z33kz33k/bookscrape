@@ -13,7 +13,7 @@ from typing import List
 import gspread
 
 from bookscrape.constants import BookRecord
-from bookscrape.scrape.goodreads.utils import url2id
+from bookscrape.scrape.provider.goodreads import url2id
 from bookscrape.utils import timed
 from bookscrape.utils.check_type import generic_iterable_type_checker, type_checker
 
@@ -43,8 +43,8 @@ def retrieve_from_gsheets_col(spreadsheet: str, worksheet: str, col=1, start_row
     return values
 
 
-def retrieve_sf_authors() -> List[str]:
-    """Retrieve a list of author names from 'sf_books' private Google sheet.
+def retrieve_yt_sf_authors() -> List[str]:
+    """Retrieve a list of author names from my private youtubers ranking.
     """
     _log.info("Retrieving author names from Google Sheets...")
     items = retrieve_from_gsheets_col("sf_books", "books", 4, 4)
@@ -60,8 +60,8 @@ def retrieve_sf_authors() -> List[str]:
     return authors
 
 
-def retrieve_sf_book_records() -> List[BookRecord]:
-    """Retrieve a list of book records from 'sf_books' private Google sheet.
+def retrieve_yt_sf_book_records() -> List[BookRecord]:
+    """Retrieve a list of book records from my private youtubers ranking.
     """
     _log.info("Retrieving book records from Google Sheets...")
     titles = [title.strip() for title in retrieve_from_gsheets_col("sf_books", "books", 2, 4)]
@@ -78,11 +78,20 @@ def retrieve_sf_book_records() -> List[BookRecord]:
     return records
 
 
-def retrieve_sf_book_ids() -> List[str]:
-    """Retrieve a list of book IDs from 'sf_books' private Google sheet.
+def retrieve_yt_sf_book_ids() -> List[str]:
+    """Retrieve a list of book IDs from my private youtubers ranking.
     """
     _log.info("Retrieving book IDs from Google Sheets...")
     ids = [url2id(url) for url in retrieve_from_gsheets_col("sf_books", "books", 3, 4)]
+    _log.info(f"Retrieved {len(ids)} book IDs")
+    return ids
+
+
+def retrieve_sf_lists_book_ids() -> List[str]:
+    """Retrieve a list of book IDs from 'sf_lists_ids' worksheet.
+    """
+    _log.info("Retrieving book IDs from Google Sheets...")
+    ids = retrieve_from_gsheets_col("sf_books", "sf_lists_ids", 1, 2)
     _log.info(f"Retrieved {len(ids)} book IDs")
     return ids
 
@@ -100,7 +109,7 @@ def save_to_gsheets_col(values: List[str], spreadsheet: str, worksheet: str, col
 
 
 def save_ids_to_sf_lists_sheet(book_ids: List[str], col: int) -> None:
-    """Save a list of Goodreads book IDs to 'sf_lists_ids' private Google sheet.
+    """Save a list of Goodreads book IDs to 'sf_lists_ids' worksheet.
     """
     _log.info("Saving book IDs to Google Sheets...")
     save_to_gsheets_col(book_ids, "sf_books", "sf_lists_ids", col, 2)

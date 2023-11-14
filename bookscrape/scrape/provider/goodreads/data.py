@@ -23,7 +23,7 @@ PROVIDER = "www.goodreads.com"
 
 
 def _load_tolkien() -> Tuple[int, int]:
-    source = getfile(Path(__file__).parent.parent.parent / "data" / "tolkien.json")
+    source = getfile(Path(__file__).parent.parent.parent.parent / "data" / "tolkien.json")
     with source.open(encoding="utf8") as f:
         data = json.load(f)
 
@@ -358,6 +358,8 @@ class _ScriptTagData:
     total_reviews: int
     first_publication: Optional[datetime]
     details: BookDetails
+    amazon_url: str
+    barnes_and_noble_url: str
 
 
 @dataclass

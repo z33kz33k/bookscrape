@@ -20,8 +20,8 @@ import pytz
 from bs4 import BeautifulSoup, Tag
 from requests import HTTPError, Timeout
 
-from bookscrape.scrape.goodreads.utils import is_goodreads_id, numeric_id, url2id
-from bookscrape.scrape.goodreads.data import Author, AuthorStats, Book, BookAward, BookDetails, \
+from bookscrape.scrape.provider.goodreads.utils import is_goodreads_id, numeric_id, url2id
+from bookscrape.scrape.provider.goodreads.data import Author, AuthorStats, Book, BookAward, BookDetails, \
     BookSeries, BookSetting, BookStats, DetailedBook, MainEdition, SimpleAuthor, _ScriptTagData
 from bookscrape.scrape.stats import FiveStars, ReviewsDistribution
 from bookscrape.scrape.utils import getsoup, throttled, ParsingError
@@ -382,6 +382,17 @@ class _ScriptTagParser:
         blurb = self._book_data.get('description')
         return blurb.strip() if blurb is not None else ""
 
+    def _parse_affiliate_links(self) -> Tuple[str, str]:
+        links = self._book_data['links({})']
+        amazon = links['primaryAffiliateLink']["url"]
+        *amazon, _ = amazon.split("/")
+        amazon = "/".join(amazon)
+        bn = from_iterable(links['secondaryAffiliateLinks'],
+                           lambda item: item["name"] == "Barnes & Noble")
+        if not bn:
+            raise ParsingError("Could not parse Barnes & Noble affiliate link")
+        return amazon, bn["url"]
+
     def parse(self) -> _ScriptTagData:
         try:
             details = self._book_data["details"]
@@ -449,6 +460,7 @@ class _ScriptTagParser:
                 )
                 places.append(place)
             characters = [item["name"] for item in self._work_data["details"]["characters"]]
+            amazon, bn = self._parse_affiliate_links()
         except KeyError as ke:
             raise ParsingError(f"A key on 'script' tag data is unavailable: {ke}")
 
@@ -466,7 +478,9 @@ class _ScriptTagParser:
                 awards=awards,
                 places=places,
                 characters=characters,
-            )
+            ),
+            amazon_url=amazon,
+            barnes_and_noble_url=bn,
         )
 
 

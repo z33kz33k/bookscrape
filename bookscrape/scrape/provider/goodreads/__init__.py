@@ -11,8 +11,8 @@ import logging
 import traceback
 from typing import Generator, Iterable, Tuple
 
-from bookscrape.scrape.goodreads.data import Author, DetailedBook, PROVIDER
-from bookscrape.scrape.goodreads.scrapers import AuthorScraper, BookScraper
+from bookscrape.scrape.provider.goodreads.data import Author, DetailedBook, PROVIDER
+from bookscrape.scrape.provider.goodreads.scrapers import AuthorScraper, BookScraper
 
 
 _log = logging.getLogger(__name__)
