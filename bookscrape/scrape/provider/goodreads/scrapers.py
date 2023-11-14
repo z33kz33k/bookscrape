@@ -20,6 +20,7 @@ import pytz
 from bs4 import BeautifulSoup, Tag
 from requests import HTTPError, Timeout
 
+from bookscrape.scrape.provider.amazon import UrlScraper as AmazonScraper
 from bookscrape.scrape.provider.goodreads.utils import is_goodreads_id, numeric_id, url2id
 from bookscrape.scrape.provider.goodreads.data import Author, AuthorStats, Book, BookAward, BookDetails, \
     BookSeries, BookSetting, BookStats, DetailedBook, MainEdition, SimpleAuthor, _ScriptTagData
@@ -863,6 +864,7 @@ class BookScraper:
         series = self._parse_series_page() if self.series_id else None
         shelves, total_shelves = self._parse_shelves_page()
         editions, total_editions = self._scrape_editions()
+        AmazonScraper(script_data.amazon_url).scrape()
         stats = BookStats(
             ratings=script_data.ratings,
             reviews=script_data.reviews,
