@@ -10,6 +10,7 @@
 import itertools
 import json
 import logging
+import random
 import re
 from collections import OrderedDict, defaultdict, namedtuple
 from datetime import datetime, timedelta
@@ -20,7 +21,7 @@ import pytz
 from bs4 import BeautifulSoup, Tag
 from requests import HTTPError, Timeout
 
-from bookscrape.scrape.provider.amazon import UrlScraper as AmazonScraper
+from bookscrape.scrape.provider.amazon import Scraper as AmazonScraper
 from bookscrape.scrape.provider.goodreads.utils import is_goodreads_id, numeric_id, url2id
 from bookscrape.scrape.provider.goodreads.data import Author, AuthorStats, Book, BookAward, BookDetails, \
     BookSeries, BookSetting, BookStats, DetailedBook, MainEdition, SimpleAuthor, _ScriptTagData
@@ -29,10 +30,13 @@ from bookscrape.scrape.utils import getsoup, throttled, ParsingError
 from bookscrape.utils import extract_float, extract_int, from_iterable, name2langcode, timed
 
 _log = logging.getLogger(__name__)
+
+
 # the unofficially known enforced throttling delay
 # between requests to Goodreads servers is 1 s
 # we're choosing to be safe here
-THROTTLING_DELAY = 1.2  # seconds
+def throttling_delay() -> float:
+    return random.uniform(1.0, 1.3)  # seconds
 
 
 class AuthorScraper:
@@ -101,7 +105,7 @@ class AuthorScraper:
         return "".join(chars)
 
     @classmethod
-    @throttled(THROTTLING_DELAY)
+    @throttled(throttling_delay)
     def find_author_id(cls, author_name: str) -> str:
         """Find Goodreads author ID by quering a Goodreads search with ``author_name``.
 
@@ -221,7 +225,7 @@ class AuthorScraper:
 
         return Book(sanitize_output(title), id_, avg, ratings, published, editions)
 
-    @throttled(THROTTLING_DELAY)
+    @throttled(throttling_delay)
     def _parse_author_page_contents(self, url: str) -> Tuple[List[Tag], AuthorStats]:
         soup = getsoup(url)
         container = soup.find("div", class_="leftContainer")
@@ -749,7 +753,7 @@ class BookScraper:
             return False
         return True
 
-    @throttled(THROTTLING_DELAY)
+    @throttled(throttling_delay)
     def _parse_series_page(self) -> BookSeries | None:
         soup = getsoup(self._series_url)
         # title
@@ -778,7 +782,7 @@ class BookScraper:
             series[numbering] = book_id
         return BookSeries(title, self.series_id, series)
 
-    @throttled(THROTTLING_DELAY)
+    @throttled(throttling_delay)
     def _parse_shelves_page(self) -> Tuple[OrderedDict[int, str], int]:
         soup = getsoup(self._shelves_url)
         lc_tag = soup.find("div", class_="leftContainer")
@@ -801,7 +805,7 @@ class BookScraper:
             shelves[shelvings] = name
         return shelves, total_shelves_created
 
-    @throttled(THROTTLING_DELAY)
+    @throttled(throttling_delay)
     def _parse_editions_page(
             self, page: int,
             editions: DefaultDict[str, Set[str]] | None = None
@@ -864,7 +868,8 @@ class BookScraper:
         series = self._parse_series_page() if self.series_id else None
         shelves, total_shelves = self._parse_shelves_page()
         editions, total_editions = self._scrape_editions()
-        AmazonScraper(script_data.amazon_url).scrape()
+        amazon_id = AmazonScraper.url2id(script_data.amazon_url)
+        amazon_book = AmazonScraper(amazon_id).scrape()
         stats = BookStats(
             ratings=script_data.ratings,
             reviews=script_data.reviews,

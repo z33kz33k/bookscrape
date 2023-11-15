@@ -55,7 +55,7 @@ def throttle(delay: float) -> None:
     time.sleep(delay)
 
 
-def throttled(delay: float) -> Callable:
+def throttled(delay: float | Callable) -> Callable:
     """Add throttling delay after the decorated operation.
 
     Args:
@@ -68,7 +68,11 @@ def throttled(delay: float) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
-            throttle(delay)
+            if callable(delay):
+                amount = delay()
+            else:
+                amount = delay
+            throttle(amount)
             return result
         return wrapper
     return decorate
